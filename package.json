@@ -2,10 +2,11 @@
     "name": "@deriv-com/api-hooks",
     "private": false,
     "version": "0.0.1",
+    "type": "module",
     "description": "A React hooks library utilising Tanstack Query which encapsulates Deriv API WebSocket functionality.",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "vite build"
     },
     "keywords": [
         "deriv",
@@ -16,6 +17,7 @@
     "license": "ISC",
     "dependencies": {
         "@deriv-com/utils": "^0.0.7",
+        "@deriv/deriv-api": "^1.0.15",
         "@tanstack/react-query": "^5.21.7"
     },
     "peerDependencies": {

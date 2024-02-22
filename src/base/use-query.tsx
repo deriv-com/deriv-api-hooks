@@ -13,11 +13,7 @@ export const useQuery = <T extends TSocketEndpointNames>({
     queryKey,
     ...rest
 }: TSocketRequestQuery<T>): UseQueryResult<TSocketResponseData<T>, TSocketError<T>> => {
-    const { derivAPI } = useAPI();
-
-    const send = (name: T, payload?: TSocketRequestPayload<T>) => {
-        return derivAPI.current?.send({ [name]: 1, ...payload });
-    };
+    const { send } = useAPI();
 
     return _useQuery<TSocketResponseData<T>, TSocketError<T>>({
         queryKey: [name, ...(queryKey ?? [])],

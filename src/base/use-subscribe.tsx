@@ -1,5 +1,5 @@
-import { TSocketRequestPayload, TSocketResponseData, TSocketSubscribableEndpointNames } from "types/api.types";
-import { useAPI } from "./use-api";
+import { TSocketRequestPayload, TSocketResponseData, TSocketSubscribableEndpointNames } from "../types/api.types";
+import { useAPI } from "./use-context-hooks";
 import { useState } from "react";
 import { ObjectUtils } from "@deriv-com/utils";
 

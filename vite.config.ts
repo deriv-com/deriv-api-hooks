@@ -13,4 +13,7 @@ export default defineConfig({
             fileName: "deriv-api-hooks",
         },
     },
+    server: {
+        port: 8443,
+    },
 });

@@ -1,5 +1,5 @@
-import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from "types/api.types";
-import { useAPI } from "./use-api";
+import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from "../types/api.types";
+import { useAPI } from "./use-context-hooks";
 import { UseMutationOptions, UseMutationResult, useMutation as useReactQueryMutation } from "@tanstack/react-query";
 
 export type AugmentedMutationResult<T extends TSocketEndpointNames> = UseMutationResult<

@@ -2,17 +2,23 @@ import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketRespo
 import { useAPI } from "./use-api";
 import { UseMutationOptions, UseMutationResult, useMutation as useReactQueryMutation } from "@tanstack/react-query";
 
-type TSocketRequestMutation<T extends TSocketEndpointNames> = {
+export type AugmentedMutationResult<T extends TSocketEndpointNames> = UseMutationResult<
+    TSocketResponseData<T>,
+    TSocketError<T>,
+    TSocketRequestPayload<T>
+>;
+
+export type AugmentedMutationOptions<T extends TSocketEndpointNames> = {
     name: T;
 } & UseMutationOptions<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>;
 
 export const useMutation = <T extends TSocketEndpointNames>({
     name,
     ...options
-}: TSocketRequestMutation<T>): UseMutationResult<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>> => {
+}: AugmentedMutationOptions<T>): AugmentedMutationResult<T> => {
     const { send } = useAPI();
 
-    return useReactQueryMutation<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>({
+    return useReactQueryMutation({
         mutationFn: (payload) => send(name, payload),
         ...options,
     });

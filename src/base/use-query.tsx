@@ -2,7 +2,7 @@ import { useQuery as _useQuery, UseQueryResult, UseQueryOptions } from "@tanstac
 import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from "../types/api.types";
 import { useAPI } from "./use-api";
 
-type TSocketRequestQuery<T extends TSocketEndpointNames> = {
+export type TSocketRequestQuery<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
 } & UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>;

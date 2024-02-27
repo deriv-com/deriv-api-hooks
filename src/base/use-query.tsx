@@ -5,7 +5,8 @@ import { useAPI } from "./use-context-hooks";
 export type TSocketRequestQuery<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
-} & UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>;
+    queryKey?: string[];
+} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>, "queryKey">;
 
 export const useQuery = <T extends TSocketEndpointNames>({
     name,

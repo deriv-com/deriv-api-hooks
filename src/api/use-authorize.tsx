@@ -1,15 +1,21 @@
-import { AugmentedMutationResult, useMutation } from "../base/use-mutation";
+import { useQuery } from "..";
+import { useAuthData } from "../base/use-context-hooks";
 
-export const useAuthorize = (): AugmentedMutationResult<"authorize"> => {
-    const {
-        mutate: _mutate,
-        mutateAsync: _mutateAsync,
-        ...rest
-    } = useMutation({ name: "authorize", onMutate: (payload) => console.log(payload) });
+export const useAuthorizeQuery = () => {
+    const { getActiveAccount, switchAccount } = useAuthData();
+    const activeAccount = getActiveAccount();
+    const activeToken = activeAccount?.token || "";
+
+    const { data, ...rest } = useQuery({
+        name: "authorize",
+        queryKey: [activeToken],
+        payload: { authorize: activeToken },
+        enabled: !!activeToken,
+    });
 
     return {
-        mutate: (payload) => _mutate(payload),
-        mutateAsync: (payload) => _mutateAsync(payload),
+        data: data?.authorize,
+        switchAccount,
         ...rest,
     };
 };

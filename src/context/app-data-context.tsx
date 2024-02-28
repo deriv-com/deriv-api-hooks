@@ -20,9 +20,9 @@ export const AppDataProvider = ({ children }: AppDataProviderProps) => {
 
     return (
         <AppDataContext.Provider value={{ environment, setEnvironment }}>
-            <AuthDataProvider>
-                <APIProvider>{children}</APIProvider>
-            </AuthDataProvider>
+            <APIProvider>
+                <AuthDataProvider>{children}</AuthDataProvider>
+            </APIProvider>
         </AppDataContext.Provider>
     );
 };

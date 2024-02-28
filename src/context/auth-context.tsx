@@ -1,14 +1,12 @@
-import { LocalStorageUtils, URLUtils } from "@deriv-com/utils";
 import { ReactNode, createContext, useEffect, useState } from "react";
-
-const getActiveLoginid = (loginInfo: URLUtils.AccountInfo[]) => {
-    return loginInfo.find((acc) => /^VR/.test(acc.loginid))?.loginid || loginInfo[0].loginid;
-};
+import { LocalStorageUtils, URLUtils } from "@deriv-com/utils";
+import { useAuthorize } from "../api/non-authorize/use-authorize";
 
 type AuthData = {
     activeLoginid: string;
-    switchAccount: (loginid: string) => void;
-    getActiveAccount: () => URLUtils.AccountInfo | null | undefined;
+    isAuthorized: boolean;
+    switchAccount: (account: URLUtils.LoginInfo) => void;
+    getActiveAccount: () => URLUtils.LoginInfo | null | undefined;
 };
 
 export const AuthDataContext = createContext<AuthData | null>(null);
@@ -18,34 +16,52 @@ type AuthDataProviderProps = {
 };
 
 export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
-    const [activeLoginid, setActiveLoginid] = useState(LocalStorageUtils.getValue("client.active_loginid") ?? "");
-    const [accountList, setAccountList] = useState(
-        LocalStorageUtils.getValue<URLUtils.AccountInfo[]>("client.account_list")
-    );
-    const getActiveAccount = () => accountList?.find((acc) => acc.loginid === activeLoginid);
+    const [activeLoginid, setActiveLoginid] = useState("");
+    const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
+    const { mutate, isSuccess: isAuthorized } = useAuthorize();
 
-    const switchAccount = (loginid: string) => {
-        if (!loginid || loginid === activeLoginid) return;
+    const authorizeAccount = (loginid: string, token: string) => {
+        mutate({ authorize: token });
         setActiveLoginid(loginid);
         LocalStorageUtils.setValue("client.active_loginid", loginid);
     };
 
-    const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
-    if (loginInfo.length) {
-        setAccountList(loginInfo);
-        LocalStorageUtils.setValue("client.account_list", loginInfo);
-        URLUtils.filterSearchParams(paramsToDelete);
-        switchAccount(getActiveLoginid(loginInfo));
-    }
+    const getActiveAccount = () => {
+        const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>("client.account_list");
+        return accountList?.find((acc) => acc.loginid === activeLoginid);
+    };
+
+    const switchAccount = (account: URLUtils.LoginInfo) => {
+        if (account.loginid !== activeLoginid) {
+            authorizeAccount(account.loginid, account.token);
+        }
+    };
 
     useEffect(() => {
-        if (accountList?.length && !activeLoginid) {
-            switchAccount(getActiveLoginid(accountList));
+        if (loginInfo.length) {
+            const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);
+            if (!defaultActiveAccount) return;
+            LocalStorageUtils.setValue("client.account_list", loginInfo);
+            URLUtils.filterSearchParams(paramsToDelete);
+            authorizeAccount(defaultActiveAccount.loginid, defaultActiveAccount.token);
+        } else {
+            let activeLoginId = "";
+            const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>("client.account_list");
+            if (accountList?.length) {
+                activeLoginId = LocalStorageUtils.getValue<string>("client.active_loginid") || "";
+                if (!activeLoginId) {
+                    const defaultActiveAccount = URLUtils.getDefaultActiveAccount(accountList);
+                    if (defaultActiveAccount) {
+                        activeLoginId = defaultActiveAccount.loginid;
+                    }
+                }
+                authorizeAccount(activeLoginId, accountList.find((acc) => acc.loginid === activeLoginId)!.token);
+            }
         }
-    }, [accountList, activeLoginid, switchAccount]);
+    }, []);
 
     return (
-        <AuthDataContext.Provider value={{ activeLoginid, switchAccount, getActiveAccount }}>
+        <AuthDataContext.Provider value={{ activeLoginid, isAuthorized, switchAccount, getActiveAccount }}>
             {children}
         </AuthDataContext.Provider>
     );

@@ -18,7 +18,7 @@ type AuthDataProviderProps = {
 export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const [activeLoginid, setActiveLoginid] = useState("");
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
-    const { mutate, isSuccess: isAuthorized } = useAuthorize();
+    const { mutate, isSuccess } = useAuthorize();
 
     const authorizeAccount = (loginid: string, token: string) => {
         mutate({ authorize: token });
@@ -61,7 +61,9 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     }, []);
 
     return (
-        <AuthDataContext.Provider value={{ activeLoginid, isAuthorized, switchAccount, getActiveAccount }}>
+        <AuthDataContext.Provider
+            value={{ activeLoginid, isAuthorized: !!activeLoginid && isSuccess, switchAccount, getActiveAccount }}
+        >
             {children}
         </AuthDataContext.Provider>
     );

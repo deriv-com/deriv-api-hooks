@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useLinkWallet = () => {
-  return useMutation({ name: "link_wallet" });
+    const { data, ...rest } = useMutation({ name: 'link_wallet' });
+
+    return {
+        data: data?.link_wallet,
+        ...rest,
+    };
 };

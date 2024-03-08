@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useNotificationEvent = () => {
-  return useMutation({ name: "notification_event" });
+    const { data, ...rest } = useMutation({ name: 'notification_event' });
+
+    return {
+        data: data?.notification_event,
+        ...rest,
+    };
 };

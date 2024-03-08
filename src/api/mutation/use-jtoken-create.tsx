@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useJtokenCreate = () => {
-  return useMutation({ name: "jtoken_create" });
+    const { data, ...rest } = useMutation({ name: 'jtoken_create' });
+
+    return {
+        data: data?.jtoken_create,
+        ...rest,
+    };
 };

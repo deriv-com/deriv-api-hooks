@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useSetSelfExclusion = () => {
-  return useMutation({ name: "set_self_exclusion" });
+    const { data, ...rest } = useMutation({ name: 'set_self_exclusion' });
+
+    return {
+        data: data?.set_self_exclusion,
+        ...rest,
+    };
 };

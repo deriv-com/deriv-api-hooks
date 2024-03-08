@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useAffiliateAddPerson = () => {
-  return useMutation({ name: "affiliate_add_person" });
+    const { data, ...rest } = useMutation({ name: 'affiliate_add_person' });
+
+    return {
+        data: data?.affiliate_add_person,
+        ...rest,
+    };
 };

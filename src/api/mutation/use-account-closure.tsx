@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useAccountClosure = () => {
-  return useMutation({ name: "account_closure" });
+    const { data, ...rest } = useMutation({ name: 'account_closure' });
+
+    return {
+        data: data?.account_closure,
+        ...rest,
+    };
 };

@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useTradingPlatformInvestorPasswordReset = () => {
-  return useMutation({ name: "trading_platform_investor_password_reset" });
+    const { data, ...rest } = useMutation({ name: 'trading_platform_investor_password_reset' });
+
+    return {
+        data: data?.trading_platform_investor_password_reset,
+        ...rest,
+    };
 };

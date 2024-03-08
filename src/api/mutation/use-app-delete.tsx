@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useAppDelete = () => {
-  return useMutation({ name: "app_delete" });
+    const { data, ...rest } = useMutation({ name: 'app_delete' });
+
+    return {
+        data: data?.app_delete,
+        ...rest,
+    };
 };

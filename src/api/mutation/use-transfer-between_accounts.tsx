@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useTransferBetweenAccounts = () => {
-  return useMutation({ name: "transfer_between_accounts" });
+    const { data, ...rest } = useMutation({ name: 'transfer_between_accounts' });
+
+    return {
+        data: data?.transfer_between_accounts,
+        ...rest,
+    };
 };

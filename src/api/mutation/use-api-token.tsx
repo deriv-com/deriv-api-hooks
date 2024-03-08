@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useApiToken = () => {
-  return useMutation({ name: "api_token" });
+    const { data, ...rest } = useMutation({ name: 'api_token' });
+
+    return {
+        data: data?.api_token,
+        ...rest,
+    };
 };

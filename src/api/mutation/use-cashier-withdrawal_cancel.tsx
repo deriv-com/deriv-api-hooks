@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useCashierWithdrawalCancel = () => {
-  return useMutation({ name: "cashier_withdrawal_cancel" });
+    const { data, ...rest } = useMutation({ name: 'cashier_withdrawal_cancel' });
+
+    return {
+        data: data?.cashier_withdrawal_cancel,
+        ...rest,
+    };
 };

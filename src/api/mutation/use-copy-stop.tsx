@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useCopyStop = () => {
-  return useMutation({ name: "copy_stop" });
+    const { data, ...rest } = useMutation({ name: 'copy_stop' });
+
+    return {
+        data: data?.copy_stop,
+        ...rest,
+    };
 };

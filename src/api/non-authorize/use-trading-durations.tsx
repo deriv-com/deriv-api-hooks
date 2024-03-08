@@ -1,13 +1,11 @@
-import { useQuery } from "../../base";
-import { TSocketQueryOptions } from "../../base/use-query";
+import { useQuery } from '../../base';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useTradingDurations = ({
-  payload,
-}: TSocketQueryOptions<"trading_durations">) => {
-  const { data, ...rest } = useQuery({ name: "trading_durations", payload });
+export const useTradingDurations = ({ payload }: TSocketQueryOptions<'trading_durations'>) => {
+    const { data, ...rest } = useQuery({ name: 'trading_durations', payload });
 
-  return {
-    data: data?.trading_durations,
-    ...rest,
-  };
+    return {
+        data: data?.trading_durations,
+        ...rest,
+    };
 };

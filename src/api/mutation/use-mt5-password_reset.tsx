@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useMt5PasswordReset = () => {
-  return useMutation({ name: "mt5_password_reset" });
+    const { data, ...rest } = useMutation({ name: 'mt5_password_reset' });
+
+    return {
+        data: data?.mt5_password_reset,
+        ...rest,
+    };
 };

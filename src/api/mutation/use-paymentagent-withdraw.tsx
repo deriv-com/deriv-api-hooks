@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const usePaymentagentWithdraw = () => {
-  return useMutation({ name: "paymentagent_withdraw" });
+    const { data, ...rest } = useMutation({ name: 'paymentagent_withdraw' });
+
+    return {
+        data: data?.paymentagent_withdraw,
+        ...rest,
+    };
 };

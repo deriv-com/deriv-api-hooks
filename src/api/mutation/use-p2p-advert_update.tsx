@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useP2pAdvertUpdate = () => {
-  return useMutation({ name: "p2p_advert_update" });
+    const { data, ...rest } = useMutation({ name: 'p2p_advert_update' });
+
+    return {
+        data: data?.p2p_advert_update,
+        ...rest,
+    };
 };

@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useChangePassword = () => {
-  return useMutation({ name: "change_password" });
+    const { data, ...rest } = useMutation({ name: 'change_password' });
+
+    return {
+        data: data?.change_password,
+        ...rest,
+    };
 };

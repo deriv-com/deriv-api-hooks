@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useSetAccountCurrency = () => {
-  return useMutation({ name: "set_account_currency" });
+    const { data, ...rest } = useMutation({ name: 'set_account_currency' });
+
+    return {
+        data: data?.set_account_currency,
+        ...rest,
+    };
 };

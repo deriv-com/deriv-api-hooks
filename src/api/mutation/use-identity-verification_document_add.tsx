@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useIdentityVerificationDocumentAdd = () => {
-  return useMutation({ name: "identity_verification_document_add" });
+    const { data, ...rest } = useMutation({ name: 'identity_verification_document_add' });
+
+    return {
+        data: data?.identity_verification_document_add,
+        ...rest,
+    };
 };

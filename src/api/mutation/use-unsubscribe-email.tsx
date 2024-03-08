@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useUnsubscribeEmail = () => {
-  return useMutation({ name: "unsubscribe_email" });
+    const { data, ...rest } = useMutation({ name: 'unsubscribe_email' });
+
+    return {
+        data: data?.unsubscribe_email,
+        ...rest,
+    };
 };

@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useP2pChatCreate = () => {
-  return useMutation({ name: "p2p_chat_create" });
+    const { data, ...rest } = useMutation({ name: 'p2p_chat_create' });
+
+    return {
+        data: data?.p2p_chat_create,
+        ...rest,
+    };
 };

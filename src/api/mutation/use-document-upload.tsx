@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useDocumentUpload = () => {
-  return useMutation({ name: "document_upload" });
+    const { data, ...rest } = useMutation({ name: 'document_upload' });
+
+    return {
+        data: data?.document_upload,
+        ...rest,
+    };
 };

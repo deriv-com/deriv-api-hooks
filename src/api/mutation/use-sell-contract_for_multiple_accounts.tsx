@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useSellContractForMultipleAccounts = () => {
-  return useMutation({ name: "sell_contract_for_multiple_accounts" });
+    const { data, ...rest } = useMutation({ name: 'sell_contract_for_multiple_accounts' });
+
+    return {
+        data: data?.sell_contract_for_multiple_accounts,
+        ...rest,
+    };
 };

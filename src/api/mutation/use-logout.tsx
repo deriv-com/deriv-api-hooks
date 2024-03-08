@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useLogout = () => {
-  return useMutation({ name: "logout" });
+    const { data, ...rest } = useMutation({ name: 'logout' });
+
+    return {
+        data: data?.logout,
+        ...rest,
+    };
 };

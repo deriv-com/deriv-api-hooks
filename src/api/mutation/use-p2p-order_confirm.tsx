@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useP2pOrderConfirm = () => {
-  return useMutation({ name: "p2p_order_confirm" });
+    const { data, ...rest } = useMutation({ name: 'p2p_order_confirm' });
+
+    return {
+        data: data?.p2p_order_confirm,
+        ...rest,
+    };
 };

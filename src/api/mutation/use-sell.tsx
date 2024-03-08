@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useSell = () => {
-  return useMutation({ name: "sell" });
+    const { data, ...rest } = useMutation({ name: 'sell' });
+
+    return {
+        data: data?.sell,
+        ...rest,
+    };
 };

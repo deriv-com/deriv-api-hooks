@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useMt5Withdrawal = () => {
-  return useMutation({ name: "mt5_withdrawal" });
+    const { data, ...rest } = useMutation({ name: 'mt5_withdrawal' });
+
+    return {
+        data: data?.mt5_withdrawal,
+        ...rest,
+    };
 };

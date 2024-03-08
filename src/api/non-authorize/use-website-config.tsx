@@ -1,13 +1,11 @@
-import { useQuery } from "../../base";
-import { TSocketQueryOptions } from "../../base/use-query";
+import { useQuery } from '../../base';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useWebsiteConfig = ({
-  payload,
-}: TSocketQueryOptions<"website_config">) => {
-  const { data, ...rest } = useQuery({ name: "website_config", payload });
+export const useWebsiteConfig = ({ payload }: TSocketQueryOptions<'website_config'>) => {
+    const { data, ...rest } = useQuery({ name: 'website_config', payload });
 
-  return {
-    data: data?.website_config,
-    ...rest,
-  };
+    return {
+        data: data?.website_config,
+        ...rest,
+    };
 };

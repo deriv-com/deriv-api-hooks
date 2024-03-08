@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useForgetAll = () => {
-  return useMutation({ name: "forget_all" });
+    const { data, ...rest } = useMutation({ name: 'forget_all' });
+
+    return {
+        data: data?.forget_all,
+        ...rest,
+    };
 };

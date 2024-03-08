@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useNewAccountVirtual = () => {
-  return useMutation({ name: "new_account_virtual" });
+    const { data, ...rest } = useMutation({ name: 'new_account_virtual' });
+
+    return {
+        data: data?.new_account_virtual,
+        ...rest,
+    };
 };

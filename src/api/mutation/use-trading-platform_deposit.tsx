@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useTradingPlatformDeposit = () => {
-  return useMutation({ name: "trading_platform_deposit" });
+    const { data, ...rest } = useMutation({ name: 'trading_platform_deposit' });
+
+    return {
+        data: data?.trading_platform_deposit,
+        ...rest,
+    };
 };

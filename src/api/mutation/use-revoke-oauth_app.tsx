@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useRevokeOauthApp = () => {
-  return useMutation({ name: "revoke_oauth_app" });
+    const { data, ...rest } = useMutation({ name: 'revoke_oauth_app' });
+
+    return {
+        data: data?.revoke_oauth_app,
+        ...rest,
+    };
 };

@@ -1,5 +1,10 @@
-import { useMutation } from "../../base";
+import { useMutation } from '../../base';
 
 export const useTncApproval = () => {
-  return useMutation({ name: "tnc_approval" });
+    const { data, ...rest } = useMutation({ name: 'tnc_approval' });
+
+    return {
+        data: data?.tnc_approval,
+        ...rest,
+    };
 };

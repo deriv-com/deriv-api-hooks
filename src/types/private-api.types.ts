@@ -1,4 +1,22 @@
-export type AvailableAccountsRequest = {
+import { TSocketEndpointNames, TSocketRequestPayload } from './api.types';
+
+export interface GenericReponse<T extends TSocketEndpointNames> {
+    /**
+     * Echo of the request made.
+     */
+    echo_req: TSocketRequestPayload<T>;
+    /**
+     * Action name of the request made.
+     */
+    msg_type: T;
+    /**
+     * Optional field sent in request to map to response, present only when request contains `req_id`.
+     */
+    req_id?: number;
+    [k: string]: unknown;
+}
+
+export interface AvailableAccountsRequest {
     /**
      * Must be `1`
      */
@@ -21,9 +39,9 @@ export type AvailableAccountsRequest = {
      * [Optional] Used to map request to response.
      */
     req_id?: number;
-};
+}
 
-export type AvailableAccountsResponse = {
+export interface AvailableAccountsResponse extends GenericReponse<'available_accounts'> {
     available_accounts?: {
         /**
          * Wallet account types that are available to be created
@@ -43,24 +61,9 @@ export type AvailableAccountsResponse = {
             landing_company: string;
         }[];
     };
-    /**
-     * Echo of the request made.
-     */
-    echo_req: {
-        [k: string]: unknown;
-    };
-    /**
-     * Action name of the request made.
-     */
-    msg_type: 'available_accounts';
-    /**
-     * Optional field sent in request to map to response, present only when request contains `req_id`.
-     */
-    req_id?: number;
-    [k: string]: unknown;
-};
+}
 
-export type CashierPaymentsRequest = {
+export interface CashierPaymentsRequest {
     /**
      * Must be `1`
      */
@@ -87,9 +90,9 @@ export type CashierPaymentsRequest = {
      * [Optional] Used to map request to response.
      */
     req_id?: number;
-};
+}
 
-export type CashierPaymentsResponse = {
+export interface CashierPaymentsResponse extends GenericReponse<'cashier_payments'> {
     cashier_payments?: {
         /**
          * Response for provider `crypto'.
@@ -180,9 +183,9 @@ export type CashierPaymentsResponse = {
      */
     req_id?: number;
     [k: string]: unknown;
-};
+}
 
-export type CashierWithdrawalCancelRequest = {
+export interface CashierWithdrawalCancelRequest {
     /**
      * Must be `1`
      */
@@ -201,9 +204,9 @@ export type CashierWithdrawalCancelRequest = {
      * [Optional] Used to map request to response.
      */
     req_id?: number;
-};
+}
 
-export type CashierWithdrawalResponse = {
+export interface CashierWithdrawalResponse extends GenericReponse<'cashier_payments'> {
     cashier_withdrawal_cancel?: {
         /**
          * The unique identifier for the transaction.
@@ -214,24 +217,9 @@ export type CashierWithdrawalResponse = {
          */
         status_code: 'CANCELLED';
     };
-    /**
-     * Echo of the request made.
-     */
-    echo_req: {
-        [k: string]: unknown;
-    };
-    /**
-     * Action name of the request made.
-     */
-    msg_type: 'cashier_withdrawal_cancel';
-    /**
-     * Optional field sent in request to map to response, present only when request contains `req_id`.
-     */
-    req_id?: number;
-    [k: string]: unknown;
-};
+}
 
-export type GetAccountTypesRequest = {
+export interface GetAccountTypesRequest {
     /**
      * Must be `1`
      */
@@ -250,9 +238,9 @@ export type GetAccountTypesRequest = {
      * [Optional] Used to map request to response.
      */
     req_id?: number;
-};
+}
 
-export type GetAccountTypeResponse = {
+export interface GetAccountTypeResponse extends GenericReponse<'get_account_types'> {
     get_account_types?: {
         /**
          * Trading account types that are available to create or link to
@@ -297,24 +285,9 @@ export type GetAccountTypeResponse = {
             };
         };
     };
-    /**
-     * Echo of the request made.
-     */
-    echo_req: {
-        [k: string]: unknown;
-    };
-    /**
-     * Action name of the request made.
-     */
-    msg_type: 'get_account_types';
-    /**
-     * Optional field sent in request to map to response, present only when request contains `req_id`.
-     */
-    req_id?: number;
-    [k: string]: unknown;
-};
+}
 
-export type NewAccountWalletRequest = {
+export interface NewAccountWalletRequest {
     /**
      * Must be `1`
      */
@@ -581,9 +554,9 @@ export type NewAccountWalletRequest = {
      * [Optional] Used to map request to response.
      */
     req_id?: number;
-};
+}
 
-export type NewAccountWalletResponse = {
+export interface NewAccountWalletResponse extends GenericReponse<'new_account_wallet'> {
     new_account_wallet?: {
         /**
          * Client ID of new real money account
@@ -610,24 +583,9 @@ export type NewAccountWalletResponse = {
          */
         oauth_token: string;
     };
-    /**
-     * Echo of the request made.
-     */
-    echo_req: {
-        [k: string]: unknown;
-    };
-    /**
-     * Action name of the request made.
-     */
-    msg_type: 'new_account_wallet';
-    /**
-     * Optional field sent in request to map to response, present only when request contains `req_id`.
-     */
-    req_id?: number;
-    [k: string]: unknown;
-};
+}
 
-export type ServiceTokenRequest = {
+export interface ServiceTokenRequest {
     /**
      * Must be `1`
      */
@@ -660,9 +618,9 @@ export type ServiceTokenRequest = {
      * [Optional] Used to map request to response.
      */
     req_id?: number;
-};
+}
 
-export type ServiceTokenResponse = {
+export interface ServiceTokenResponse extends GenericReponse<'service_token'> {
     /**
      * Service specific tokens and data.
      */
@@ -742,30 +700,147 @@ export type ServiceTokenResponse = {
             url?: string;
         };
     };
-};
+}
 
-export type WalletMigrationRequest = {
+export interface TradingPlatformLeverageRequest {
+    /**
+     * Must be `1`
+     */
+    trading_platform_leverage: 1;
+    /**
+     * Name of trading platform.
+     */
+    platform: 'mt5' | 'dxtrade' | 'ctrader';
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface TradingPlatformLeverageResponse extends GenericReponse<'trading_platform_leverage'> {
+    /**
+     * dynamic leverage data.
+     */
+    trading_platform_leverage: {
+        leverage: {
+            [U in 'stock_indices' | 'forex' | 'metals' | 'cryptocurrencies']: {
+                display_name: string;
+                instruments: string[];
+                min: number;
+                max: number;
+                volume: {
+                    unit: string;
+                    data: {
+                        from: number;
+                        to: number;
+                        leverage: number;
+                    }[];
+                };
+            };
+        };
+    };
+}
+
+export interface TradingPlatformNewAccountRequest {
+    /**
+     * Must be `1`
+     */
+    trading_platform_new_account: 1;
+    /**
+     * Account type.
+     */
+    account_type: 'demo' | 'real';
+    /**
+     * [Optional]
+     */
+    company?: string;
+    /**
+     * [Optional] Trading account currency, the default value will be the qualified account currency.
+     */
+    currency?: string;
+    /**
+     * [Optional] If set to 1, only validation is performed.
+     */
+    dry_run?: 0 | 1;
+    /**
+     * Market type
+     */
+    market_type: 'financial' | 'synthetic' | 'all';
+    /**
+     * The master password of the account. For validation (Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address). Only for DXTrade.
+     */
+    password?: string;
+    /**
+     * Name of trading platform.
+     */
+    platform: 'dxtrade' | 'ctrader';
+    /**
+     * [Optional] Sub account type.
+     */
+    sub_account_type?: 'financial' | 'financial_stp' | 'swap_free';
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface TradingPlatformPasswordChangeRequest {
+    /**
+     * Must be `1`
+     */
+    trading_platform_password_change: 1;
+    /**
+     * New trading password. Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address.
+     */
+    new_password: string;
+    /**
+     * Old password for validation. Must be empty if a password has not been set yet.
+     */
+    old_password?: string;
+    /**
+     * Name of trading platform.
+     */
+    platform: 'dxtrade' | 'mt5';
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface TradingPlatformPasswordChangeResponse extends GenericReponse<'trading_platform_password_change'> {
+    trading_platform_password_change?: 0 | 1;
+}
+
+export interface WalletMigrationRequest {
     /**
      * Must be `state`, `start` or `reset`
      */
     wallet_migration: 'state' | 'start' | 'reset';
-};
+}
 
-export type WalletMigrationResponse = {
+export interface WalletMigrationResponse extends GenericReponse<'wallet_migration'> {
     wallet_migration: {
         /**
          * State of wallet migration.
          */
         state: 'ineligible' | 'eligible' | 'in_progress' | 'migrated' | 'failed';
     };
-    /**
-     * Echo of the request made.
-     */
-    echo_req: {
-        [k: string]: unknown;
-    };
-    /**
-     * Action name of the request made.
-     */
-    msg_type: 'wallet_migration';
-};
+}

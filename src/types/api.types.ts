@@ -245,6 +245,11 @@ import {
     NewAccountWalletResponse,
     ServiceTokenRequest,
     ServiceTokenResponse,
+    TradingPlatformLeverageRequest,
+    TradingPlatformLeverageResponse,
+    TradingPlatformNewAccountRequest,
+    TradingPlatformPasswordChangeRequest,
+    TradingPlatformPasswordChangeResponse,
     WalletMigrationRequest,
     WalletMigrationResponse,
 } from './private-api.types';
@@ -298,41 +303,8 @@ export type TPrivateSocketEndpoints = {
         [k: string]: unknown;
     };
     trading_platform_investor_password_reset: {
-        request: {
-            /**
-             * Must be `1`
-             */
-            trading_platform_investor_password_reset: 1;
-            /**
-             * Trading account ID.
-             */
-            account_id: string;
-            /**
-             * New password of the account. For validation (Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address).
-             */
-            new_password: string;
-            /**
-             * Name of trading platform.
-             */
-            platform: 'mt5';
-            /**
-             * Email verification code (received from a `verify_email` call, which must be done first)
-             */
-            verification_code: string;
-            /**
-             * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
-             */
-            passthrough?: {
-                [k: string]: unknown;
-            };
-            /**
-             * [Optional] Used to map request to response.
-             */
-            req_id?: number;
-        };
-        response: {
-            trading_platform_investor_password_reset?: 0 | 1;
-        };
+        request: TradingPlatformInvestorPasswordResetRequest;
+        response: TradingPlatformInvestorPasswordResetResponse;
         /**
          * Echo of the request made.
          */
@@ -350,49 +322,8 @@ export type TPrivateSocketEndpoints = {
         [k: string]: unknown;
     };
     trading_platform_leverage: {
-        request: {
-            /**
-             * Must be `1`
-             */
-            trading_platform_leverage: 1;
-            /**
-             * Name of trading platform.
-             */
-            platform: 'mt5' | 'dxtrade' | 'ctrader';
-            /**
-             * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
-             */
-            passthrough?: {
-                [k: string]: unknown;
-            };
-            /**
-             * [Optional] Used to map request to response.
-             */
-            req_id?: number;
-        };
-        response: {
-            /**
-             * dynamic leverage data.
-             */
-            trading_platform_leverage: {
-                leverage: {
-                    [x in 'stock_indices' | 'forex' | 'metals' | 'cryptocurrencies']: {
-                        display_name: string;
-                        instruments: string[];
-                        min: number;
-                        max: number;
-                        volume: {
-                            unit: string;
-                            data: {
-                                from: number;
-                                to: number;
-                                leverage: number;
-                            }[];
-                        };
-                    };
-                };
-            };
-        };
+        request: TradingPlatformLeverageRequest;
+        response: TradingPlatformLeverageResponse;
         /**
          * Echo of the request made.
          */
@@ -410,102 +341,11 @@ export type TPrivateSocketEndpoints = {
         [k: string]: unknown;
     };
     trading_platform_password_change: {
-        request: {
-            /**
-             * Must be `1`
-             */
-            trading_platform_password_change: 1;
-            /**
-             * New trading password. Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address.
-             */
-            new_password: string;
-            /**
-             * Old password for validation. Must be empty if a password has not been set yet.
-             */
-            old_password?: string;
-            /**
-             * Name of trading platform.
-             */
-            platform: 'dxtrade' | 'mt5';
-            /**
-             * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
-             */
-            passthrough?: {
-                [k: string]: unknown;
-            };
-            /**
-             * [Optional] Used to map request to response.
-             */
-            req_id?: number;
-        };
-        response: {
-            trading_platform_password_change?: 0 | 1;
-        };
-        /**
-         * Echo of the request made.
-         */
-        echo_req: {
-            [k: string]: unknown;
-        };
-        /**
-         * Action name of the request made.
-         */
-        msg_type: 'trading_platform_password_change';
-        /**
-         * Optional field sent in request to map to response, present only when request contains `req_id`.
-         */
-        req_id?: number;
-        [k: string]: unknown;
+        request: TradingPlatformPasswordChangeRequest;
+        response: TradingPlatformPasswordChangeResponse;
     };
     trading_platform_new_account: {
-        request: {
-            /**
-             * Must be `1`
-             */
-            trading_platform_new_account: 1;
-            /**
-             * Account type.
-             */
-            account_type: 'demo' | 'real';
-            /**
-             * [Optional]
-             */
-            company?: string;
-            /**
-             * [Optional] Trading account currency, the default value will be the qualified account currency.
-             */
-            currency?: string;
-            /**
-             * [Optional] If set to 1, only validation is performed.
-             */
-            dry_run?: 0 | 1;
-            /**
-             * Market type
-             */
-            market_type: 'financial' | 'synthetic' | 'all';
-            /**
-             * The master password of the account. For validation (Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address). Only for DXTrade.
-             */
-            password?: string;
-            /**
-             * Name of trading platform.
-             */
-            platform: 'dxtrade' | 'ctrader';
-            /**
-             * [Optional] Sub account type.
-             */
-            sub_account_type?: 'financial' | 'financial_stp' | 'swap_free';
-            /**
-             * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
-             */
-            passthrough?: {
-                [k: string]: unknown;
-            };
-            /**
-             * [Optional] Used to map request to response.
-             */
-            req_id?: number;
-        };
+        request: TradingPlatformNewAccountRequest;
         response: {
             /**
              * ID of Trading account.

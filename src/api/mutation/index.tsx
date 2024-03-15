@@ -1,136 +1,139 @@
 import { useAccountClosure } from './use-account-closure';
-export { useAccountClosure };
 import { useAccountSecurity } from './use-account-security';
-export { useAccountSecurity };
 import { useAffiliateAddCompany } from './use-affiliate-add_company';
-export { useAffiliateAddCompany };
 import { useAffiliateAddPerson } from './use-affiliate-add_person';
-export { useAffiliateAddPerson };
 import { useAffiliateRegisterPerson } from './use-affiliate-register_person';
-export { useAffiliateRegisterPerson };
 import { useApiToken } from './use-api-token';
-export { useApiToken };
 import { useAppDelete } from './use-app-delete';
-export { useAppDelete };
 import { useAppRegister } from './use-app-register';
-export { useAppRegister };
 import { useAppUpdate } from './use-app-update';
-export { useAppUpdate };
 import { useBuyContractForMultipleAccounts } from './use-buy-contract_for_multiple_accounts';
-export { useBuyContractForMultipleAccounts };
 import { useCancel } from './use-cancel';
-export { useCancel };
 import { useCashierWithdrawalCancel } from './use-cashier-withdrawal_cancel';
-export { useCashierWithdrawalCancel };
 import { useChangeEmail } from './use-change-email';
-export { useChangeEmail };
 import { useChangePassword } from './use-change-password';
-export { useChangePassword };
 import { useConfirmEmail } from './use-confirm-email';
-export { useConfirmEmail };
 import { useContractUpdate } from './use-contract-update';
-export { useContractUpdate };
 import { useCopyStart } from './use-copy-start';
-export { useCopyStart };
 import { useCopyStop } from './use-copy-stop';
-export { useCopyStop };
 import { useDocumentUpload } from './use-document-upload';
-export { useDocumentUpload };
 import { useForget } from './use-forget';
-export { useForget };
 import { useForgetAll } from './use-forget-all';
-export { useForgetAll };
 import { useIdentityVerificationDocumentAdd } from './use-identity-verification_document_add';
-export { useIdentityVerificationDocumentAdd };
 import { useJtokenCreate } from './use-jtoken-create';
-export { useJtokenCreate };
 import { useLinkWallet } from './use-link-wallet';
-export { useLinkWallet };
 import { useLogout } from './use-logout';
-export { useLogout };
 import { useMt5Deposit } from './use-mt5-deposit';
-export { useMt5Deposit };
 import { useMt5PasswordChange } from './use-mt5-password_change';
-export { useMt5PasswordChange };
 import { useMt5PasswordReset } from './use-mt5-password_reset';
-export { useMt5PasswordReset };
 import { useMt5Withdrawal } from './use-mt5-withdrawal';
-export { useMt5Withdrawal };
 import { useNewAccountMaltainvest } from './use-new-account_maltainvest';
-export { useNewAccountMaltainvest };
 import { useNewAccountReal } from './use-new-account_real';
-export { useNewAccountReal };
 import { useNewAccountVirtual } from './use-new-account_virtual';
-export { useNewAccountVirtual };
 import { useNewAccountWallet } from './use-new-account_wallet';
-export { useNewAccountWallet };
 import { useNotificationEvent } from './use-notification-event';
-export { useNotificationEvent };
 import { useP2pAdvertCreate } from './use-p2p-advert_create';
-export { useP2pAdvertCreate };
 import { useP2pAdvertUpdate } from './use-p2p-advert_update';
-export { useP2pAdvertUpdate };
 import { useP2pAdvertiserUpdate } from './use-p2p-advertiser_update';
-export { useP2pAdvertiserUpdate };
 import { useP2pChatCreate } from './use-p2p-chat_create';
-export { useP2pChatCreate };
 import { useP2pOrderCancel } from './use-p2p-order_cancel';
-export { useP2pOrderCancel };
 import { useP2pOrderConfirm } from './use-p2p-order_confirm';
-export { useP2pOrderConfirm };
 import { useP2pOrderDispute } from './use-p2p-order_dispute';
-export { useP2pOrderDispute };
 import { usePasskeysLogin } from './use-passkeys-login';
-export { usePasskeysLogin };
 import { usePasskeysRegister } from './use-passkeys-register';
-export { usePasskeysRegister };
 import { usePasskeysRename } from './use-passkeys-rename';
-export { usePasskeysRename };
 import { usePasskeysRevoke } from './use-passkeys-revoke';
-export { usePasskeysRevoke };
 import { usePaymentagentCreate } from './use-paymentagent-create';
-export { usePaymentagentCreate };
 import { usePaymentagentTransfer } from './use-paymentagent-transfer';
-export { usePaymentagentTransfer };
 import { usePaymentagentWithdraw } from './use-paymentagent-withdraw';
-export { usePaymentagentWithdraw };
 import { useResetPassword } from './use-reset-password';
-export { useResetPassword };
 import { useRevokeOauthApp } from './use-revoke-oauth_app';
-export { useRevokeOauthApp };
 import { useSell } from './use-sell';
-export { useSell };
 import { useSellContractForMultipleAccounts } from './use-sell-contract_for_multiple_accounts';
-export { useSellContractForMultipleAccounts };
 import { useSellExpired } from './use-sell-expired';
-export { useSellExpired };
 import { useSetAccountCurrency } from './use-set-account_currency';
-export { useSetAccountCurrency };
 import { useSetFinancialAssessment } from './use-set-financial_assessment';
-export { useSetFinancialAssessment };
 import { useSetSelfExclusion } from './use-set-self_exclusion';
-export { useSetSelfExclusion };
 import { useSetSettings } from './use-set-settings';
-export { useSetSettings };
 import { useTncApproval } from './use-tnc-approval';
-export { useTncApproval };
 import { useTopupVirtual } from './use-topup-virtual';
-export { useTopupVirtual };
 import { useTradingPlatformDeposit } from './use-trading-platform_deposit';
-export { useTradingPlatformDeposit };
 import { useTradingPlatformInvestorPasswordChange } from './use-trading-platform_investor_password_change';
-export { useTradingPlatformInvestorPasswordChange };
 import { useTradingPlatformInvestorPasswordReset } from './use-trading-platform_investor_password_reset';
-export { useTradingPlatformInvestorPasswordReset };
 import { useTradingPlatformNewAccount } from './use-trading-platform_new_account';
-export { useTradingPlatformNewAccount };
 import { useTradingPlatformPasswordChange } from './use-trading-platform_password_change';
-export { useTradingPlatformPasswordChange };
 import { useTradingPlatformPasswordReset } from './use-trading-platform_password_reset';
-export { useTradingPlatformPasswordReset };
 import { useTradingPlatformWithdrawal } from './use-trading-platform_withdrawal';
-export { useTradingPlatformWithdrawal };
 import { useTransferBetweenAccounts } from './use-transfer-between_accounts';
-export { useTransferBetweenAccounts };
 import { useUnsubscribeEmail } from './use-unsubscribe-email';
-export { useUnsubscribeEmail };
+
+export {
+    useAccountClosure,
+    useAccountSecurity,
+    useAffiliateAddCompany,
+    useAffiliateAddPerson,
+    useAffiliateRegisterPerson,
+    useApiToken,
+    useAppDelete,
+    useAppRegister,
+    useAppUpdate,
+    useBuyContractForMultipleAccounts,
+    useCancel,
+    useCashierWithdrawalCancel,
+    useChangeEmail,
+    useChangePassword,
+    useConfirmEmail,
+    useContractUpdate,
+    useCopyStart,
+    useCopyStop,
+    useDocumentUpload,
+    useForget,
+    useForgetAll,
+    useIdentityVerificationDocumentAdd,
+    useJtokenCreate,
+    useLinkWallet,
+    useLogout,
+    useMt5Deposit,
+    useMt5PasswordChange,
+    useMt5PasswordReset,
+    useMt5Withdrawal,
+    useNewAccountMaltainvest,
+    useNewAccountReal,
+    useNewAccountVirtual,
+    useNewAccountWallet,
+    useNotificationEvent,
+    useP2pAdvertCreate,
+    useP2pAdvertUpdate,
+    useP2pAdvertiserUpdate,
+    useP2pChatCreate,
+    useP2pOrderCancel,
+    useP2pOrderConfirm,
+    useP2pOrderDispute,
+    usePasskeysLogin,
+    usePasskeysRegister,
+    usePasskeysRename,
+    usePasskeysRevoke,
+    usePaymentagentCreate,
+    usePaymentagentTransfer,
+    usePaymentagentWithdraw,
+    useResetPassword,
+    useRevokeOauthApp,
+    useSell,
+    useSellContractForMultipleAccounts,
+    useSellExpired,
+    useSetAccountCurrency,
+    useSetFinancialAssessment,
+    useSetSelfExclusion,
+    useSetSettings,
+    useTncApproval,
+    useTopupVirtual,
+    useTradingPlatformDeposit,
+    useTradingPlatformInvestorPasswordChange,
+    useTradingPlatformInvestorPasswordReset,
+    useTradingPlatformNewAccount,
+    useTradingPlatformPasswordChange,
+    useTradingPlatformPasswordReset,
+    useTradingPlatformWithdrawal,
+    useTransferBetweenAccounts,
+    useUnsubscribeEmail,
+};

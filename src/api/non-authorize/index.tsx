@@ -1,44 +1,47 @@
 import { useActiveSymbols } from './use-active-symbols';
-export { useActiveSymbols };
 import { useAssetIndex } from './use-asset-index';
-export { useAssetIndex };
 import { useContractsFor } from './use-contracts-for';
-export { useContractsFor };
 import { useCopytradingStatistics } from './use-copytrading-statistics';
-export { useCopytradingStatistics };
 import { useCryptoConfig } from './use-crypto-config';
-export { useCryptoConfig };
 import { useEconomicCalendar } from './use-economic-calendar';
-export { useEconomicCalendar };
 import { useLandingCompany } from './use-landing-company';
-export { useLandingCompany };
 import { useLandingCompanyDetails } from './use-landing-company_details';
-export { useLandingCompanyDetails };
 import { usePaymentMethods } from './use-payment-methods';
-export { usePaymentMethods };
 import { usePaymentagentList } from './use-paymentagent-list';
-export { usePaymentagentList };
 import { usePayoutCurrencies } from './use-payout-currencies';
-export { usePayoutCurrencies };
 import { usePing } from './use-ping';
-export { usePing };
 import { useResidenceList } from './use-residence-list';
-export { useResidenceList };
 import { useStatesList } from './use-states-list';
-export { useStatesList };
 import { useTime } from './use-time';
-export { useTime };
 import { useTradingDurations } from './use-trading-durations';
-export { useTradingDurations };
 import { useTradingPlatformLeverage } from './use-trading-platform_leverage';
-export { useTradingPlatformLeverage };
 import { useTradingPlatformProductListing } from './use-trading-platform_product_listing';
-export { useTradingPlatformProductListing };
 import { useTradingTimes } from './use-trading-times';
-export { useTradingTimes };
 import { useVerifyEmail } from './use-verify-email';
-export { useVerifyEmail };
 import { useVerifyEmailCellxpert } from './use-verify-email_cellxpert';
-export { useVerifyEmailCellxpert };
 import { useWebsiteConfig } from './use-website-config';
-export { useWebsiteConfig };
+
+export {
+    useActiveSymbols,
+    useAssetIndex,
+    useContractsFor,
+    useCopytradingStatistics,
+    useCryptoConfig,
+    useEconomicCalendar,
+    useLandingCompany,
+    useLandingCompanyDetails,
+    usePaymentMethods,
+    usePaymentagentList,
+    usePayoutCurrencies,
+    usePing,
+    useResidenceList,
+    useStatesList,
+    useTime,
+    useTradingDurations,
+    useTradingPlatformLeverage,
+    useTradingPlatformProductListing,
+    useTradingTimes,
+    useVerifyEmail,
+    useVerifyEmailCellxpert,
+    useWebsiteConfig,
+};

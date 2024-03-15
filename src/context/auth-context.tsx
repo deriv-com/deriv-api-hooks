@@ -1,6 +1,7 @@
-import { ReactNode, createContext, useEffect, useState } from "react";
-import { LocalStorageUtils, URLUtils } from "@deriv-com/utils";
-import { useAuthorize } from "../api/non-authorize/use-authorize";
+import { ReactNode, createContext, useEffect, useState } from 'react';
+import { LocalStorageUtils, URLUtils } from '@deriv-com/utils';
+import { useAuthorize } from '../api/non-authorize/use-authorize';
+import { useAppData } from '../base';
 
 type AuthData = {
     activeLoginid: string;
@@ -16,19 +17,19 @@ type AuthDataProviderProps = {
 };
 
 export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
-    const [activeLoginid, setActiveLoginid] = useState("");
+    const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
     const { mutate, isSuccess } = useAuthorize();
 
     const authorizeAccount = (loginid: string, token: string) => {
         mutate({ authorize: token });
         setActiveLoginid(loginid);
-        LocalStorageUtils.setValue("client.active_loginid", loginid);
+        LocalStorageUtils.setValue('client.active_loginid', loginid);
     };
 
     const getActiveAccount = () => {
-        const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>("client.account_list");
-        return accountList?.find((acc) => acc.loginid === activeLoginid);
+        const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>('client.account_list');
+        return accountList?.find(acc => acc.loginid === activeLoginid);
     };
 
     const switchAccount = (account: URLUtils.LoginInfo) => {
@@ -41,21 +42,21 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
         if (loginInfo.length) {
             const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);
             if (!defaultActiveAccount) return;
-            LocalStorageUtils.setValue("client.account_list", loginInfo);
+            LocalStorageUtils.setValue('client.account_list', loginInfo);
             URLUtils.filterSearchParams(paramsToDelete);
             authorizeAccount(defaultActiveAccount.loginid, defaultActiveAccount.token);
         } else {
-            let activeLoginId = "";
-            const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>("client.account_list");
+            let activeLoginId = '';
+            const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>('client.account_list');
             if (accountList?.length) {
-                activeLoginId = LocalStorageUtils.getValue<string>("client.active_loginid") || "";
+                activeLoginId = LocalStorageUtils.getValue<string>('client.active_loginid') || '';
                 if (!activeLoginId) {
                     const defaultActiveAccount = URLUtils.getDefaultActiveAccount(accountList);
                     if (defaultActiveAccount) {
                         activeLoginId = defaultActiveAccount.loginid;
                     }
                 }
-                authorizeAccount(activeLoginId, accountList.find((acc) => acc.loginid === activeLoginId)!.token);
+                authorizeAccount(activeLoginId, accountList.find(acc => acc.loginid === activeLoginId)!.token);
             }
         }
     }, []);

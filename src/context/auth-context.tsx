@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useEffect, useMemo } from 'react';
 import { LocalStorageUtils, URLUtils } from '@deriv-com/utils';
 import { useAuthorize } from '../api/non-authorize/use-authorize';
 import { useAppData } from '../base';
@@ -49,7 +49,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             let activeLoginId = '';
             const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>('client.account_list');
             if (accountList?.length) {
-                activeLoginId = LocalStorageUtils.getValue<string>('client.active_loginid') || '';
+                activeLoginId = LocalStorageUtils.getValue<string>('client.active_loginid') ?? '';
                 if (!activeLoginId) {
                     const defaultActiveAccount = URLUtils.getDefaultActiveAccount(accountList);
                     if (defaultActiveAccount) {
@@ -61,11 +61,10 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
         }
     }, []);
 
-    return (
-        <AuthDataContext.Provider
-            value={{ activeLoginid, isAuthorized: !!activeLoginid && isSuccess, switchAccount, getActiveAccount }}
-        >
-            {children}
-        </AuthDataContext.Provider>
+    const value = useMemo(
+        () => ({ activeLoginid, isAuthorized: !!activeLoginid && isSuccess, switchAccount, getActiveAccount }),
+        [activeLoginid, isSuccess, switchAccount, getActiveAccount]
     );
+
+    return <AuthDataContext.Provider value={value}>{children}</AuthDataContext.Provider>;
 };

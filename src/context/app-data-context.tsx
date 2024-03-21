@@ -1,4 +1,4 @@
-import { Dispatch, PropsWithChildren, SetStateAction, createContext, useState } from 'react';
+import { Dispatch, PropsWithChildren, SetStateAction, createContext, useMemo, useState } from 'react';
 import { AuthDataProvider } from './auth-context';
 import { APIProvider } from './api-context';
 
@@ -24,8 +24,13 @@ export const AppDataProvider = ({ children }: PropsWithChildren) => {
     const [activeLoginid, setActiveLoginid] = useState('');
     const [environment, setEnvironment] = useState<Environment>('demo');
 
+    const value = useMemo(
+        () => ({ environment, setEnvironment, activeLoginid, setActiveLoginid }),
+        [environment, setEnvironment, activeLoginid, setActiveLoginid]
+    );
+
     return (
-        <AppDataContext.Provider value={{ environment, setEnvironment, activeLoginid, setActiveLoginid }}>
+        <AppDataContext.Provider value={value}>
             <APIProvider>
                 <AuthDataProvider>{children}</AuthDataProvider>
             </APIProvider>

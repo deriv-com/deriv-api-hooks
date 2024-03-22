@@ -846,133 +846,103 @@ export interface WalletMigrationResponse extends GenericReponse<'wallet_migratio
 }
 
 export interface TradingPlatformProductListingRequest {
-    trading_platform_product_listing: {
-        description: 'Must be 1.';
-        type: 'integer';
-        enum: [1];
+    /**
+     * Must be `1`
+     */
+    trading_platform_product_listing: 1;
+    /**
+     * [Optional] Specific application `app_id`.
+     */
+    app_id?: string[];
+    /**
+     * Country of legal citizenship, 2-letter country code.
+     */
+    country_code: string;
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
     };
-    app_id: {
-        description: '[Optional] Specific application `app_id`.';
-        type: 'array';
-        items: {
-            description: 'Application id.';
-            type: 'integer';
-        };
-    };
-    country_code: {
-        description: 'Country of legal citizenship, 2-letter country code.';
-        type: 'string';
-    };
-    passthrough: {
-        description: '[Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.';
-        type: 'object';
-    };
-    req_id: {
-        description: '[Optional] Used to map request to response.';
-        type: 'integer';
-    };
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
 }
 
 export interface TradingPlatformProductListingResponse extends GenericReponse<'trading_platform_product_listing'> {
-    trading_platform_product_listing: {
-        title: 'trading_platform_product_listing';
-        description: 'Containing Trading product objects.';
-        type: 'object';
-        patternProperties: {
-            '^[0-9]+$': {
-                description: 'Platform product listing.';
-                type: 'object';
-                additionalProperties: false;
-                properties: {
-                    available_markets: {
-                        description: 'Available markets for country.';
-                        type: 'array';
-                        items: {
-                            type: 'string';
-                        };
-                    };
-                    available_trade_types: {
-                        description: 'Available trade types for country.';
-                        type: 'array';
-                        items: {
-                            type: 'string';
-                        };
-                    };
-                    name: {
-                        description: 'Name of trading platform.';
-                        type: 'string';
-                    };
-                    product_list: {
-                        description: 'Available product for the Trading Platform.';
-                        type: 'array';
-                        items: {
-                            type: 'object';
-                            additionalProperties: false;
-                            properties: {
-                                available_account_types: {
-                                    description: 'Available account types for this asset symbol.';
-                                    type: 'array';
-                                    items: {
-                                        type: 'string';
-                                    };
-                                };
-                                available_trade_types: {
-                                    description: 'Available trade types for this asset symbol.';
-                                    type: 'array';
-                                    items: {
-                                        type: 'string';
-                                    };
-                                };
-                                market: {
-                                    description: 'Information for a market.';
-                                    type: 'object';
-                                    additionalProperties: false;
-                                    properties: {
-                                        display_name: {
-                                            description: 'Display name of the market.';
-                                            type: 'string';
-                                        };
-                                        name: {
-                                            description: 'Internal name of the market..';
-                                            type: 'string';
-                                        };
-                                    };
-                                };
-                                submarket: {
-                                    description: 'Information for submarket.';
-                                    type: 'object';
-                                    additionalProperties: false;
-                                    properties: {
-                                        display_name: {
-                                            description: 'Display name of the submarket.';
-                                            type: 'string';
-                                        };
-                                        name: {
-                                            description: 'Internal name of the submarket.';
-                                            type: 'string';
-                                        };
-                                    };
-                                };
-                                symbol: {
-                                    description: 'Information for underlying symbol.';
-                                    type: 'object';
-                                    additionalProperties: false;
-                                    properties: {
-                                        display_name: {
-                                            description: 'Display name of the underlying symbol.';
-                                            type: 'string';
-                                        };
-                                        name: {
-                                            description: 'Internal name of the underlying symbol.';
-                                            type: 'string';
-                                        };
-                                    };
-                                };
-                            };
-                        };
-                    };
+    /**
+     * Containing Trading product objects.
+     */
+    trading_platform_product_listing?: {
+        /**
+         * Platform product listing.
+         */
+        [key: number]: {
+            /**
+             * Available markets for country.
+             */
+            available_markets?: string[];
+            /**
+             * Available trade types for country.
+             */
+            available_trade_types?: string[];
+            /**
+             * Name of trading platform.
+             */
+            name?: string;
+            /**
+             * Available product for the Trading Platform.
+             */
+            product_list?: {
+                /**
+                 * Available account types for this asset symbol.
+                 */
+                available_account_types?: string[];
+                /**
+                 * Available trade types for this asset symbol.
+                 */
+                available_trade_types?: string[];
+                /**
+                 * Information for a market.
+                 */
+                market?: {
+                    /**
+                     * Display name of the market.
+                     */
+                    display_name?: string;
+                    /**
+                     * Internal name of the market..
+                     */
+                    name?: string;
                 };
-            };
+                /**
+                 * Information for submarket.
+                 */
+                submarket?: {
+                    /**
+                     * Display name of the submarket.
+                     */
+                    display_name?: string;
+                    /**
+                     * Internal name of the submarket.
+                     */
+                    name?: string;
+                };
+                /**
+                 * Information for underlying symbol.
+                 */
+                symbol?: {
+                    /**
+                     * Display name of the underlying symbol.
+                     */
+                    display_name?: string;
+                    /**
+                     * Internal name of the underlying symbol.
+                     */
+                    name?: string;
+                };
+            }[];
         };
     };
 }

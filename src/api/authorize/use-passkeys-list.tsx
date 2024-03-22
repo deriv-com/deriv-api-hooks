@@ -9,7 +9,7 @@ export const usePasskeysList = (): { data: TSocketResponseData<'passkeys_list'>[
     const { data, ...rest } = useAuthorizeQuery({ name: 'passkeys_list' });
 
     return {
-        data: data?.passkeys_list,
+        data: data!.passkeys_list,
         ...rest,
     };
 };

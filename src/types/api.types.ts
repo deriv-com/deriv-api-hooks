@@ -233,16 +233,40 @@ import type {
     VerifyEmailResponse,
 } from '@deriv/api-types';
 import {
+    AccountClosureRequest,
+    AccountClosureResponse,
+    AccountSecurityRequest,
+    AccountSecurityResponse,
+    AffiliateAddCompanyRequest,
+    AffiliateAddCompanyResponse,
+    AffiliateAddPersonRequest,
+    AffiliateAddPersonResponse,
     AvailableAccountsRequest,
     AvailableAccountsResponse,
     CashierPaymentsRequest,
     CashierPaymentsResponse,
     CashierWithdrawalCancelRequest,
     CashierWithdrawalResponse,
+    ChangePasswordRequest,
+    ChangePasswordResponse,
     GetAccountTypeResponse,
     GetAccountTypesRequest,
     NewAccountWalletRequest,
     NewAccountWalletResponse,
+    PasskeysListRequest,
+    PasskeysListResponse,
+    PasskeysLoginRequest,
+    PasskeysLoginResponse,
+    PasskeysOptionsRequest,
+    PasskeysOptionsResponse,
+    PasskeysRenameRequest,
+    PasskeysRenameResponse,
+    PasskeysRegisterRequest,
+    PasskeysRegisterResponse,
+    PasskeysRegisterOptionsRequest,
+    PasskeysRegisterOptionsResponse,
+    PasskeysRevokeRequest,
+    PasskeysRevokeResponse,
     ServiceTokenRequest,
     ServiceTokenResponse,
     TradingPlatformLeverageRequest,
@@ -252,16 +276,37 @@ import {
     TradingPlatformPasswordChangeResponse,
     WalletMigrationRequest,
     WalletMigrationResponse,
+    TradingPlatformNewAccountResponse,
 } from './private-api.types';
 
 export type TPrivateSocketEndpoints = {
+    account_closure: {
+        request: AccountClosureRequest;
+        response: AccountClosureResponse;
+    };
     account_list: {
         request: AccountListRequest;
         response: AccountListResponse;
     };
+    account_security: {
+        request: AccountSecurityRequest;
+        response: AccountSecurityResponse;
+    };
+    affiliate_add_company: {
+        request: AffiliateAddCompanyRequest;
+        response: AffiliateAddCompanyResponse;
+    };
+    affiliate_add_person: {
+        request: AffiliateAddPersonRequest;
+        response: AffiliateAddPersonResponse;
+    };
     available_accounts: {
         request: AvailableAccountsRequest;
         response: AvailableAccountsResponse;
+    };
+    change_password: {
+        request: ChangePasswordRequest;
+        response: ChangePasswordResponse;
     };
     wallet_migration: {
         request: WalletMigrationRequest;
@@ -282,6 +327,34 @@ export type TPrivateSocketEndpoints = {
     new_account_wallet: {
         request: NewAccountWalletRequest;
         response: NewAccountWalletResponse;
+    };
+    passkeys_list: {
+        request: PasskeysListRequest;
+        response: PasskeysListResponse;
+    };
+    passkeys_login: {
+        request: PasskeysLoginRequest;
+        response: PasskeysLoginResponse;
+    };
+    passkeys_options: {
+        request: PasskeysOptionsRequest;
+        response: PasskeysOptionsResponse;
+    };
+    passkeys_rename: {
+        request: PasskeysRenameRequest;
+        response: PasskeysRenameResponse;
+    };
+    passkeys_register: {
+        request: PasskeysRegisterRequest;
+        response: PasskeysRegisterResponse;
+    };
+    passkeys_register_options: {
+        request: PasskeysRegisterOptionsRequest;
+        response: PasskeysRegisterOptionsResponse;
+    };
+    passkeys_revoke: {
+        request: PasskeysRevokeRequest;
+        response: PasskeysRevokeResponse;
     };
     service_token: {
         request: ServiceTokenRequest;
@@ -346,71 +419,7 @@ export type TPrivateSocketEndpoints = {
     };
     trading_platform_new_account: {
         request: TradingPlatformNewAccountRequest;
-        response: {
-            /**
-             * ID of Trading account.
-             */
-            account_id?: string;
-            /**
-             * Account type.
-             */
-            account_type?: 'demo' | 'real' | 'all';
-            /**
-             * Agent Details.
-             */
-            agent?: null | string;
-            /**
-             * Balance of the Trading account.
-             */
-            balance?: number;
-            /**
-             * Currency of the Trading account.
-             */
-            currency?: string;
-            /**
-             * Account balance, formatted to appropriate decimal places.
-             */
-            display_balance?: string;
-            /**
-             * Account enabled status
-             */
-            enabled?: number;
-            /**
-             * Landing company shortcode of the Trading account.
-             */
-            landing_company_short?: 'bvi' | 'labuan' | 'malta' | 'maltainvest' | 'svg' | 'vanuatu' | 'seychelles';
-            /**
-             * Login name used to log in into Trading platform.
-             */
-            login?: string;
-            /**
-             * Market type.
-             */
-            market_type?: 'financial' | 'synthetic' | 'all';
-            /**
-             * Name of trading platform.
-             */
-            platform?: 'dxtrade' | 'ctrader';
-            /**
-             * Sub account type.
-             */
-            sub_account_type?: 'financial' | 'financial_stp' | 'swap_free';
-        };
-        /**
-         * Echo of the request made.
-         */
-        echo_req: {
-            [k: string]: unknown;
-        };
-        /**
-         * Action name of the request made.
-         */
-        msg_type: 'trading_platform_new_account';
-        /**
-         * Optional field sent in request to map to response, present only when request contains `req_id`.
-         */
-        req_id?: number;
-        [k: string]: unknown;
+        response: TradingPlatformNewAccountResponse;
     };
     trading_platform_available_accounts: {
         request: {

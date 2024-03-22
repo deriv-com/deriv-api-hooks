@@ -98,6 +98,51 @@ export interface AccountSecurityResponse extends GenericResponse<'account_securi
     };
 }
 
+export interface AccountStatisticsRequest {
+    /**
+     * Must be `1`
+     */
+    account_statistics: 1;
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface AccountStatisticsResponse extends GenericResponse<'account_statistics'> {
+    /**
+     * Response of account statistics
+     */
+    account_statistics: {
+        /**
+         * Currency of an account
+         */
+        currency: string;
+
+        /**
+         * Sum of all deposits of an account
+         */
+        total_deposits: number;
+
+        /**
+         * Sum of all withdrawals of an account
+         */
+        total_withdrawals: number;
+    };
+}
+
 export interface AffiliateAddPersonRequest {
     /**
      * [Required] Must be `1`
@@ -550,6 +595,192 @@ export interface AffiliateAddPersonResponse extends GenericResponse<'affiliate_a
     };
 }
 
+export interface AffiliateRegisterPersonRequest {
+    /**
+     * [Required] Must be `1`
+     */
+    affiliate_register_person: number;
+
+    /**
+     * City name within 50 characters.
+     */
+    address_city: string;
+
+    /**
+     * Possible value receive from `states_list` call.
+     */
+    address_state: string;
+
+    /**
+     * Within 70 characters, with no leading whitespaces and may contain letters/numbers and/or any of following characters '.,:;()@#/-.
+     */
+    address_street: string;
+
+    /**
+     * Commission plan selected by affiliate 2 RevShare, 4. Turnover.
+     */
+    commission_plan: number;
+
+    /**
+     * Name of the country that currently reside, 2-letter country code.
+     */
+    country: string;
+
+    /**
+     * Birth date of affiliate user trying to register.
+     */
+    date_of_birth: string;
+
+    /**
+     * Email address.
+     */
+    email: string;
+
+    /**
+     * The official first name of the affiliate. Within 2-50 characters, use only letters, spaces, hyphens, full-stops or apostrophes.
+     */
+    first_name: string;
+
+    /**
+     * The official last name of the affiliate. Within 2-50 characters, use only letters, spaces, hyphens, full-stops or apostrophes.
+     */
+    last_name: string;
+
+    /**
+     * Indicates client's self-declaration of not being a PEP/RCA (Politically Exposed Person/Relatives and Close Associates).
+     */
+    non_pep_declaration: number;
+
+    /**
+     * Indicates client's self-declaration of being over 18 in age.
+     */
+    over_18_declaration: number;
+
+    /**
+     * Registered phone number of the affiliate. Starting with `+` followed by 8-35 digits, allowing hyphens or space.
+     */
+    phone: string;
+
+    /**
+     * Phone code without the starting + sign.
+     */
+    phone_code: string;
+
+    /**
+     * Indicates client has agreed to the terms and conditions.
+     */
+    tnc_accepted: number;
+
+    /**
+     * Indicates client has agreed to the terms and conditions for affiliates.
+     */
+    tnc_affiliate_accepted: number;
+
+    /**
+     * Account type select 1 business, 2 individual.
+     */
+    type_of_account: number;
+
+    /**
+     * Username of affiliate, will be unique everytime.
+     */
+    user_name: string;
+
+    /**
+     * Social media URL of the affiliate trying to register.
+     */
+    website_url: string;
+
+    /**
+     * Whatsapp phone number of the affiliate. Starting with `+` followed by 8-35 digits, allowing hyphens or space.
+     */
+    whatsapp_number: string;
+
+    /**
+     * Whatsapp code without the starting + sign.
+     */
+    whatsapp_number_phoneCode: string;
+
+    /**
+     * Within 20 characters and may not contain '+'.
+     */
+    address_postcode?: string;
+
+    /**
+     * Name of the country that the user is citizen of, 2-letter country code.
+     */
+    citizenship?: string;
+
+    /**
+     * Name of the company.
+     */
+    company_name?: string;
+
+    /**
+     * Registration number of the company.
+     */
+    company_registration_number?: string;
+
+    /**
+     * Currency of affiliate that wants to work with.
+     */
+    currency?: string;
+
+    /**
+     * Password for the affiliate account. (Accepts any printable ASCII character. Must be between 6-50 characters, and include numbers, lowercase and uppercase letters.).
+     */
+    password?: string;
+
+    /**
+     * Indicates client is going to promote its account to EU or not.
+     */
+    promote_eu?: number;
+
+    /**
+     * Indicates client has agreed to receive marketing emails or not.
+     */
+    receive_marketing_emails?: number;
+
+    /**
+     * Social media URL of the affiliate trying to register.
+     */
+    social_media_url?: string;
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface AffiliateRegisterPersonResponse extends GenericResponse<'affiliate_register_person'> {
+    /**
+     * A message with affiliate user trying to register details
+     */
+    affiliate_register_person: {
+        /**
+         * Registered Affiliate ID
+         */
+        affiliate_user_id: string;
+
+        /**
+         * Affiliate was successfully added, 0:unsuccessful 1:successful
+         */
+        success: 0 | 1;
+    };
+}
+
 export interface AvailableAccountsRequest {
     /**
      * Must be `1`
@@ -753,6 +984,52 @@ export interface CashierWithdrawalResponse extends GenericResponse<'cashier_paym
     };
 }
 
+export interface ChangeEmailRequest {
+    /**
+     * Must be `verify` or `update`.
+     */
+    change_email: 'verify' | 'update';
+
+    /**
+     * Email address to be verified.
+     */
+    new_email: string;
+
+    /**
+     * [Optional] New password (Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address). Mandatory if change_email is update and user has social login.
+     */
+    new_password?: string;
+
+    /**
+     * Email verification code (received from a `verify_email` call, which must be done first)
+     */
+    verification_code: string;
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface ChangeEmailResponse extends GenericResponse<'change_email'> {
+    /**
+     * `1`: email changed successfully, `0`: failed to change email
+     */
+    change_email: 0 | 1;
+}
+
 export interface ChangePasswordRequest {
     /**
      * Must be `1`
@@ -787,6 +1064,37 @@ export interface ChangePasswordResponse extends GenericResponse<'change_password
      * If set to 1, password updated.
      */
     change_password?: 0 | 1;
+}
+
+export interface CreateJTokenRequest {
+    /**
+     * Must be `1`.
+     */
+    jtoken_create: 1;
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface CreateJTokenResponse extends GenericResponse<'jtoken_create'> {
+    /**
+     * The JToken created.
+     */
+    jtoken_create: string;
 }
 
 export interface GetAccountTypesRequest {
@@ -855,6 +1163,47 @@ export interface GetAccountTypeResponse extends GenericResponse<'get_account_typ
             };
         };
     };
+}
+
+export interface LinkWalletRequest {
+    /**
+     * Must be `1`.
+     */
+    link_wallet: 1;
+
+    /**
+     * The unique identifier for this trading account.
+     */
+    client_id: string;
+
+    /**
+     * The unique identifier for this wallet.
+     */
+    wallet_id: string;
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface LinkWalletResponse extends GenericResponse<'link_wallet'> {
+    /**
+     * 1 on success
+     */
+    link_wallet: 1;
 }
 
 export interface NewAccountWalletRequest {
@@ -1722,6 +2071,94 @@ export interface PasskeysRevokeResponse extends GenericResponse<'passkeys_revoke
      */
     passkeys_revoke: number;
 }
+
+export interface ReportRequest {
+    /**
+     * Must be `1`
+     */
+    request_report: 1;
+
+    /**
+     * Start date of the report
+     */
+    date_from: number;
+
+    /**
+     * End date of the report
+     */
+    date_to: number;
+
+    /**
+     * Type of report to be sent to client's registered e-mail address
+     */
+    report_type: 'statement';
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface ReportRequestResponse extends GenericResponse<'request_report'> {
+    /**
+     * Response of request report
+     */
+    request_report: {
+        /**
+         * `1` indicates that report will be e-mailed, otherwise an error with error_code and error_message will be returned
+         */
+        report_status: number;
+    };
+}
+
+export interface ResetPasswordRequest {
+    /**
+     * Must be `1`
+     */
+    reset_password: 1;
+
+    /**
+     * New password. For validation (Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address).
+     */
+    new_password: string;
+
+    /**
+     * Email verification code (received from a `verify_email` call, which must be done first)
+     */
+    verification_code: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface ResetPasswordResponse extends GenericResponse<'reset_password'> {
+    /**
+     * `1`: password reset success, `0`: password reset failure
+     */
+    reset_password: 0 | 1;
+}
+
 export interface ServiceTokenRequest {
     /**
      * Must be `1`
@@ -2021,19 +2458,145 @@ export interface TradingPlatformPasswordChangeResponse extends GenericResponse<'
     trading_platform_password_change?: 0 | 1;
 }
 
-export interface WalletMigrationRequest {
+export interface TradingPlatformWithdrawalRequest {
     /**
-     * Must be `state`, `start` or `reset`
+     * Must be `1`
      */
-    wallet_migration: 'state' | 'start' | 'reset';
+    trading_platform_withdrawal: 1;
+
+    /**
+     * Amount to withdraw (in the currency of the Trading account).
+     */
+    amount: number;
+
+    /**
+     * Trading account login to withdraw money from.
+     */
+    from_account: string;
+
+    /**
+     * Name of trading platform.
+     */
+    platform: 'dxtrade' | 'derivez' | 'ctrader';
+
+    /**
+     * Wallet account loginid to transfer money to.
+     */
+    to_account: string;
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
 }
 
-export interface WalletMigrationResponse extends GenericResponse<'wallet_migration'> {
+export interface TradingPlatformWithdrawalResponse extends GenericResponse<'trading_platform_withdrawal'> {
+    /**
+     * Information about withdrawal transaction
+     */
+    trading_platform_withdrawal: {
+        /**
+         * The reference number for the related withdrawal from the wallet account
+         */
+        transaction_id: number;
+    };
+}
+
+export interface WalletMigrationRequest {
+    /**
+     * Wallet migration action.
+     */
+    wallet_migration: 'state' | 'start' | 'reset';
+
+    /**
+     * [Optional] The login id of the user. If left unspecified, it defaults to the initial authorized token's login id.
+     */
+    loginid?: string;
+
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface WalletMigrationResponse {
+    /**
+     * The information regarding wallet migration state.
+     */
     wallet_migration: {
         /**
-         * State of wallet migration.
+         * It contains plan of migration with all accounts that are going to be created and linked to existing accounts.
          */
-        state: 'ineligible' | 'eligible' | 'in_progress' | 'migrated' | 'failed';
+        account_list?: {
+            /**
+             * The category of the account.
+             */
+            account_category: string;
+            /**
+             * The type of the account.
+             */
+            account_type: string;
+            /**
+             * The currency of the account.
+             */
+            currency: string;
+            /**
+             * The landing company short code of the account.
+             */
+            landing_company_short: string;
+            /**
+             * The list of accounts that will be linked to this wallet account.
+             */
+            link_accounts: {
+                /**
+                 * The category of the account.
+                 */
+                account_category: string;
+                /**
+                 * The type of the account.
+                 */
+                account_type: string;
+                /**
+                 * The loginid of the account.
+                 */
+                loginid: string;
+                /**
+                 * The platform of the account.
+                 */
+                platform: string;
+            }[];
+            /**
+             * The platform of the account.
+             */
+            platform: string;
+        }[];
+        /**
+         * Current state of migration process.
+         */
+        state: {
+            description: string;
+            type: string;
+            enum: string[];
+        };
     };
 }
 
@@ -2062,7 +2625,7 @@ export interface TradingPlatformProductListingRequest {
     req_id?: number;
 }
 
-export interface TradingPlatformProductListingResponse extends GenericReponse<'trading_platform_product_listing'> {
+export interface TradingPlatformProductListingResponse extends GenericResponse<'trading_platform_product_listing'> {
     /**
      * Containing Trading product objects.
      */

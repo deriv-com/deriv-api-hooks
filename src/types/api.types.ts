@@ -237,22 +237,32 @@ import {
     AccountClosureResponse,
     AccountSecurityRequest,
     AccountSecurityResponse,
+    AccountStatisticsRequest,
+    AccountStatisticsResponse,
     AffiliateAddCompanyRequest,
     AffiliateAddCompanyResponse,
     AffiliateAddPersonRequest,
     AffiliateAddPersonResponse,
+    AffiliateRegisterPersonRequest,
+    AffiliateRegisterPersonResponse,
     AvailableAccountsRequest,
     AvailableAccountsResponse,
     CashierPaymentsRequest,
     CashierPaymentsResponse,
     CashierWithdrawalCancelRequest,
     CashierWithdrawalResponse,
+    ChangeEmailRequest,
+    ChangeEmailResponse,
     ChangePasswordRequest,
     ChangePasswordResponse,
     GetAccountTypeResponse,
     GetAccountTypesRequest,
+    CreateJTokenRequest,
+    CreateJTokenResponse,
     NewAccountWalletRequest,
     NewAccountWalletResponse,
+    LinkWalletRequest,
+    LinkWalletResponse,
     PasskeysListRequest,
     PasskeysListResponse,
     PasskeysLoginRequest,
@@ -267,6 +277,10 @@ import {
     PasskeysRegisterOptionsResponse,
     PasskeysRevokeRequest,
     PasskeysRevokeResponse,
+    ReportRequest,
+    ReportRequestResponse,
+    ResetPasswordRequest,
+    ResetPasswordResponse,
     ServiceTokenRequest,
     ServiceTokenResponse,
     TradingPlatformLeverageRequest,
@@ -276,6 +290,8 @@ import {
     TradingPlatformPasswordChangeResponse,
     TradingPlatformProductListingRequest,
     TradingPlatformProductListingResponse,
+    TradingPlatformWithdrawalRequest,
+    TradingPlatformWithdrawalResponse,
     WalletMigrationRequest,
     WalletMigrationResponse,
     TradingPlatformNewAccountResponse,
@@ -294,6 +310,10 @@ export type TPrivateSocketEndpoints = {
         request: AccountSecurityRequest;
         response: AccountSecurityResponse;
     };
+    account_statistics: {
+        request: AccountStatisticsRequest;
+        response: AccountStatisticsResponse;
+    };
     affiliate_add_company: {
         request: AffiliateAddCompanyRequest;
         response: AffiliateAddCompanyResponse;
@@ -302,9 +322,17 @@ export type TPrivateSocketEndpoints = {
         request: AffiliateAddPersonRequest;
         response: AffiliateAddPersonResponse;
     };
+    affiliate_register_person: {
+        request: AffiliateRegisterPersonRequest;
+        response: AffiliateRegisterPersonResponse;
+    };
     available_accounts: {
         request: AvailableAccountsRequest;
         response: AvailableAccountsResponse;
+    };
+    change_email: {
+        request: ChangeEmailRequest;
+        response: ChangeEmailResponse;
     };
     change_password: {
         request: ChangePasswordRequest;
@@ -325,6 +353,14 @@ export type TPrivateSocketEndpoints = {
     get_account_types: {
         request: GetAccountTypesRequest;
         response: GetAccountTypeResponse;
+    };
+    jtoken_create: {
+        request: CreateJTokenRequest;
+        response: CreateJTokenResponse;
+    };
+    link_wallet: {
+        request: LinkWalletRequest;
+        response: LinkWalletResponse;
     };
     new_account_wallet: {
         request: NewAccountWalletRequest;
@@ -357,6 +393,14 @@ export type TPrivateSocketEndpoints = {
     passkeys_revoke: {
         request: PasskeysRevokeRequest;
         response: PasskeysRevokeResponse;
+    };
+    reset_password: {
+        request: ResetPasswordRequest;
+        response: ResetPasswordResponse;
+    };
+    request_report: {
+        request: ReportRequest;
+        response: ReportRequestResponse;
     };
     service_token: {
         request: ServiceTokenRequest;
@@ -735,56 +779,12 @@ export type TPrivateSocketEndpoints = {
         };
     };
     trading_platform_investor_password_change: {
-        request: {
-            /**
-             * Must be `1`
-             */
-            trading_platform_investor_password_change: 1;
-            /**
-             * Trading account ID.
-             */
-            account_id: string;
-            /**
-             * New investor password. Accepts any printable ASCII character. Must be within 8-25 characters, and include numbers, lowercase and uppercase letters. Must not be the same as the user's email address.
-             */
-            new_password: string;
-            /**
-             * Old investor password for validation (non-empty string, accepts any printable ASCII character)
-             */
-            old_password: string;
-            /**
-             * Name of trading platform.
-             */
-            platform: 'mt5';
-            /**
-             * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field. Maximum size is 3500 bytes.
-             */
-            passthrough?: {
-                [k: string]: unknown;
-            };
-            /**
-             * [Optional] Used to map request to response.
-             */
-            req_id?: number;
-        };
-        response: {
-            trading_platform_password_change?: 0 | 1;
-        };
-        /**
-         * Echo of the request made.
-         */
-        echo_req: {
-            [k: string]: unknown;
-        };
-        /**
-         * Action name of the request made.
-         */
-        msg_type: 'trading_platform_investor_password_change';
-        /**
-         * Optional field sent in request to map to response, present only when request contains `req_id`.
-         */
-        req_id?: number;
-        [k: string]: unknown;
+        request: TradingPlatformPasswordChangeRequest;
+        response: TradingPlatformPasswordChangeResponse;
+    };
+    trading_platform_withdrawal: {
+        request: TradingPlatformWithdrawalRequest;
+        response: TradingPlatformWithdrawalResponse;
     };
     notification_event: {
         request: {
@@ -1020,6 +1020,58 @@ type TSocketEndpoints = {
     cashier: {
         request: CashierInformationRequest;
         response: CashierInformationResponse;
+    };
+    confirm_email: {
+        request: {
+            /**
+             * Must be `1`.
+             */
+            confirm_email: 1;
+
+            /**
+             * Boolean value: 1 or 0, indicating whether the client has given consent for marketing emails.
+             */
+            email_consent: 1 | 0;
+
+            /**
+             * Email verification code (received from a `verify_email` call, which must be done first).
+             */
+            verification_code: string;
+
+            /**
+             * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+             */
+            passthrough?: {
+                [k: string]: unknown;
+            };
+
+            /**
+             * [Optional] Used to map request to response.
+             */
+            req_id?: number;
+        };
+        response: {
+            /**
+             * 1 for success (The verification code has been successfully verified)
+             */
+            confirm_email: 0 | 1;
+        };
+        /**
+         * Echo of the request made.
+         */
+        echo_req: {
+            [k: string]: unknown;
+        };
+
+        /**
+         * Action name of the request made.
+         */
+        msg_type: 'confirm_email';
+
+        /**
+         * Optional field sent in request to map to response, present only when request contains `req_id`.
+         */
+        req_id?: number;
     };
     contract_update_history: {
         request: UpdateContractHistoryRequest;
@@ -1374,10 +1426,6 @@ type TSocketEndpoints = {
     trading_durations: {
         request: TradingDurationsRequest;
         response: TradingDurationsResponse;
-    };
-    trading_platform_investor_password_reset: {
-        request: TradingPlatformInvestorPasswordResetRequest;
-        response: TradingPlatformInvestorPasswordResetResponse;
     };
     trading_platform_product_listing: {
         request: TradingPlatformProductListingRequest;

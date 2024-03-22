@@ -4,7 +4,7 @@ export const useUnsubscribeEmail = () => {
     const { data, ...rest } = useMutation({ name: 'unsubscribe_email' });
 
     return {
-        data: data?.unsubscribe_email,
+        data: data,
         ...rest,
     };
 };

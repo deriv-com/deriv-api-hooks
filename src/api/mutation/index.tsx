@@ -43,7 +43,7 @@ import { usePasskeysLogin } from './use-passkeys-login';
 import { usePasskeysRegister } from './use-passkeys-register';
 import { usePasskeysRename } from './use-passkeys-rename';
 import { usePasskeysRevoke } from './use-passkeys-revoke';
-import { usePaymentagentCreate } from './use-paymentagent-create';
+import { usePaymentAgentCreate } from './use-paymentagent-create';
 import { usePaymentagentTransfer } from './use-paymentagent-transfer';
 import { usePaymentagentWithdraw } from './use-paymentagent-withdraw';
 import { useResetPassword } from './use-reset-password';
@@ -113,7 +113,7 @@ export {
     usePasskeysRegister,
     usePasskeysRename,
     usePasskeysRevoke,
-    usePaymentagentCreate,
+    usePaymentAgentCreate,
     usePaymentagentTransfer,
     usePaymentagentWithdraw,
     useResetPassword,

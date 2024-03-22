@@ -1,10 +1,10 @@
-import { createContext, MutableRefObject, PropsWithChildren, useEffect, useRef } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { Subscription } from "rxjs";
+import { createContext, MutableRefObject, PropsWithChildren, useEffect, useMemo, useRef } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { Subscription } from 'rxjs';
 // @ts-expect-error Deriv API is not typed
-import DerivAPI from "@deriv/deriv-api/dist/DerivAPIBasic";
-import { URLUtils } from "@deriv-com/utils";
-import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from "../types/api.types";
+import DerivAPI from '@deriv/deriv-api/dist/DerivAPIBasic';
+import { URLUtils } from '@deriv-com/utils';
+import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from '../types/api.types';
 
 const queryClient = new QueryClient();
 
@@ -46,7 +46,7 @@ export const APIProvider = ({ children }: PropsWithChildren) => {
         // Cleanup function to unsubscribe from all active subscriptions and disconnect the WebSocket connection.
         return () => {
             if (currentSubscriptions) {
-                Object.keys(currentSubscriptions).forEach((key) => {
+                Object.keys(currentSubscriptions).forEach(key => {
                     currentSubscriptions[key].unsubscribe();
                 });
             }
@@ -54,8 +54,10 @@ export const APIProvider = ({ children }: PropsWithChildren) => {
         };
     }, []);
 
+    const value = useMemo(() => ({ derivAPI: derivAPI.current, subscriptions, send }), [derivAPI, subscriptions, send]);
+
     return (
-        <APIDataContext.Provider value={{ derivAPI: derivAPI.current, subscriptions, send }}>
+        <APIDataContext.Provider value={value}>
             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </APIDataContext.Provider>
     );

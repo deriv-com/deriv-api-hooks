@@ -844,3 +844,105 @@ export interface WalletMigrationResponse extends GenericReponse<'wallet_migratio
         state: 'ineligible' | 'eligible' | 'in_progress' | 'migrated' | 'failed';
     };
 }
+
+export interface TradingPlatformProductListingRequest {
+    /**
+     * Must be `1`
+     */
+    trading_platform_product_listing: 1;
+    /**
+     * [Optional] Specific application `app_id`.
+     */
+    app_id?: string[];
+    /**
+     * Country of legal citizenship, 2-letter country code.
+     */
+    country_code: string;
+    /**
+     * [Optional] Used to pass data through the websocket, which may be retrieved via the `echo_req` output field.
+     */
+    passthrough?: {
+        [k: string]: unknown;
+    };
+    /**
+     * [Optional] Used to map request to response.
+     */
+    req_id?: number;
+}
+
+export interface TradingPlatformProductListingResponse extends GenericReponse<'trading_platform_product_listing'> {
+    /**
+     * Containing Trading product objects.
+     */
+    trading_platform_product_listing?: {
+        /**
+         * Platform product listing.
+         */
+        [key: number]: {
+            /**
+             * Available markets for country.
+             */
+            available_markets?: string[];
+            /**
+             * Available trade types for country.
+             */
+            available_trade_types?: string[];
+            /**
+             * Name of trading platform.
+             */
+            name?: string;
+            /**
+             * Available product for the Trading Platform.
+             */
+            product_list?: {
+                /**
+                 * Available account types for this asset symbol.
+                 */
+                available_account_types?: string[];
+                /**
+                 * Available trade types for this asset symbol.
+                 */
+                available_trade_types?: string[];
+                /**
+                 * Information for a market.
+                 */
+                market?: {
+                    /**
+                     * Display name of the market.
+                     */
+                    display_name?: string;
+                    /**
+                     * Internal name of the market..
+                     */
+                    name?: string;
+                };
+                /**
+                 * Information for submarket.
+                 */
+                submarket?: {
+                    /**
+                     * Display name of the submarket.
+                     */
+                    display_name?: string;
+                    /**
+                     * Internal name of the submarket.
+                     */
+                    name?: string;
+                };
+                /**
+                 * Information for underlying symbol.
+                 */
+                symbol?: {
+                    /**
+                     * Display name of the underlying symbol.
+                     */
+                    display_name?: string;
+                    /**
+                     * Internal name of the underlying symbol.
+                     */
+                    name?: string;
+                };
+            }[];
+        };
+    };
+}

@@ -250,6 +250,8 @@ import {
     TradingPlatformNewAccountRequest,
     TradingPlatformPasswordChangeRequest,
     TradingPlatformPasswordChangeResponse,
+    TradingPlatformProductListingRequest,
+    TradingPlatformProductListingResponse,
     WalletMigrationRequest,
     WalletMigrationResponse,
 } from './private-api.types';
@@ -1367,6 +1369,10 @@ type TSocketEndpoints = {
     trading_platform_investor_password_reset: {
         request: TradingPlatformInvestorPasswordResetRequest;
         response: TradingPlatformInvestorPasswordResetResponse;
+    };
+    trading_platform_product_listing: {
+        request: TradingPlatformProductListingRequest;
+        response: TradingPlatformProductListingResponse;
     };
     trading_platform_password_reset: {
         request: TradingPlatformPasswordResetRequest;

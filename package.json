@@ -1,43 +1,56 @@
 {
     "name": "@deriv-com/api-hooks",
     "private": false,
-    "version": "0.0.1",
-    "type": "module",
+    "version": "0.0.2",
     "description": "A React hooks library utilising Tanstack Query which encapsulates Deriv API WebSocket functionality.",
-    "main": "index.js",
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
+        "prepare": "rm -rf ./dist && npm run build",
         "extract": "tsc ./scripts/codemod.ts --esModuleInterop --outDir ./codemod && mv ./codemod/codemod.js ./codemod/codemod.cjs && node ./codemod/codemod.cjs && prettier ./src/api --write"
     },
     "keywords": [
         "deriv",
         "utils"
     ],
+    "type": "module",
+    "main": "./dist/deriv-api-hooks.umd.cjs",
+    "module": "./dist/deriv-api-hooks.js",
+    "types": "./dist/deriv-api-hooks.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/deriv-api-hooks.d.ts",
+            "import": "./dist/deriv-api-hooks.js",
+            "require": "./dist/deriv-api-hooks.umd.cjs"
+        }
+    },
+    "files": [
+        "dist"
+    ],
     "author": "deriv",
     "homepage": "https://deriv.com",
     "license": "ISC",
     "dependencies": {
-        "@deriv-com/utils": "^0.0.10",
+        "@deriv-com/utils": "^0.0.11",
         "@deriv/deriv-api": "^1.0.15",
-        "@tanstack/react-query": "^5.28.2"
+        "@tanstack/react-query": "^5.28.6"
     },
     "peerDependencies": {
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     },
     "devDependencies": {
-        "@deriv/api-types": "^1.0.168",
-        "@types/node": "^20.11.27",
-        "@types/react": "^18.2.66",
+        "@deriv/api-types": "^1.0.172",
+        "@types/node": "^20.11.30",
+        "@types/react": "^18.2.69",
         "@types/react-dom": "^18.2.22",
         "@vitejs/plugin-react": "^4.2.1",
         "prettier": "3.2.5",
         "rxjs": "^7.8.1",
-        "typescript": "^5.4.2",
-        "vite": "^5.1.6",
+        "typescript": "^5.4.3",
+        "vite": "^5.2.6",
         "vite-plugin-dts": "^3.7.3",
-        "vite-plugin-mkcert": "^1.17.4",
+        "vite-plugin-mkcert": "^1.17.5",
         "vite-tsconfig-paths": "^4.3.2"
     }
 }

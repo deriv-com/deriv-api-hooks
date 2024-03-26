@@ -1,7 +1,7 @@
 {
     "name": "@deriv-com/api-hooks",
     "private": false,
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A React hooks library utilising Tanstack Query which encapsulates Deriv API WebSocket functionality.",
     "scripts": {
         "dev": "vite",
@@ -33,9 +33,7 @@
     "dependencies": {
         "@deriv-com/utils": "^0.0.11",
         "@deriv/deriv-api": "^1.0.15",
-        "@tanstack/react-query": "^5.28.6",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "@tanstack/react-query": "^5.28.6"
     },
     "devDependencies": {
         "@deriv/api-types": "^1.0.172",
@@ -43,6 +41,8 @@
         "@types/react": "^18.2.69",
         "@types/react-dom": "^18.2.22",
         "@vitejs/plugin-react": "^4.2.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "prettier": "3.2.5",
         "rxjs": "^7.8.1",
         "typescript": "^5.4.3",

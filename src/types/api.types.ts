@@ -296,6 +296,7 @@ import {
     WalletMigrationResponse,
     TradingPlatformNewAccountResponse,
 } from './private-api.types';
+import { KeysMatching, NoStringIndex } from './util.types';
 
 export type TPrivateSocketEndpoints = {
     account_closure: {

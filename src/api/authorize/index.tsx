@@ -10,6 +10,7 @@ import { useContractUpdateHistory } from './use-contract-update_history';
 import { useCopytradingList } from './use-copytrading-list';
 import { useGetAccountStatus } from './use-get-account_status';
 import { useGetAccountTypes } from './use-get-account_types';
+import { useGetSettings } from './use-get-settings';
 import { useGetFinancialAssessment } from './use-get-financial_assessment';
 import { useGetLimits } from './use-get-limits';
 import { useGetSelfExclusion } from './use-get-self_exclusion';
@@ -56,6 +57,7 @@ export {
     useCopytradingList,
     useGetAccountStatus,
     useGetAccountTypes,
+    useGetSettings,
     useGetFinancialAssessment,
     useGetLimits,
     useGetSelfExclusion,

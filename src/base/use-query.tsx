@@ -1,12 +1,12 @@
-import { useQuery as _useQuery, UseQueryResult, UseQueryOptions } from "@tanstack/react-query";
-import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from "../types/api.types";
-import { useAPI } from "./use-context-hooks";
+import { useQuery as _useQuery, UseQueryResult, UseQueryOptions } from '@tanstack/react-query';
+import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from '../types/api.types';
+import { useAPI } from './use-context-hooks';
 
 export type TSocketQueryOptions<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
     queryKey?: string[];
-} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>, "queryKey">;
+} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>, 'queryKey'>;
 
 export type TSocketQueryResults<T extends TSocketEndpointNames> = UseQueryResult<
     TSocketResponseData<T>,
@@ -18,7 +18,7 @@ export const useQuery = <T extends TSocketEndpointNames>({
     payload,
     queryKey,
     ...rest
-}: TSocketQueryOptions<T>): TSocketQueryResults<T> => {
+}: TSocketQueryOptions<T>) => {
     const { send } = useAPI();
 
     return _useQuery<TSocketResponseData<T>, TSocketError<T>>({

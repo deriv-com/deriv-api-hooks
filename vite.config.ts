@@ -12,6 +12,7 @@ export default defineConfig({
         viteTsconfigPaths(),
         dts({
             rollupTypes: true,
+            insertTypesEntry: true,
         }),
     ],
     build: {

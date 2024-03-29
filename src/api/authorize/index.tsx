@@ -11,10 +11,10 @@ import { useContractUpdateHistory } from './use-contract-update_history';
 import { useCopytradingList } from './use-copytrading-list';
 import { useGetAccountStatus } from './use-get-account_status';
 import { useGetAccountTypes } from './use-get-account_types';
-import { useGetSettings } from './use-get-settings';
 import { useGetFinancialAssessment } from './use-get-financial_assessment';
 import { useGetLimits } from './use-get-limits';
 import { useGetSelfExclusion } from './use-get-self_exclusion';
+import { useGetSettings } from './use-get-settings';
 import { useKycAuthStatus } from './use-kyc-auth_status';
 import { useLoginHistory } from './use-login-history';
 import { useMt5GetSettings } from './use-mt5-get_settings';
@@ -44,6 +44,7 @@ import { useTradingPlatformAccounts } from './use-trading-platform_accounts';
 import { useTradingPlatformAvailableAccounts } from './use-trading-platform_available_accounts';
 import { useTradingServers } from './use-trading-servers';
 import { useWalletMigration } from './use-wallet-migration';
+import { useWebsiteStatus } from './use-website-status';
 
 export {
     useAccountList,
@@ -59,10 +60,10 @@ export {
     useCopytradingList,
     useGetAccountStatus,
     useGetAccountTypes,
-    useGetSettings,
     useGetFinancialAssessment,
     useGetLimits,
     useGetSelfExclusion,
+    useGetSettings,
     useKycAuthStatus,
     useLoginHistory,
     useMt5GetSettings,
@@ -92,4 +93,5 @@ export {
     useTradingPlatformAvailableAccounts,
     useTradingServers,
     useWalletMigration,
+    useWebsiteStatus,
 };

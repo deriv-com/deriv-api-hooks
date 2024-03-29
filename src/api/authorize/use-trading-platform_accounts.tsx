@@ -1,11 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useTradingPlatformAccounts = (): {
-    data: TSocketResponseData<'trading_platform_accounts'>['trading_platform_accounts'];
-} & Omit<TSocketQueryResults<'trading_platform_accounts'>, 'data'> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'trading_platform_accounts' });
+export const useTradingPlatformAccounts = ({ payload }: TSocketQueryOptions<'trading_platform_accounts'>) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'trading_platform_accounts', payload });
 
     return {
         data: data?.trading_platform_accounts,

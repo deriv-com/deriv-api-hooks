@@ -5,6 +5,7 @@ import { useAppList } from './use-app-list';
 import { useAppMarkupDetails } from './use-app-markup_details';
 import { useAppMarkupStatistics } from './use-app-markup_statistics';
 import { useAvailableAccounts } from './use-available-accounts';
+import { useBalance } from './use-balance';
 import { useCashier } from './use-cashier';
 import { useContractUpdateHistory } from './use-contract-update_history';
 import { useCopytradingList } from './use-copytrading-list';
@@ -52,6 +53,7 @@ export {
     useAppMarkupDetails,
     useAppMarkupStatistics,
     useAvailableAccounts,
+    useBalance,
     useCashier,
     useContractUpdateHistory,
     useCopytradingList,

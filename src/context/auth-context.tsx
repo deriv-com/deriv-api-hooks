@@ -6,7 +6,7 @@ import { useAppData } from '../base';
 type AuthData = {
     activeLoginid: string;
     isAuthorized: boolean;
-    switchAccount: (account: URLUtils.LoginInfo) => void;
+    switchAccount: (loginid: string) => void;
     getActiveAccount: () => URLUtils.LoginInfo | null | undefined;
 };
 
@@ -32,9 +32,13 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
         return accountList?.find(acc => acc.loginid === activeLoginid);
     };
 
-    const switchAccount = (account: URLUtils.LoginInfo) => {
-        if (account.loginid !== activeLoginid) {
-            authorizeAccount(account.loginid, account.token);
+    const switchAccount = (loginid: string) => {
+        if (loginid !== activeLoginid) {
+            const accountList = LocalStorageUtils.getValue<URLUtils.LoginInfo[]>('client.account_list');
+            const matchingAccount = accountList?.find(acc => acc.loginid === loginid);
+            if (matchingAccount) {
+                authorizeAccount(loginid, matchingAccount.token);
+            }
         }
     };
 

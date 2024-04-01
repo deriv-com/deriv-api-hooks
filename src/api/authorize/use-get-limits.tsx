@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useGetLimits = (): { data: TSocketResponseData<'get_limits'>['get_limits'] } & Omit<
-    TSocketQueryResults<'get_limits'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'get_limits' });
+export const useGetLimits = ({ ...props }: Omit<TSocketQueryOptions<'get_limits'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'get_limits', ...props });
 
     return {
         data: data?.get_limits,

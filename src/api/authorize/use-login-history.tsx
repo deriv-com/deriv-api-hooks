@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useLoginHistory = (): { data: TSocketResponseData<'login_history'>['login_history'] } & Omit<
-    TSocketQueryResults<'login_history'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'login_history' });
+export const useLoginHistory = ({ ...props }: Omit<TSocketQueryOptions<'login_history'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'login_history', ...props });
 
     return {
         data: data?.login_history,

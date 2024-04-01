@@ -1,8 +1,8 @@
 import { useQuery } from '../../base';
 import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useContractsFor = ({ payload }: TSocketQueryOptions<'contracts_for'>) => {
-    const { data, ...rest } = useQuery({ name: 'contracts_for', payload });
+export const useContractsFor = ({ ...props }: Omit<TSocketQueryOptions<'contracts_for'>, 'name'> = {}) => {
+    const { data, ...rest } = useQuery({ name: 'contracts_for', ...props });
 
     return {
         data: data?.contracts_for,

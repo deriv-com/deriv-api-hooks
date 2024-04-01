@@ -1,6 +1,6 @@
 import React from 'react';
 import { URLUtils } from '@deriv-com/utils';
-import { useAccountList } from '../src/index';
+import { useAccountList, useMT5NewAccount } from '../src/index';
 
 export const SandboxPage = () => {
     const { data } = useAccountList();

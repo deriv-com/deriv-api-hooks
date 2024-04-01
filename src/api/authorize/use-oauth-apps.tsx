@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useOauthApps = (): { data: TSocketResponseData<'oauth_apps'>['oauth_apps'] } & Omit<
-    TSocketQueryResults<'oauth_apps'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'oauth_apps' });
+export const useOauthApps = ({ ...props }: Omit<TSocketQueryOptions<'oauth_apps'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'oauth_apps', ...props });
 
     return {
         data: data?.oauth_apps,

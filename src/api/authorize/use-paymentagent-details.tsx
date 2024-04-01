@@ -1,11 +1,10 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const usePaymentagentDetails = (): {
-    data: TSocketResponseData<'paymentagent_details'>['paymentagent_details'];
-} & Omit<TSocketQueryResults<'paymentagent_details'>, 'data'> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'paymentagent_details' });
+export const usePaymentagentDetails = ({
+    ...props
+}: Omit<TSocketQueryOptions<'paymentagent_details'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'paymentagent_details', ...props });
 
     return {
         data: data?.paymentagent_details,

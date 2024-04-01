@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const usePortfolio = (): { data: TSocketResponseData<'portfolio'>['portfolio'] } & Omit<
-    TSocketQueryResults<'portfolio'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'portfolio' });
+export const usePortfolio = ({ ...props }: Omit<TSocketQueryOptions<'portfolio'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'portfolio', ...props });
 
     return {
         data: data?.portfolio,

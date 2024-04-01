@@ -1,8 +1,8 @@
 import { useQuery } from '../../base';
 import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useWebsiteConfig = ({ payload }: TSocketQueryOptions<'website_config'>) => {
-    const { data, ...rest } = useQuery({ name: 'website_config', payload });
+export const useWebsiteConfig = ({ ...props }: Omit<TSocketQueryOptions<'website_config'>, 'name'> = {}) => {
+    const { data, ...rest } = useQuery({ name: 'website_config', ...props });
 
     return {
         data: data?.website_config,

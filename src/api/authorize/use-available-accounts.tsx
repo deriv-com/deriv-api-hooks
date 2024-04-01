@@ -1,11 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useAvailableAccounts = (): {
-    data: TSocketResponseData<'available_accounts'>['available_accounts'];
-} & Omit<TSocketQueryResults<'available_accounts'>, 'data'> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'available_accounts' });
+export const useAvailableAccounts = ({ ...props }: Omit<TSocketQueryOptions<'available_accounts'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'available_accounts', ...props });
 
     return {
         data: data?.available_accounts,

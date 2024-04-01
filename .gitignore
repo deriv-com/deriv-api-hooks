@@ -133,3 +133,4 @@ dist
 v3
 scripts
 codemod
+.DS_Store

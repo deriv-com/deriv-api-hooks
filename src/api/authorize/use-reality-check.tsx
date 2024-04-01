@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useRealityCheck = (): { data: TSocketResponseData<'reality_check'>['reality_check'] } & Omit<
-    TSocketQueryResults<'reality_check'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'reality_check' });
+export const useRealityCheck = ({ ...props }: Omit<TSocketQueryOptions<'reality_check'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'reality_check', ...props });
 
     return {
         data: data?.reality_check,

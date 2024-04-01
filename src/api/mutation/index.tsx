@@ -25,6 +25,7 @@ import { useJtokenCreate } from './use-jtoken-create';
 import { useLinkWallet } from './use-link-wallet';
 import { useLogout } from './use-logout';
 import { useMt5Deposit } from './use-mt5-deposit';
+import { useMT5NewAccount } from './use-mt5-new-account';
 import { useMt5PasswordChange } from './use-mt5-password-change';
 import { useMt5PasswordReset } from './use-mt5-password-reset';
 import { useMt5Withdrawal } from './use-mt5-withdrawal';
@@ -95,6 +96,7 @@ export {
     useLinkWallet,
     useLogout,
     useMt5Deposit,
+    useMT5NewAccount,
     useMt5PasswordChange,
     useMt5PasswordReset,
     useMt5Withdrawal,

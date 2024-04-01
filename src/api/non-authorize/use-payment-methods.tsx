@@ -1,8 +1,8 @@
 import { useQuery } from '../../base';
 import { TSocketQueryOptions } from '../../base/use-query';
 
-export const usePaymentMethods = ({ payload }: TSocketQueryOptions<'payment_methods'>) => {
-    const { data, ...rest } = useQuery({ name: 'payment_methods', payload });
+export const usePaymentMethods = ({ ...props }: Omit<TSocketQueryOptions<'payment_methods'>, 'name'> = {}) => {
+    const { data, ...rest } = useQuery({ name: 'payment_methods', ...props });
 
     return {
         data: data?.payment_methods,

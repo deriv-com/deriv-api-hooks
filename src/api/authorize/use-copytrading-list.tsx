@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useCopytradingList = (): { data: TSocketResponseData<'copytrading_list'>['copytrading_list'] } & Omit<
-    TSocketQueryResults<'copytrading_list'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'copytrading_list' });
+export const useCopytradingList = ({ ...props }: Omit<TSocketQueryOptions<'copytrading_list'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'copytrading_list', ...props });
 
     return {
         data: data?.copytrading_list,

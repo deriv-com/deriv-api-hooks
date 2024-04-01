@@ -1,7 +1,8 @@
 import { useMutation } from '../../base';
+import { AugmentedMutationOptions } from '../../base/use-mutation';
 
-export const useAccountSecurity = () => {
-    const { data, ...rest } = useMutation({ name: 'account_security' });
+export const useAccountSecurity = ({ ...props }: Omit<AugmentedMutationOptions<'account_security'>, 'name'> = {}) => {
+    const { data, ...rest } = useMutation({ name: 'account_security', ...props });
 
     return {
         data: data?.account_security,

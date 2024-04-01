@@ -1,12 +1,8 @@
 import { useAuthorizeQuery } from '../../base';
-import { TSocketQueryResults } from '../../base/use-query';
-import { TSocketResponseData } from '../../types/api.types';
+import { TSocketQueryOptions } from '../../base/use-query';
 
-export const useProfitTable = (): { data: TSocketResponseData<'profit_table'>['profit_table'] } & Omit<
-    TSocketQueryResults<'profit_table'>,
-    'data'
-> => {
-    const { data, ...rest } = useAuthorizeQuery({ name: 'profit_table' });
+export const useProfitTable = ({ ...props }: Omit<TSocketQueryOptions<'profit_table'>, 'name'> = {}) => {
+    const { data, ...rest } = useAuthorizeQuery({ name: 'profit_table', ...props });
 
     return {
         data: data?.profit_table,

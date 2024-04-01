@@ -1,7 +1,7 @@
 {
     "name": "@deriv-com/api-hooks",
     "private": false,
-    "version": "0.0.13",
+    "version": "0.0.14",
     "description": "A React hooks library utilising Tanstack Query which encapsulates Deriv API WebSocket functionality.",
     "scripts": {
         "dev": "vite",

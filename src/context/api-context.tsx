@@ -3,10 +3,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Subscription } from 'rxjs';
 // @ts-expect-error Deriv API is not typed
 import DerivAPI from '@deriv/deriv-api/dist/DerivAPIBasic';
-import { URLUtils } from '@deriv-com/utils';
 import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from '../types/api.types';
+import { DerivAPILegacy } from '../client-library/deriv-api-client-legacy';
 
 const queryClient = new QueryClient();
+const derivAPI = new DerivAPILegacy();
 
 type TSendFunction = <T extends TSocketEndpointNames>(
     name: T,
@@ -31,16 +32,15 @@ export const APIDataContext = createContext<APIData | null>(null);
  * @returns {JSX.Element} The provider component wrapping its children with API data context and React Query client.
  */
 export const APIProvider = ({ children }: PropsWithChildren) => {
-    const derivAPI = useRef<DerivAPI>(new DerivAPI({ connection: new WebSocket(URLUtils.getWebsocketURL()) }));
     const subscriptions = useRef<Record<string, Subscription> | null>(null);
 
     /**
      * Function to send a request to a specific WebSocket endpoint using the DerivAPI.
      */
-    const send: TSendFunction = (name, payload) => derivAPI.current?.send({ [name]: 1, ...payload });
+    const send: TSendFunction = (name, payload) => derivAPI.getActiveSocket().send({ [name]: 1, ...payload });
 
     useEffect(() => {
-        const currentDerivApi = derivAPI.current;
+        const currentDerivApi = derivAPI.getActiveSocket();
         const currentSubscriptions = subscriptions.current;
 
         // Cleanup function to unsubscribe from all active subscriptions and disconnect the WebSocket connection.
@@ -54,7 +54,10 @@ export const APIProvider = ({ children }: PropsWithChildren) => {
         };
     }, []);
 
-    const value = useMemo(() => ({ derivAPI: derivAPI.current, subscriptions, send }), [derivAPI, subscriptions, send]);
+    const value = useMemo(
+        () => ({ derivAPI: derivAPI.getActiveSocket(), subscriptions, send }),
+        [derivAPI, subscriptions, send]
+    );
 
     return (
         <APIDataContext.Provider value={value}>

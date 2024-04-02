@@ -20,6 +20,7 @@ import { useTradingTimes } from './use-trading-times';
 import { useVerifyEmail } from './use-verify-email';
 import { useVerifyEmailCellxpert } from './use-verify-email-cellxpert';
 import { useWebsiteConfig } from './use-website-config';
+import { useWebsiteStatus } from './use-website-status';
 export {
     useActiveSymbols,
     useAssetIndex,
@@ -43,4 +44,5 @@ export {
     useVerifyEmail,
     useVerifyEmailCellxpert,
     useWebsiteConfig,
+    useWebsiteStatus,
 };

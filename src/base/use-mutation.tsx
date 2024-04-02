@@ -1,5 +1,5 @@
 import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from '../types/api.types';
-import { useAPI } from './use-context-hooks';
+import { useAPI, useAuthData } from './use-context-hooks';
 import { UseMutationOptions, UseMutationResult, useMutation as useReactQueryMutation } from '@tanstack/react-query';
 
 export type AugmentedMutationResult<T extends TSocketEndpointNames> = UseMutationResult<
@@ -13,10 +13,23 @@ export type AugmentedMutationOptions<T extends TSocketEndpointNames> = {
 } & UseMutationOptions<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>;
 
 export const useMutation = <T extends TSocketEndpointNames>({ name, ...options }: AugmentedMutationOptions<T>) => {
+    const { isAuthorized } = useAuthData();
     const { send } = useAPI();
 
-    return useReactQueryMutation({
+    const { mutate, mutateAsync, ...props } = useReactQueryMutation({
         mutationFn: payload => send(name, payload),
         ...options,
     });
+
+    return {
+        mutate: (payload: TSocketRequestPayload<T>) => {
+            if (!isAuthorized) return;
+            return mutate(payload);
+        },
+        mutateAsync: (payload: TSocketRequestPayload<T>) => {
+            if (!isAuthorized) return;
+            return mutateAsync(payload);
+        },
+        ...props,
+    };
 };

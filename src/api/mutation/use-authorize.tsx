@@ -1,11 +1,13 @@
-import { useMutation } from '../../base';
+import { useMutation as useReactQueryMutation } from '@tanstack/react-query';
 import { AugmentedMutationOptions } from '../../base/use-mutation';
+import { useAPI } from '../../base/use-context-hooks';
 
-export const useAuthorize = ({ ...props }: Omit<AugmentedMutationOptions<'authorize'>, 'name'> = {}) => {
-    const { data, ...rest } = useMutation({ name: 'authorize', ...props });
+// Do not use the useMutation from base. This is a non authorized required call
+export const useAuthorize = ({ ...options }: Omit<AugmentedMutationOptions<'authorize'>, 'name'> = {}) => {
+    const { send } = useAPI();
 
-    return {
-        data: data?.authorize,
-        ...rest,
-    };
+    return useReactQueryMutation({
+        mutationFn: payload => send('authorize', payload),
+        ...options,
+    });
 };

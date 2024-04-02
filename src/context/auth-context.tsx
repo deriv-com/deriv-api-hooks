@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useEffect, useMemo } from 'react';
 import { LocalStorageUtils, URLUtils } from '@deriv-com/utils';
-import { useAuthorize } from '../api/non-authorize/use-authorize';
+import { useAuthorize } from '../api/mutation/use-authorize';
 import { useAppData } from '../base';
 
 type AuthData = {

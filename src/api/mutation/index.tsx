@@ -1,5 +1,4 @@
 import { useAccountClosure } from './use-account-closure';
-import { useAccountList } from './use-account-list';
 import { useAccountSecurity } from './use-account-security';
 import { useAffiliateAddCompany } from './use-affiliate-add-company';
 import { useAffiliateAddPerson } from './use-affiliate-add-person';
@@ -8,6 +7,7 @@ import { useApiToken } from './use-api-token';
 import { useAppDelete } from './use-app-delete';
 import { useAppRegister } from './use-app-register';
 import { useAppUpdate } from './use-app-update';
+import { useAuthorize } from './use-authorize';
 import { useBuyContractForMultipleAccounts } from './use-buy-contract-for-multiple-accounts';
 import { useCancel } from './use-cancel';
 import { useCashierWithdrawalCancel } from './use-cashier-withdrawal-cancel';
@@ -70,7 +70,6 @@ import { useTransferBetweenAccounts } from './use-transfer-between-accounts';
 import { useUnsubscribeEmail } from './use-unsubscribe-email';
 export {
     useAccountClosure,
-    useAccountList,
     useAccountSecurity,
     useAffiliateAddCompany,
     useAffiliateAddPerson,
@@ -79,6 +78,7 @@ export {
     useAppDelete,
     useAppRegister,
     useAppUpdate,
+    useAuthorize,
     useBuyContractForMultipleAccounts,
     useCancel,
     useCashierWithdrawalCancel,

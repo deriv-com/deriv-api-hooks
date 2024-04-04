@@ -6,7 +6,6 @@ import DerivAPI from '@deriv/deriv-api/dist/DerivAPIBasic';
 import { TSocketEndpointNames, TSocketError, TSocketRequestPayload, TSocketResponseData } from '../types/api.types';
 import { DerivAPILegacy } from '../client-library/deriv-api-client-legacy';
 
-const queryClient = new QueryClient();
 const derivAPI = new DerivAPILegacy();
 
 type TSendFunction = <T extends TSocketEndpointNames>(
@@ -31,7 +30,7 @@ export const APIDataContext = createContext<APIData | null>(null);
  * @param {PropsWithChildren} { children } - The child components to be wrapped by the provider.
  * @returns {JSX.Element} The provider component wrapping its children with API data context and React Query client.
  */
-export const APIProvider = ({ children }: PropsWithChildren) => {
+export const APIProvider = ({ children, queryClient }: PropsWithChildren<{ queryClient: QueryClient }>) => {
     const subscriptions = useRef<Record<string, Subscription> | null>(null);
 
     /**

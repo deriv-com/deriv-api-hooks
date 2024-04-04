@@ -1,6 +1,7 @@
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useMemo, useState } from 'react';
 import { AuthDataProvider } from './auth-context';
 import { APIProvider } from './api-context';
+import { QueryClient } from '@tanstack/react-query';
 
 type Environment = 'real' | 'demo';
 
@@ -20,7 +21,7 @@ export const AppDataContext = createContext<AppData | null>(null);
  * @param {PropsWithChildren} { children } - The child components to be wrapped by the provider.
  * @returns {JSX.Element} The provider component wrapping its children with App data context.
  */
-export const AppDataProvider = ({ children }: PropsWithChildren) => {
+export const AppDataProvider = ({ children, queryClient }: PropsWithChildren<{ queryClient: QueryClient }>) => {
     const [activeLoginid, setActiveLoginid] = useState('');
     const [environment, setEnvironment] = useState<Environment>('demo');
 
@@ -31,7 +32,7 @@ export const AppDataProvider = ({ children }: PropsWithChildren) => {
 
     return (
         <AppDataContext.Provider value={value}>
-            <APIProvider>
+            <APIProvider queryClient={queryClient}>
                 <AuthDataProvider>{children}</AuthDataProvider>
             </APIProvider>
         </AppDataContext.Provider>

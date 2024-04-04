@@ -1,5 +1,4 @@
 import { createContext, MutableRefObject, PropsWithChildren, useEffect, useMemo, useRef } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Subscription } from 'rxjs';
 // @ts-expect-error Deriv API is not typed
 import DerivAPI from '@deriv/deriv-api/dist/DerivAPIBasic';
@@ -30,7 +29,7 @@ export const APIDataContext = createContext<APIData | null>(null);
  * @param {PropsWithChildren} { children } - The child components to be wrapped by the provider.
  * @returns {JSX.Element} The provider component wrapping its children with API data context and React Query client.
  */
-export const APIProvider = ({ children, queryClient }: PropsWithChildren<{ queryClient: QueryClient }>) => {
+export const APIProvider = ({ children }: PropsWithChildren) => {
     const subscriptions = useRef<Record<string, Subscription> | null>(null);
 
     /**
@@ -58,9 +57,5 @@ export const APIProvider = ({ children, queryClient }: PropsWithChildren<{ query
         [derivAPI, subscriptions, send]
     );
 
-    return (
-        <APIDataContext.Provider value={value}>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        </APIDataContext.Provider>
-    );
+    return <APIDataContext.Provider value={value}>{children}</APIDataContext.Provider>;
 };

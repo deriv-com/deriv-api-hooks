@@ -22,7 +22,7 @@ export default defineConfig({
             fileName: 'deriv-api-hooks',
         },
         rollupOptions: {
-            external: ['react', 'react-dom'],
+            external: ['react', 'react-dom', '@tanstack/react-query'],
         },
     },
     server: {

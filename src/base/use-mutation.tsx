@@ -10,7 +10,7 @@ export type AugmentedMutationResult<T extends TSocketEndpointNames> = UseMutatio
 
 export type AugmentedMutationOptions<T extends TSocketEndpointNames> = {
     name: T;
-} & UseMutationOptions<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>;
+} & Omit<UseMutationOptions<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>, 'mutationFn'>;
 
 export const useMutation = <T extends TSocketEndpointNames>({ name, ...options }: AugmentedMutationOptions<T>) => {
     const { isAuthorized } = useAuthData();

@@ -6,7 +6,7 @@ export type TSocketQueryOptions<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
     queryKey?: string[];
-} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>, 'queryKey'>;
+} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>, 'queryKey' | 'queryFn'>;
 
 export type TSocketQueryResults<T extends TSocketEndpointNames> = UseQueryResult<
     TSocketResponseData<T>,

@@ -32,6 +32,8 @@ export class DerivAPILegacy {
             const derivAPI = new DerivAPI({ connection: webSocketInstance });
             this.websocketMap.set(websocketURL, derivAPI);
             this.activeSocket = websocketURL;
+
+            this.keepAlive();
         }
     }
 

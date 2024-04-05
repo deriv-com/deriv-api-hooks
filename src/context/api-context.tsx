@@ -38,6 +38,8 @@ export const APIProvider = ({ children }: PropsWithChildren) => {
     const send: TSendFunction = (name, payload) => derivAPI.getActiveSocket().send({ [name]: 1, ...payload });
 
     useEffect(() => {
+        derivAPI.keepAlive();
+
         const currentDerivApi = derivAPI.getActiveSocket();
         const currentSubscriptions = subscriptions.current;
 

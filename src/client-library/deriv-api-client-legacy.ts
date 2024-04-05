@@ -5,17 +5,20 @@ import DerivAPI from '@deriv/deriv-api/dist/DerivAPIBasic';
 type WebsocketMap = Map<string, typeof DerivAPI>;
 
 export class DerivAPILegacy {
-    activeSocket: string;
+    activeSocket: string = '';
     websocketMap: WebsocketMap = new Map();
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
-    constructor() {
+    private createWebsocketInstance() {
         const websocketURL = URLUtils.getWebsocketURL();
         const webSocketInstance = new WebSocket(websocketURL);
         const derivAPI = new DerivAPI({ connection: webSocketInstance });
         this.websocketMap.set(websocketURL, derivAPI);
         this.activeSocket = websocketURL;
+    }
 
+    constructor() {
+        this.createWebsocketInstance();
         this.keepAlive();
     }
 
@@ -27,12 +30,7 @@ export class DerivAPILegacy {
         const activeSocket = this.getActiveSocket();
 
         if (!activeSocket || activeSocket.connection.readyState === WebSocket.CLOSED) {
-            const websocketURL = URLUtils.getWebsocketURL();
-            const webSocketInstance = new WebSocket(websocketURL);
-            const derivAPI = new DerivAPI({ connection: webSocketInstance });
-            this.websocketMap.set(websocketURL, derivAPI);
-            this.activeSocket = websocketURL;
-
+            this.createWebsocketInstance();
             this.keepAlive();
         }
     }

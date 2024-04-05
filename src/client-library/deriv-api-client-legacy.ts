@@ -24,7 +24,7 @@ export class DerivAPILegacy {
     handleReconnect() {
         const activeSocket = this.getActiveSocket();
 
-        if (!activeSocket || activeSocket.readyState === WebSocket.CLOSED) {
+        if (!activeSocket || activeSocket.connection.readyState === WebSocket.CLOSED) {
             const websocketURL = URLUtils.getWebsocketURL();
             const webSocketInstance = new WebSocket(websocketURL);
             const derivAPI = new DerivAPI({ connection: webSocketInstance });
@@ -42,8 +42,8 @@ export class DerivAPILegacy {
             this.handleReconnect();
 
             const activeSocket = this.getActiveSocket();
-            if (activeSocket && activeSocket.readyState === WebSocket.OPEN) {
-                activeSocket.send(JSON.stringify({ ping: 1 }));
+            if (activeSocket && activeSocket.connection.readyState === WebSocket.OPEN) {
+                activeSocket.send({ ping: 1 });
             }
         }, interval);
     }

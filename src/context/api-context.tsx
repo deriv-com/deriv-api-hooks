@@ -7,6 +7,8 @@ import { DerivAPILegacy } from '../client-library/deriv-api-client-legacy';
 
 const derivAPI = new DerivAPILegacy();
 
+derivAPI.keepAlive();
+
 type TSendFunction = <T extends TSocketEndpointNames>(
     name: T,
     payload?: TSocketRequestPayload<T>
@@ -38,8 +40,6 @@ export const APIProvider = ({ children }: PropsWithChildren) => {
     const send: TSendFunction = (name, payload) => derivAPI.getActiveSocket().send({ [name]: 1, ...payload });
 
     useEffect(() => {
-        derivAPI.keepAlive();
-
         const currentDerivApi = derivAPI.getActiveSocket();
         const currentSubscriptions = subscriptions.current;
 

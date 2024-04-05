@@ -33,7 +33,7 @@ export class DerivAPILegacy {
         }
     }
 
-    keepAlive(interval: number = 5000) {
+    keepAlive(interval: number = 30000) {
         if (this.keepAliveIntervalId) {
             clearInterval(this.keepAliveIntervalId);
         }

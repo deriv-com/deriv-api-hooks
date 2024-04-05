@@ -7,8 +7,6 @@ import { DerivAPILegacy } from '../client-library/deriv-api-client-legacy';
 
 const derivAPI = new DerivAPILegacy();
 
-derivAPI.keepAlive();
-
 type TSendFunction = <T extends TSocketEndpointNames>(
     name: T,
     payload?: TSocketRequestPayload<T>

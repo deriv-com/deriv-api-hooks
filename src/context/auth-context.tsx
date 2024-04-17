@@ -4,17 +4,13 @@ import { useAuthorize } from '../api/mutation/use-authorize';
 import { useAppData } from '../base';
 import Cookies from 'js-cookie';
 
-type AccountsList = {
-    loginid: string;
-    token: string;
-    currency: string;
-}[];
-
 type AuthData = {
     activeLoginid: string;
     isAuthorized: boolean;
     isAuthorizing: boolean;
     switchAccount: (loginid: string) => void;
+    appendAccountCookie: (loginid: string, token: string) => void;
+    logout: () => void;
 };
 
 export const AuthDataContext = createContext<AuthData | null>(null);
@@ -35,9 +31,10 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const switchAccount = useCallback(
         (loginId: string) => {
-            const accountsList: AccountsList = JSON.parse(Cookies.get('accountsList') ?? '[]');
+            const tradingAccounts: Record<string, string> = JSON.parse(Cookies.get('tradingAccounts') ?? '{}');
 
-            const token = accountsList.find(account => account.loginid === loginId)?.token;
+            const token = tradingAccounts[loginId];
+
             if (!token) return;
             authorizeAccount(token);
 
@@ -58,7 +55,13 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             if (!defaultActiveAccount) return;
 
             setActiveLoginid(loginInfo[0].loginid);
-            Cookies.set('accountsList', JSON.stringify(loginInfo));
+            const tradingAccounts: Record<string, string> = {};
+
+            loginInfo.forEach(account => {
+                tradingAccounts[account.loginid] = account.token;
+            });
+
+            Cookies.set('tradingAccounts', JSON.stringify(tradingAccounts));
 
             URLUtils.filterSearchParams(paramsToDelete);
             authorizeAccount(loginInfo[0].token);
@@ -71,12 +74,30 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
         }
     }, []);
 
+    const appendAccountCookie = useCallback((loginid: string, token: string) => {
+        const tradingAccounts: Record<string, string> = JSON.parse(Cookies.get('tradingAccounts') ?? '{}');
+
+        tradingAccounts[loginid] = token;
+
+        Cookies.set('tradingAccounts', JSON.stringify(tradingAccounts));
+
+        switchAccount(loginid);
+    }, []);
+
+    const logout = useCallback(() => {
+        Cookies.remove('authToken');
+        Cookies.remove('accountsList');
+        setActiveLoginid('');
+    }, []);
+
     const value = useMemo(
         () => ({
             activeLoginid,
             isAuthorized: !!activeLoginid && isSuccess,
             isAuthorizing: isPending,
             switchAccount,
+            appendAccountCookie,
+            logout,
         }),
         [activeLoginid, isSuccess]
     );

@@ -22,7 +22,7 @@ jobs:
               with:
                   node-version: 20.x
             - name: Install Dependencies
-              uses: 'deriv-com/shared-actions/.github/actions/npm_install@master'
+              run: npm clean-install
             - name: >-
                   Verify The Integrity of Provenance Attestations and Registry
                   Signatures for Installed Dependencies

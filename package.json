@@ -30,10 +30,6 @@
     ],
     "author": "deriv",
     "homepage": "https://deriv.com",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/deriv-com/deriv-api-hooks.git"
-    },
     "license": "ISC",
     "dependencies": {
         "@deriv-com/utils": "^0.0.11",

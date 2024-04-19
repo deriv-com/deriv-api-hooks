@@ -145,6 +145,8 @@ import type {
     P2PPaymentMethodsResponse,
     P2PPingRequest,
     P2PPingResponse,
+    P2PSettingsRequest,
+    P2PSettingsResponse,
     PaymentAgentCreateRequest,
     PaymentAgentCreateResponse,
     PaymentAgentDetailsRequest,
@@ -1303,6 +1305,10 @@ type TSocketEndpoints = {
     p2p_ping: {
         request: P2PPingRequest;
         response: P2PPingResponse;
+    };
+    p2p_settings: {
+        request: P2PSettingsRequest;
+        response: P2PSettingsResponse;
     };
     payment_methods: {
         request: PaymentMethodsRequest;

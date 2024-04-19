@@ -23,6 +23,8 @@ import { useMt5PasswordCheck } from './use-mt5-password-check';
 import { useOauthApps } from './use-oauth-apps';
 import { useP2pAdvertList } from './use-p2p-advert-list';
 import { useP2pAdvertiserAdverts } from './use-p2p-advertiser-adverts';
+import { useP2PAdvertInfo } from './use-p2p-advert-info';
+import { useP2PAdvertiserCreate } from './use-p2p-advertiser-create';
 import { useP2pAdvertiserList } from './use-p2p-advertiser-list';
 import { useP2pAdvertiserPaymentMethods } from './use-p2p-advertiser-payment-methods';
 import { useP2pAdvertiserRelations } from './use-p2p-advertiser-relations';
@@ -68,8 +70,10 @@ export {
     useMt5LoginList,
     useMt5PasswordCheck,
     useOauthApps,
-    useP2pAdvertList,
+    useP2PAdvertInfo,
     useP2pAdvertiserAdverts,
+    useP2PAdvertiserCreate,
+    useP2pAdvertList,
     useP2pAdvertiserList,
     useP2pAdvertiserPaymentMethods,
     useP2pAdvertiserRelations,

@@ -41,6 +41,7 @@ import { useP2pChatCreate } from './use-p2p-chat-create';
 import { useP2pOrderCancel } from './use-p2p-order-cancel';
 import { useP2pOrderConfirm } from './use-p2p-order-confirm';
 import { useP2pOrderDispute } from './use-p2p-order-dispute';
+import { useP2POrderCreate } from './use-p2p-order-create';
 import { usePasskeysLogin } from './use-passkeys-login';
 import { usePasskeysRegister } from './use-passkeys-register';
 import { usePasskeysRename } from './use-passkeys-rename';
@@ -68,6 +69,7 @@ import { useTradingPlatformPasswordReset } from './use-trading-platform-password
 import { useTradingPlatformWithdrawal } from './use-trading-platform-withdrawal';
 import { useTransferBetweenAccounts } from './use-transfer-between-accounts';
 import { useUnsubscribeEmail } from './use-unsubscribe-email';
+
 export {
     useAccountClosure,
     useAccountSecurity,
@@ -112,6 +114,7 @@ export {
     useP2pOrderCancel,
     useP2pOrderConfirm,
     useP2pOrderDispute,
+    useP2POrderCreate,
     usePasskeysLogin,
     usePasskeysRegister,
     usePasskeysRename,

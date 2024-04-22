@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { useUseInfiniteQuery } from '../../base';
+import { useInfiniteQuery } from '../../base';
 import { TPaginatedQueryOptions } from '../../base/use-infinite-query';
 
-export const useP2pAdvertiserAdverts = ({
+export const useP2PAdvertiserAdverts = ({
     ...props
 }: Omit<TPaginatedQueryOptions<'p2p_advertiser_adverts'>, 'name'> = {}) => {
-    const { data, fetchNextPage, ...rest } = useUseInfiniteQuery({
+    const { data, fetchNextPage, ...rest } = useInfiniteQuery({
         name: 'p2p_advertiser_adverts',
         ...props,
         getNextPageParam: props.getNextPageParam

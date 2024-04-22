@@ -13,7 +13,7 @@ export type TPaginatedQueryOptions<T extends TSocketPaginateableEndpointNames> =
     queryKey?: string[];
 } & Partial<Omit<UseInfiniteQueryOptions<TSocketResponseData<T>, TSocketError<T>>, 'queryKey' | 'queryFn' | 'select'>>;
 
-export const useUseInfiniteQuery = <T extends TSocketPaginateableEndpointNames>({
+export const useInfiniteQuery = <T extends TSocketPaginateableEndpointNames>({
     name,
     payload,
     queryKey,

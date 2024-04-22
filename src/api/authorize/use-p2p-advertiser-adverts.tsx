@@ -4,17 +4,15 @@ import { TPaginatedQueryOptions } from '../../base/use-infinite-query';
 
 export const useP2PAdvertiserAdverts = ({
     ...props
-}: Omit<TPaginatedQueryOptions<'p2p_advertiser_adverts'>, 'name'> = {}) => {
+}: Omit<TPaginatedQueryOptions<'p2p_advertiser_adverts'>, 'name' | 'getNextPageParam'> = {}) => {
     const { data, fetchNextPage, ...rest } = useInfiniteQuery({
         name: 'p2p_advertiser_adverts',
         ...props,
-        getNextPageParam: props.getNextPageParam
-            ? props.getNextPageParam
-            : (lastPage, pages) => {
-                  if (!lastPage?.p2p_advertiser_adverts?.list?.length) return;
+        getNextPageParam: (lastPage, pages) => {
+            if (!lastPage?.p2p_advertiser_adverts?.list?.length) return;
 
-                  return pages.length;
-              },
+            return pages.length;
+        },
     });
 
     const flattenedData = useMemo(() => {

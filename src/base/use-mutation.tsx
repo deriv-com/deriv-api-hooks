@@ -10,9 +10,14 @@ export type AugmentedMutationResult<T extends TSocketEndpointNames> = UseMutatio
 
 export type AugmentedMutationOptions<T extends TSocketEndpointNames> = {
     name: T;
+    bypassAuth?: boolean;
 } & Omit<UseMutationOptions<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>, 'mutationFn'>;
 
-export const useMutation = <T extends TSocketEndpointNames>({ name, ...options }: AugmentedMutationOptions<T>) => {
+export const useMutation = <T extends TSocketEndpointNames>({
+    name,
+    bypassAuth = false,
+    ...options
+}: AugmentedMutationOptions<T>) => {
     const { isAuthorized } = useAuthData();
     const { send } = useAPI();
 
@@ -23,11 +28,11 @@ export const useMutation = <T extends TSocketEndpointNames>({ name, ...options }
 
     return {
         mutate: (payload: TSocketRequestPayload<T>) => {
-            if (!isAuthorized) return;
+            if (!bypassAuth && !isAuthorized) return;
             return mutate(payload);
         },
         mutateAsync: (payload: TSocketRequestPayload<T>) => {
-            if (!isAuthorized) return;
+            if (!bypassAuth && !isAuthorized) return;
             return mutateAsync(payload);
         },
         ...props,

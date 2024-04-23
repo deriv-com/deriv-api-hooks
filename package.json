@@ -5,7 +5,7 @@
     "description": "A React hooks library utilising Tanstack Query which encapsulates Deriv API WebSocket functionality.",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "build": "vite build",
         "prepare": "rm -rf ./dist && npm run build",
         "watch": "tsc && vite build --watch",
         "extract": "tsc ./scripts/codemod.ts --esModuleInterop --outDir ./codemod && mv ./codemod/codemod.js ./codemod/codemod.cjs && node ./codemod/codemod.cjs && prettier ./src/api --write"

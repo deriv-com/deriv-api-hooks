@@ -1,13 +1,14 @@
-import { useMutation } from '../../base';
+import { useMutation as useReactQueryMutation } from '@tanstack/react-query';
+import { useAPI } from '../../base/use-context-hooks';
 import { AugmentedMutationOptions } from '../../base/use-mutation';
 
 export const useNewAccountVirtual = ({
-    ...props
+    ...options
 }: Omit<AugmentedMutationOptions<'new_account_virtual'>, 'name'> = {}) => {
-    const { data, ...rest } = useMutation({ name: 'new_account_virtual', ...props });
+    const { send } = useAPI();
 
-    return {
-        data: data?.new_account_virtual,
-        ...rest,
-    };
+    return useReactQueryMutation({
+        mutationFn: payload => send('new_account_virtual', payload),
+        ...options,
+    });
 };

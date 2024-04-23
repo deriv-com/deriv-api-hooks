@@ -9,13 +9,12 @@ export const useExchangeRates = () => {
     const exchangeRatesSubscriptions = useRef<{ base_currency: string; target_currency: string }[]>([]);
 
     const subscribeRates = useCallback(
-        async ({ base_currency, target_currencies }: TCurrencyExchangeSubscribeFunction<string>) => {
-            await Promise.all(
-                target_currencies.map(async target_currency => {
-                    exchangeRatesSubscriptions.current.push({ base_currency, target_currency });
-                    await subscribe({ base_currency, target_currency });
-                })
-            );
+        ({ base_currency, target_currencies }: TCurrencyExchangeSubscribeFunction<string>) => {
+            target_currencies.reduce(async (prevPromise, target_currency) => {
+                await prevPromise;
+                exchangeRatesSubscriptions.current.push({ base_currency, target_currency });
+                return subscribe({ base_currency, target_currency });
+            }, Promise.resolve());
 
             const newExchangeRates = { ...exchangeRates };
 

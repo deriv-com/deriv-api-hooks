@@ -21,8 +21,8 @@ import { useMt5GetSettings } from './use-mt5-get-settings';
 import { useMt5LoginList } from './use-mt5-login-list';
 import { useMt5PasswordCheck } from './use-mt5-password-check';
 import { useOauthApps } from './use-oauth-apps';
-import { useP2pAdvertList } from './use-p2p-advert-list';
-import { useP2pAdvertiserAdverts } from './use-p2p-advertiser-adverts';
+import { useP2PAdvertList } from './use-p2p-advert-list';
+import { useP2PAdvertiserAdverts } from './use-p2p-advertiser-adverts';
 import { useP2PAdvertInfo } from './use-p2p-advert-info';
 import { useP2PAdvertiserCreate } from './use-p2p-advertiser-create';
 import { useP2pAdvertiserList } from './use-p2p-advertiser-list';
@@ -71,9 +71,9 @@ export {
     useMt5PasswordCheck,
     useOauthApps,
     useP2PAdvertInfo,
-    useP2pAdvertiserAdverts,
+    useP2PAdvertiserAdverts,
     useP2PAdvertiserCreate,
-    useP2pAdvertList,
+    useP2PAdvertList,
     useP2pAdvertiserList,
     useP2pAdvertiserPaymentMethods,
     useP2pAdvertiserRelations,

@@ -25,6 +25,12 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const { data, mutate, isSuccess, isPending } = useAuthorize();
 
+    const tradingAccounts: Record<string, string> = JSON.parse(Cookies.get('tradingAccounts') ?? '{}');
+    const isAuthorized = useMemo(
+        () => !!activeLoginid || !!Object.keys(tradingAccounts).length,
+        [activeLoginid, tradingAccounts]
+    );
+
     const authorizeAccount = useCallback((token?: string) => {
         if (token) mutate({ authorize: token });
     }, []);
@@ -86,18 +92,18 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const logout = useCallback(() => {
         Cookies.remove('authToken');
-        Cookies.remove('accountsList');
+        Cookies.remove('tradingAccounts');
         setActiveLoginid('');
     }, []);
 
     const value = useMemo(
         () => ({
             activeLoginid,
-            isAuthorized: !!activeLoginid && isSuccess,
             isAuthorizing: isPending,
             switchAccount,
             appendAccountCookie,
             logout,
+            isAuthorized,
         }),
         [activeLoginid, isSuccess]
     );

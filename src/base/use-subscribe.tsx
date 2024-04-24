@@ -40,7 +40,7 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
         const matchingSubscription = subscriptions.current?.[id];
         if (matchingSubscription) return { id, subscription: matchingSubscription };
 
-        const subscription = derivAPI.current?.subscribe({ [name]: 1, subscribe: 1, ...(payload || {}) });
+        const subscription = derivAPI?.subscribe({ [name]: 1, subscribe: 1, ...(payload || {}) });
         subscriptions.current = { ...(subscriptions.current || {}), ...{ [id]: subscription } };
         return { id, subscription };
     };

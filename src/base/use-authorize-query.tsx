@@ -4,7 +4,7 @@ import { TSocketQueryOptions, useQuery } from './use-query';
 
 export const useAuthorizeQuery = <T extends TSocketEndpointNames>({
     name,
-    enabled,
+    enabled = true,
     ...rest
 }: TSocketQueryOptions<T>) => {
     const { isAuthorized } = useAuthData();

@@ -24,12 +24,8 @@ import { useOauthApps } from './use-oauth-apps';
 import { useP2PAdvertList } from './use-p2p-advert-list';
 import { useP2PAdvertiserAdverts } from './use-p2p-advertiser-adverts';
 import { useP2PAdvertInfo } from './use-p2p-advert-info';
-import { useP2PAdvertiserCreate } from './use-p2p-advertiser-create';
 import { useP2pAdvertiserList } from './use-p2p-advertiser-list';
-import { useP2pAdvertiserPaymentMethods } from './use-p2p-advertiser-payment-methods';
-import { useP2pAdvertiserRelations } from './use-p2p-advertiser-relations';
 import { useP2PCountryList } from './use-p2p-country-list';
-import { useP2pOrderReview } from './use-p2p-order-review';
 import { useP2pPaymentMethods } from './use-p2p-payment-methods';
 import { useP2pPing } from './use-p2p-ping';
 import { usePasskeysList } from './use-passkeys-list';
@@ -73,13 +69,9 @@ export {
     useOauthApps,
     useP2PAdvertInfo,
     useP2PAdvertiserAdverts,
-    useP2PAdvertiserCreate,
     useP2PAdvertList,
     useP2pAdvertiserList,
-    useP2pAdvertiserPaymentMethods,
-    useP2pAdvertiserRelations,
     useP2PCountryList,
-    useP2pOrderReview,
     useP2pPaymentMethods,
     useP2pPing,
     usePasskeysList,

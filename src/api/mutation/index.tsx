@@ -20,6 +20,8 @@ import { useCopyStop } from './use-copy-stop';
 import { useDocumentUpload } from './use-document-upload';
 import { useForget } from './use-forget';
 import { useForgetAll } from './use-forget-all';
+import { useGetFinancialAssessment } from './use-get-financial-assessment';
+import { useGetSettings } from './use-get-settings';
 import { useIdentityVerificationDocumentAdd } from './use-identity-verification-document-add';
 import { useJtokenCreate } from './use-jtoken-create';
 import { useLinkWallet } from './use-link-wallet';
@@ -73,6 +75,8 @@ import { useTradingPlatformPasswordReset } from './use-trading-platform-password
 import { useTradingPlatformWithdrawal } from './use-trading-platform-withdrawal';
 import { useTransferBetweenAccounts } from './use-transfer-between-accounts';
 import { useUnsubscribeEmail } from './use-unsubscribe-email';
+import { useVerifyEmail } from './use-verify-email';
+import { useWalletMigration } from './use-wallet-migration';
 
 export {
     useAccountClosure,
@@ -97,6 +101,8 @@ export {
     useDocumentUpload,
     useForget,
     useForgetAll,
+    useGetFinancialAssessment,
+    useGetSettings,
     useIdentityVerificationDocumentAdd,
     useJtokenCreate,
     useLinkWallet,
@@ -150,4 +156,6 @@ export {
     useTradingPlatformWithdrawal,
     useTransferBetweenAccounts,
     useUnsubscribeEmail,
+    useVerifyEmail,
+    useWalletMigration,
 };

@@ -42,6 +42,10 @@ import { useP2pOrderCancel } from './use-p2p-order-cancel';
 import { useP2pOrderConfirm } from './use-p2p-order-confirm';
 import { useP2pOrderDispute } from './use-p2p-order-dispute';
 import { useP2POrderCreate } from './use-p2p-order-create';
+import { useP2PAdvertiserCreate } from './use-p2p-advertiser-create';
+import { useP2PAdvertiserPaymentMethods } from './use-p2p-advertiser-payment-methods';
+import { useP2PAdvertiserRelations } from './use-p2p-advertiser-relations';
+import { useP2POrderReview } from './use-p2p-order-review';
 import { usePasskeysLogin } from './use-passkeys-login';
 import { usePasskeysRegister } from './use-passkeys-register';
 import { usePasskeysRename } from './use-passkeys-rename';
@@ -115,6 +119,10 @@ export {
     useP2pOrderConfirm,
     useP2pOrderDispute,
     useP2POrderCreate,
+    useP2PAdvertiserCreate,
+    useP2PAdvertiserPaymentMethods,
+    useP2PAdvertiserRelations,
+    useP2POrderReview,
     usePasskeysLogin,
     usePasskeysRegister,
     usePasskeysRename,

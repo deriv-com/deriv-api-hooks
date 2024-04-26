@@ -1,4 +1,9 @@
-import { TSocketRequestPayload, TSocketResponseData, TSocketSubscribableEndpointNames } from "../types/api.types";
+import {
+    TSocketError,
+    TSocketRequestPayload,
+    TSocketResponseData,
+    TSocketSubscribableEndpointNames,
+} from "../types/api.types";
 import { useAPI } from "./use-context-hooks";
 import { useState } from "react";
 import { ObjectUtils } from "@deriv-com/utils";
@@ -25,6 +30,7 @@ type TSubscriptionStatus = "loading" | "error" | "idle" | "active";
 export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T) => {
     const { derivAPI, subscriptions } = useAPI();
     const [data, setData] = useState<TSocketResponseData<T>>();
+    const [error, setError] = useState<TSocketError<T>>();
     const [status, setStatus] = useState<TSubscriptionStatus>("loading");
     const [subscription_id, setSubscriptionId] = useState("");
 
@@ -53,10 +59,16 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
     const subscribe = async (payload: TSocketRequestPayload<T>) => {
         const { id, subscription } = await createSubscription(payload);
         setSubscriptionId(id);
-        subscription.subscribe((response: TSocketResponseData<T>) => {
-            setStatus("active");
-            return setData(response);
-        });
+        subscription.subscribe(
+            (response: TSocketResponseData<T>) => {
+                setStatus("active");
+                return setData(response);
+            },
+            (response: TSocketError<T>) => {
+                setStatus("error");
+                return setError(response);
+            }
+        );
     };
 
     /**
@@ -69,6 +81,7 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
 
     return {
         data,
+        error,
         subscribe,
         unsubscribe,
         isActive: status === "active",

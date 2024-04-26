@@ -20,8 +20,6 @@ import { useCopyStop } from './use-copy-stop';
 import { useDocumentUpload } from './use-document-upload';
 import { useForget } from './use-forget';
 import { useForgetAll } from './use-forget-all';
-import { useGetFinancialAssessment } from './use-get-financial-assessment';
-import { useGetSettings } from './use-get-settings';
 import { useIdentityVerificationDocumentAdd } from './use-identity-verification-document-add';
 import { useJtokenCreate } from './use-jtoken-create';
 import { useLinkWallet } from './use-link-wallet';
@@ -101,8 +99,6 @@ export {
     useDocumentUpload,
     useForget,
     useForgetAll,
-    useGetFinancialAssessment,
-    useGetSettings,
     useIdentityVerificationDocumentAdd,
     useJtokenCreate,
     useLinkWallet,

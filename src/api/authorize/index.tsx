@@ -11,6 +11,8 @@ import { useContractUpdateHistory } from './use-contract-update-history';
 import { useCopytradingList } from './use-copytrading-list';
 import { useGetAccountStatus } from './use-get-account-status';
 import { useGetAccountTypes } from './use-get-account-types';
+import { useGetFinancialAssessment } from './use-get-financial-assessment';
+import { useGetSettings } from './use-get-settings';
 import { useGetLimits } from './use-get-limits';
 import { useGetSelfExclusion } from './use-get-self-exclusion';
 import { useKycAuthStatus } from './use-kyc-auth-status';
@@ -55,6 +57,8 @@ export {
     useCopytradingList,
     useGetAccountStatus,
     useGetAccountTypes,
+    useGetFinancialAssessment,
+    useGetSettings,
     useGetLimits,
     useGetSelfExclusion,
     useKycAuthStatus,

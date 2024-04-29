@@ -73,6 +73,8 @@ import { useTradingPlatformPasswordReset } from './use-trading-platform-password
 import { useTradingPlatformWithdrawal } from './use-trading-platform-withdrawal';
 import { useTransferBetweenAccounts } from './use-transfer-between-accounts';
 import { useUnsubscribeEmail } from './use-unsubscribe-email';
+import { useVerifyEmail } from './use-verify-email';
+import { useWalletMigration } from './use-wallet-migration';
 
 export {
     useAccountClosure,
@@ -150,4 +152,6 @@ export {
     useTradingPlatformWithdrawal,
     useTransferBetweenAccounts,
     useUnsubscribeEmail,
+    useVerifyEmail,
+    useWalletMigration,
 };

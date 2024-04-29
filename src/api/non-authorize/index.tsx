@@ -17,7 +17,6 @@ import { useTradingDurations } from './use-trading-durations';
 import { useTradingPlatformLeverage } from './use-trading-platform-leverage';
 import { useTradingPlatformProductListing } from './use-trading-platform-product-listing';
 import { useTradingTimes } from './use-trading-times';
-import { useVerifyEmail } from './use-verify-email';
 import { useVerifyEmailCellxpert } from './use-verify-email-cellxpert';
 import { useWebsiteConfig } from './use-website-config';
 import { useWebsiteStatus } from './use-website-status';
@@ -41,7 +40,6 @@ export {
     useTradingPlatformLeverage,
     useTradingPlatformProductListing,
     useTradingTimes,
-    useVerifyEmail,
     useVerifyEmailCellxpert,
     useWebsiteConfig,
     useWebsiteStatus,

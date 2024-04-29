@@ -42,7 +42,6 @@ import { useStatement } from './use-statement';
 import { useTradingPlatformAccounts } from './use-trading-platform-accounts';
 import { useTradingPlatformAvailableAccounts } from './use-trading-platform-available-accounts';
 import { useTradingServers } from './use-trading-servers';
-import { useWalletMigration } from './use-wallet-migration';
 export {
     useAccountList,
     useAccountStatistics,
@@ -88,5 +87,4 @@ export {
     useTradingPlatformAccounts,
     useTradingPlatformAvailableAccounts,
     useTradingServers,
-    useWalletMigration,
 };

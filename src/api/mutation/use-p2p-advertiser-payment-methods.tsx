@@ -4,13 +4,13 @@ import { AugmentedMutationOptions } from '../../base/use-mutation';
 
 type TMutateParams = Parameters<ReturnType<typeof useMutation<"p2p_advertiser_payment_methods">>["mutate"]>[0];
 
-export const useP2PAdvertiserPaymentMethods = ({
+export const useP2PAdvertiserPaymentMethods = ({ enabled,
     ...props
 }: Omit<AugmentedMutationOptions<'p2p_advertiser_payment_methods'>, 'name'> & { enabled?: boolean } = {}) => {
     const { data, mutate, ...rest } = useMutation({ name: 'p2p_advertiser_payment_methods', ...props });
 
     useEffect(() => {
-        if (props.enabled) {
+        if (enabled) {
             mutate({})
         }
     }, []);

@@ -31,7 +31,7 @@ export const useP2PAdvertiserPaymentMethods = ({ enabled,
         data: data?.p2p_advertiser_payment_methods,
         create,
         update,
-        deletePaymentMethod,
+        delete: deletePaymentMethod,
         ...rest,
     };
 };

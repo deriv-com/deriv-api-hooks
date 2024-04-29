@@ -44,6 +44,7 @@ import { useP2pOrderDispute } from './use-p2p-order-dispute';
 import { useP2POrderCreate } from './use-p2p-order-create';
 import { useP2PAdvertiserCreate } from './use-p2p-advertiser-create';
 import { useP2PAdvertiserPaymentMethods } from './use-p2p-advertiser-payment-methods';
+import { useP2PAdvertiserPaymentMethodsMutation } from './use-p2p-advertiser-payment-methods-mutation';
 import { useP2PAdvertiserRelations } from './use-p2p-advertiser-relations';
 import { useP2POrderReview } from './use-p2p-order-review';
 import { usePasskeysLogin } from './use-passkeys-login';
@@ -123,6 +124,7 @@ export {
     useP2POrderCreate,
     useP2PAdvertiserCreate,
     useP2PAdvertiserPaymentMethods,
+    useP2PAdvertiserPaymentMethodsMutation,
     useP2PAdvertiserRelations,
     useP2POrderReview,
     usePasskeysLogin,

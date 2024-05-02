@@ -10,7 +10,7 @@ export const useAuthorizedSubscription = <T extends TSocketSubscribableEndpointN
     const AUTH_TIMEOUT_DURATION = 100;
     const authorizedSubscribe = async (payload: Parameters<typeof subscribe>[0]) => {
         if (isAuthorized && activeLoginid) {
-            await subscribe(payload);
+            subscribe(payload);
         } else {
             await new Promise((resolve, reject) => {
                 authTimeoutId.current = setTimeout(() => {

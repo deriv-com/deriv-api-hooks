@@ -10,7 +10,7 @@ import { useAPI, useAuthData } from './use-context-hooks';
 export type TPaginatedQueryOptions<T extends TSocketPaginateableEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
-    queryKey?: unknown[];
+    queryKey?: string[];
 } & Partial<Omit<UseInfiniteQueryOptions<TSocketResponseData<T>, TSocketError<T>>, 'queryKey' | 'queryFn' | 'select'>>;
 
 export const useInfiniteQuery = <T extends TSocketPaginateableEndpointNames>({

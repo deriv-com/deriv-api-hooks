@@ -16,9 +16,7 @@ export const useAuthorizedSubscription = <T extends TSocketSubscribableEndpointN
                 authTimeoutId.current = setTimeout(() => {
                     if (isAuthorized && activeLoginid) {
                         clearTimeout(authTimeoutId.current);
-                        subscribe(payload).then(resolve)
-                    } else {
-                        reject(new Error("Authorization timeout"));
+                        subscribe(payload).then(resolve).catch(reject);
                     }
                 }, AUTH_TIMEOUT_DURATION);
             });

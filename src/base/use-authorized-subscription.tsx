@@ -7,7 +7,7 @@ export const useAuthorizedSubscription = <T extends TSocketSubscribableEndpointN
     const { isAuthorized, activeLoginid, isAuthorizing } = useAuthData();
     const authTimeoutId = useRef<ReturnType<typeof setTimeout>>();
     const { subscribe, ...rest } = useSubscribe(name);
-    const AUTH_TIMEOUT_DURATION = 400;
+    const AUTH_TIMEOUT_DURATION = 30000;
     const authorizedSubscribe = async (payload: Parameters<typeof subscribe>[0]) => {
         if (isAuthorized && activeLoginid && !isAuthorizing) {
             subscribe(payload);

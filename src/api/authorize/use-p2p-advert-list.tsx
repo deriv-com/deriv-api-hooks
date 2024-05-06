@@ -9,7 +9,7 @@ export const useP2PAdvertList = ({
         name: 'p2p_advert_list',
         ...props,
         getNextPageParam: (lastPage, pages) => {
-            if (!lastPage?.p2p_advert_list?.list?.length) return;
+            if (lastPage?.p2p_advert_list?.list.length === 0 || !lastPage?.p2p_advert_list?.list) return;
 
             return pages.length;
         },

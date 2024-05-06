@@ -11,7 +11,7 @@ export const useP2POrderList = ({
         name: 'p2p_order_list',
         ...props,
         getNextPageParam: (lastPage, pages) => {
-            if (!lastPage?.p2p_order_list?.list?.length) return;
+            if (lastPage?.p2p_order_list?.list.length === 0 || !lastPage?.p2p_order_list?.list) return;
 
             return pages.length;
         },

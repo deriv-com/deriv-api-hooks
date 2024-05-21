@@ -1,5 +1,5 @@
-import { ObjectUtils } from '@deriv-com/utils';
-import { TSocketEndpointNames, TSocketResponseData } from '../types/api.types';
+import { ObjectUtils, PromiseUtils } from '@deriv-com/utils';
+import { TSocketEndpointNames, TSocketRequestPayload, TSocketResponseData } from '../types/api.types';
 
 type DerivAPIClientOptions = {
     onOpen: (e: Event) => void;
@@ -9,7 +9,7 @@ type DerivAPIClientOptions = {
 type RequestHandler<T extends TSocketEndpointNames = TSocketEndpointNames> = {
     name: TSocketEndpointNames;
     onData: (data: TSocketResponseData<T>) => void;
-    promise: Promise<TSocketResponseData<T>>;
+    promise: Promise<TSocketResponseData<T> | null | undefined>;
     type: 'request';
 };
 
@@ -53,25 +53,29 @@ export class DerivAPIClient {
                 }
                 if (matchingHandler.type === 'subscribe') {
                     matchingHandler.onData(parsedData);
+                    return;
                 }
             }
         });
     }
 
-    // async send<T extends TSocketEndpointNames>(name: TSocketEndpointNames, payload: TSocketRequestPayload<T>) {
-    //     const requestHash = await ObjectUtils.hashObject({ ...payload, req_id: this.req_id });
-    //     const matchingRequest = this.requestHandler.get(requestHash);
-    //     if (matchingRequest && matchingRequest.type === 'request') return matchingRequest.promise;
+    async send<T extends TSocketEndpointNames>(name: T, payload: TSocketRequestPayload<T>) {
+        const requestHash = await ObjectUtils.hashObject({ ...payload, req_id: this.req_id });
+        const matchingRequest = this.requestHandler.get(requestHash);
+        if (matchingRequest && matchingRequest.type === 'request') return matchingRequest.promise;
 
-    //     const { promise, resolve } = PromiseUtils.createPromise<TSocketResponseData<T>>();
-    //     const newRequestHandler: RequestHandler = {
-    //         name,
-    //         onData: (data: TSocketResponseData<T>) => {
-    //             resolve(data);
-    //         },
-    //     };
-    // }
+        const { promise, resolve } = PromiseUtils.createPromise<TSocketResponseData<T>>();
+        const newRequestHandler: RequestHandler<T> = {
+            name,
+            onData: data => resolve(data),
+            promise,
+            type: 'request',
+        };
+        this.requestHandler.set(requestHash, newRequestHandler as RequestHandler<TSocketEndpointNames>);
+        return promise;
+    }
 
     subscribe() {}
+
     unsubscribe() {}
 }

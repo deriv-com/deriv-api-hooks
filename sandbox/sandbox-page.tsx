@@ -1,15 +1,19 @@
-import React from 'react';
-import { URLUtils } from '@deriv-com/utils';
-import { useAccountList } from '../src/index';
+import React, { useEffect } from 'react';
+import { useExchangeRates } from '../src/index';
 
 export const SandboxPage = () => {
-    const { data } = useAccountList();
+    const { data, subscribeRates } = useExchangeRates();
+
+    useEffect(() => {
+        subscribeRates({ base_currency: 'USD', target_currencies: ['IDR'] });
+    }, []);
+
+    console.log(data?.exchange_rates);
 
     return (
         <div>
             <div>
-                <a href={URLUtils.getOauthURL()}>Login</a>
-                <div>{JSON.stringify(data)}</div>
+                <button></button>
             </div>
         </div>
     );

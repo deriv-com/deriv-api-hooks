@@ -7,6 +7,10 @@ export interface UnknownGenericResponse {
     subscription?: {
         id: string;
     };
+    error: {
+        code: string;
+        message: string;
+    };
 }
 
 export interface GenericResponse<T extends TSocketEndpointNames> {

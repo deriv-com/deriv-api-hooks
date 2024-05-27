@@ -52,6 +52,11 @@ export class DerivAPIClient {
         this.websocket.addEventListener('message', async response => {
             const parsedData = JSON.parse(response.data) as UnknownGenericResponse;
             if (parsedData.subscription || parsedData.echo_req?.subscribe) {
+                const subscribeHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
+                const matchingHandler = this.subscribeHandler.get(subscribeHash);
+                if (matchingHandler) {
+                    matchingHandler.onData(parsedData);
+                }
             } else {
                 const requestHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
                 const matchingHandler = this.requestHandler.get(requestHash);
@@ -75,6 +80,9 @@ export class DerivAPIClient {
             promise,
         };
         this.requestHandler.set(requestHash, newRequestHandler as RequestHandler<TSocketEndpointNames>);
+        if (this.websocket.readyState === 2) {
+            this.websocket.send(JSON.stringify({ [name]: 1, ...(payload ?? {}) }));
+        }
         return promise;
     }
 
@@ -98,7 +106,19 @@ export class DerivAPIClient {
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
             );
         }
+
+        return subscriptionHash;
     }
 
-    unsubscribe() {}
+    async unsubscribe(hash: string) {
+        const matchingSubscription = this.subscribeHandler.get(hash);
+        if (matchingSubscription) {
+            const { subscription_id } = matchingSubscription;
+            const response = await this.send('forget', { forget: subscription_id });
+            if (response && !response.error) {
+                this.subscribeHandler.delete(hash);
+                return response;
+            }
+        }
+    }
 }

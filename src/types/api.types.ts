@@ -1490,7 +1490,7 @@ export type TSocketEndpointNames = keyof TSocketEndpoints;
 
 export type TSocketSubscribableEndpointNames = KeysMatching<TSocketEndpoints, { request: { subscribe?: number } }>;
 
-export type TSocketResponse<T extends TSocketEndpointNames> = TSocketEndpoints[T]['response'];
+export type TSocketResponse<T extends TSocketEndpointNames> = TSocketEndpoints[T]['response'] & TSocketError<T>;
 
 export type TSocketError<T extends TSocketEndpointNames> = {
     /**

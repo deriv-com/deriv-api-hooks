@@ -56,6 +56,9 @@ export class DerivAPIClient {
                 const matchingHandler = this.subscribeHandler.get(subscribeHash);
                 if (matchingHandler) {
                     matchingHandler.onData(parsedData);
+                    if (parsedData.subscription?.id) {
+                        matchingHandler.subscription_id = parsedData.subscription?.id;
+                    }
                 }
             } else {
                 const requestHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });

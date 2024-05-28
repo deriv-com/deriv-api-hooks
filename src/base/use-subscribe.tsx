@@ -3,12 +3,11 @@ import {
     TSocketRequestPayload,
     TSocketResponseData,
     TSocketSubscribableEndpointNames,
-} from "../types/api.types";
-import { useAPI } from "./use-context-hooks";
-import { useState } from "react";
-import { ObjectUtils } from "@deriv-com/utils";
+} from '../types/api.types';
+import { useAPI } from './use-context-hooks';
+import { useState } from 'react';
 
-type TSubscriptionStatus = "loading" | "error" | "idle" | "active";
+type TSubscriptionStatus = 'loading' | 'error' | 'idle' | 'active';
 
 /**
  * A custom hook to subscribe to a specified WebSocket endpoint, manage subscription status, and handle data updates.
@@ -28,65 +27,24 @@ type TSubscriptionStatus = "loading" | "error" | "idle" | "active";
  * }}
  */
 export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T) => {
-    const { derivAPI, subscriptions } = useAPI();
+    const { derivAPIClient } = useAPI();
     const [data, setData] = useState<TSocketResponseData<T>>();
-    const [error, setError] = useState<TSocketError<T>>();
-    const [status, setStatus] = useState<TSubscriptionStatus>("loading");
-    const [subscription_id, setSubscriptionId] = useState("");
-
-    /**
-     * Creates a new subscription or returns an existing one if it matches the provided payload.
-     *
-     * @param {TSocketRequestPayload<T>} payload - The payload to be sent for the subscription.
-     * @returns {Promise<{id: string, subscription: Subscription}>}
-     * An object containing the `id` of the subscription and the `subscription` object itself.
-     */
-    const createSubscription = async (payload: TSocketRequestPayload<T>) => {
-        const id = await ObjectUtils.hashObject({ name, payload });
-        const matchingSubscription = subscriptions.current?.[id];
-        if (matchingSubscription) return { id, subscription: matchingSubscription };
-
-        const subscription = derivAPI?.subscribe({ [name]: 1, subscribe: 1, ...(payload || {}) });
-        subscriptions.current = { ...(subscriptions.current || {}), ...{ [id]: subscription } };
-        return { id, subscription };
-    };
-
-    /**
-     * Subscribes to a WebSocket endpoint.
-     *
-     * @param {TSocketRequestPayload<T>} payload - The payload for the subscription.
-     */
-    const subscribe = async (payload: TSocketRequestPayload<T>) => {
-        const { id, subscription } = await createSubscription(payload);
-        setSubscriptionId(id);
-        subscription.subscribe(
-            (response: TSocketResponseData<T>) => {
-                setStatus("active");
-                return setData(response);
-            },
-            (response: TSocketError<T>) => {
-                setStatus("error");
-                return setError(response);
-            }
-        );
-    };
-
-    /**
-     * Unsubscribes from the current WebSocket endpoint.
-     */
-    const unsubscribe = () => {
-        const matchingSubscription = subscriptions.current?.[subscription_id];
-        if (matchingSubscription) matchingSubscription.unsubscribe();
-    };
+    const [error] = useState<TSocketError<T>>();
+    const [status] = useState<TSubscriptionStatus>('loading');
+    const [subscription_id, setSubscriptionId] = useState('');
 
     return {
         data,
         error,
-        subscribe,
-        unsubscribe,
-        isActive: status === "active",
-        isError: status === "error",
-        isIdle: status === "idle",
-        isLoading: status === "loading",
+        subscribe: async <T extends TSocketSubscribableEndpointNames>(payload: TSocketRequestPayload<T>) => {
+            // @ts-expect-error lmao
+            const id = await derivAPIClient.subscribe(name, payload, data => setData(data));
+            setSubscriptionId(id);
+        },
+        unsubscribe: () => derivAPIClient.unsubscribe(subscription_id),
+        isActive: status === 'active',
+        isError: status === 'error',
+        isIdle: status === 'idle',
+        isLoading: status === 'loading',
     };
 };

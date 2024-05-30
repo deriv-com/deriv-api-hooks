@@ -1,19 +1,18 @@
-import React, { useEffect } from 'react';
-import { useExchangeRates } from '../src/index';
+import React from 'react';
+import { DerivAPIClient } from '../src/client-library/deriv-api-client';
+
+const derivAPI = new DerivAPIClient('wss://red.binaryws.com/websockets/v3?l=EN&app_id=1089&brand=deriv');
 
 export const SandboxPage = () => {
-    const { data, subscribeRates } = useExchangeRates();
-
-    useEffect(() => {
-        subscribeRates({ base_currency: 'USD', target_currencies: ['IDR'] });
-    }, []);
-
-    console.log(data?.exchange_rates);
+    const handleSomeShit = async () => {
+        const response = await derivAPI.send('ping');
+        console.log(response.ping);
+    };
 
     return (
         <div>
             <div>
-                <button></button>
+                <button onClick={() => handleSomeShit()}>Kelik</button>
             </div>
         </div>
     );

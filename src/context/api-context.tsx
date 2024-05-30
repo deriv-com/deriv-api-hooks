@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useEffect } from 'react';
 import { DerivAPIClient } from '../client-library/deriv-api-client';
 
-const derivAPIClient = new DerivAPIClient('wss://red.binaryws.com/websockets/v3?l=EN&app_id=1089&brand=deriv');
+export const derivAPIClient = new DerivAPIClient('wss://red.binaryws.com/websockets/v3?l=EN&app_id=1089&brand=deriv');
 
 type APIData = {
     derivAPIClient: DerivAPIClient;

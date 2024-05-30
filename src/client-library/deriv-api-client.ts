@@ -15,7 +15,7 @@ type DerivAPIClientOptions = {
 type RequestHandler<T extends TSocketEndpointNames = TSocketEndpointNames> = {
     name: TSocketEndpointNames;
     onData: (data: TSocketResponseData<T>) => void;
-    promise: Promise<TSocketResponseData<T> | null | undefined>;
+    promise: Promise<TSocketResponseData<T>>;
 };
 
 type SubscriptionHandler<T extends TSocketSubscribableEndpointNames = TSocketSubscribableEndpointNames> = {
@@ -38,11 +38,11 @@ export class DerivAPIClient {
     req_id: number;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
+        this.websocket = new WebSocket(endpoint);
         this.req_id = 1;
         this.requestHandler = new Map();
         this.subscribeHandler = new Map();
 
-        this.websocket = new WebSocket(endpoint);
         if (typeof options?.onOpen === 'function') {
             this.websocket.addEventListener('open', e => options.onOpen(e));
         }
@@ -51,16 +51,14 @@ export class DerivAPIClient {
         }
         this.websocket.addEventListener('message', async response => {
             const parsedData = JSON.parse(response.data) as UnknownGenericResponse;
+
             if (parsedData.subscription || parsedData.echo_req?.subscribe) {
                 const subscribeHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
                 const matchingHandler = this.subscribeHandler.get(subscribeHash);
                 if (matchingHandler) {
                     matchingHandler.onData(parsedData);
-                    if (parsedData.subscription?.id) {
-                        matchingHandler.subscription_id = parsedData.subscription?.id;
-                    }
                 }
-            } else {
+            } else if (parsedData) {
                 const requestHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
                 const matchingHandler = this.requestHandler.get(requestHash);
                 if (matchingHandler) {
@@ -71,10 +69,12 @@ export class DerivAPIClient {
         });
     }
 
-    async send<T extends TSocketEndpointNames>(name: T, payload: TSocketRequestPayload<T>) {
-        const requestHash = await ObjectUtils.hashObject({ ...payload, req_id: this.req_id });
+    async send<T extends TSocketEndpointNames>(name: T, requestPayload?: TSocketRequestPayload<T>) {
+        const payload = { [name]: 1, ...(requestPayload ?? {}), req_id: this.req_id };
+        const requestHash = await ObjectUtils.hashObject(payload);
+
         const matchingRequest = this.requestHandler.get(requestHash);
-        if (matchingRequest) return matchingRequest.promise;
+        if (matchingRequest) return matchingRequest.promise as Promise<TSocketResponseData<T>>;
 
         const { promise, resolve } = PromiseUtils.createPromise<TSocketResponseData<T>>();
         const newRequestHandler: RequestHandler<T> = {
@@ -83,8 +83,10 @@ export class DerivAPIClient {
             promise,
         };
         this.requestHandler.set(requestHash, newRequestHandler as RequestHandler<TSocketEndpointNames>);
-        if (this.websocket.readyState === 2) {
-            this.websocket.send(JSON.stringify({ [name]: 1, ...(payload ?? {}) }));
+
+        if (this.websocket.readyState === 1) {
+            this.websocket.send(JSON.stringify(payload));
+            this.req_id = this.req_id++;
         }
         return promise;
     }
@@ -123,5 +125,23 @@ export class DerivAPIClient {
                 return response;
             }
         }
+    }
+
+    switchConnection() {}
+
+    isSocketClosingOrClosed() {
+        return [!2, 3].includes(this.websocket.readyState);
+    }
+
+    disconnect() {
+        if (this.isSocketClosingOrClosed()) {
+            this.websocket.close();
+        }
+    }
+
+    cleanup() {
+        this.requestHandler.clear();
+        this.subscribeHandler.clear();
+        this.disconnect();
     }
 }

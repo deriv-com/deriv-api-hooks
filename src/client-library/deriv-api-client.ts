@@ -5,7 +5,6 @@ import {
     TSocketResponseData,
     TSocketSubscribableEndpointNames,
 } from '../types/api.types';
-import { UnknownGenericResponse } from '../types/private-api.types';
 
 type DerivAPIClientOptions = {
     onOpen: (e: Event) => void;
@@ -50,13 +49,14 @@ export class DerivAPIClient {
             this.websocket.addEventListener('close', e => options.onClose(e));
         }
         this.websocket.addEventListener('message', async response => {
-            const parsedData = JSON.parse(response.data) as UnknownGenericResponse;
+            const parsedData = JSON.parse(response.data);
 
             if (parsedData.subscription || parsedData.echo_req?.subscribe) {
                 const subscribeHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
                 const matchingHandler = this.subscribeHandler.get(subscribeHash);
                 if (matchingHandler) {
                     matchingHandler.onData(parsedData);
+                    matchingHandler.subscription_id = parsedData?.subscription?.id ?? '';
                 }
             } else if (parsedData) {
                 const requestHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
@@ -93,13 +93,14 @@ export class DerivAPIClient {
 
     async subscribe<T extends TSocketSubscribableEndpointNames>(
         name: T,
-        payload: TSocketRequestPayload<T>,
+        subscriptionPayload: TSocketRequestPayload<T>,
         onData: (data: TSocketResponseData<T>) => void
     ) {
-        const subscriptionHash = await ObjectUtils.hashObject({ ...payload, req_id: this.req_id });
+        const payload = { [name]: 1, ...(subscriptionPayload ?? {}), req_id: this.req_id };
+        const subscriptionHash = await ObjectUtils.hashObject(payload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
-        if (matchingSubscription) {
+        if (!matchingSubscription) {
             const newSubscriptionHandler: SubscriptionHandler<T> = {
                 name,
                 status: 'idle',
@@ -110,8 +111,12 @@ export class DerivAPIClient {
                 subscriptionHash,
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
             );
-        }
 
+            if (this.websocket.readyState === 1) {
+                this.websocket.send(JSON.stringify(payload));
+                this.req_id = this.req_id++;
+            }
+        }
         return subscriptionHash;
     }
 
@@ -122,7 +127,6 @@ export class DerivAPIClient {
             const response = await this.send('forget', { forget: subscription_id });
             if (response && !response.error) {
                 this.subscribeHandler.delete(hash);
-                return response;
             }
         }
     }

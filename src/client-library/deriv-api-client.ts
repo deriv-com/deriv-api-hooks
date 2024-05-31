@@ -35,16 +35,21 @@ export class DerivAPIClient {
     requestHandler: RequestMap;
     subscribeHandler: SubscriptionMap;
     req_id: number;
+    pauseHandler: ReturnType<typeof PromiseUtils.createPromise>;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
         this.websocket = new WebSocket(endpoint);
         this.req_id = 1;
         this.requestHandler = new Map();
         this.subscribeHandler = new Map();
+        this.pauseHandler = PromiseUtils.createPromise();
 
-        if (typeof options?.onOpen === 'function') {
-            this.websocket.addEventListener('open', e => options.onOpen(e));
-        }
+        this.websocket.addEventListener('open', e => {
+            if (typeof options?.onOpen === 'function') options.onOpen(e);
+            const { resolve } = this.pauseHandler;
+            resolve({});
+        });
+
         if (typeof options?.onClose === 'function') {
             this.websocket.addEventListener('close', e => options.onClose(e));
         }
@@ -84,10 +89,10 @@ export class DerivAPIClient {
         };
         this.requestHandler.set(requestHash, newRequestHandler as RequestHandler<TSocketEndpointNames>);
 
-        if (this.websocket.readyState === 1) {
-            this.websocket.send(JSON.stringify(payload));
-            this.req_id = this.req_id++;
-        }
+        await this.pauseHandler?.promise;
+        this.websocket.send(JSON.stringify(payload));
+        this.req_id = this.req_id++;
+
         return promise;
     }
 

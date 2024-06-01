@@ -1,18 +1,5 @@
 import { TSocketEndpointNames, TSocketRequestPayload } from './api.types';
 
-export interface UnknownGenericResponse {
-    echo_req?: { subscribe: number };
-    msg_type: TSocketEndpointNames;
-    req_id: number;
-    subscription?: {
-        id: string;
-    };
-    error: {
-        code: string;
-        message: string;
-    };
-}
-
 export interface GenericResponse<T extends TSocketEndpointNames> {
     /**
      * Echo of the request made.

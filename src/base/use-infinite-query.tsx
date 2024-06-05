@@ -20,13 +20,13 @@ export const useInfiniteQuery = <T extends TSocketPaginateableEndpointNames>({
     ...options
 }: TPaginatedQueryOptions<T>) => {
     const { isAuthorized } = useAuthData();
-    const { send } = useAPI();
+    const { derivAPIClient } = useAPI();
     const initialOffset = payload?.offset || 0;
     const limit = payload?.limit || 50;
     return _useInfiniteQuery<TSocketResponseData<T>, TSocketError<T>>({
         queryKey: [name, ...(queryKey ?? [])],
         queryFn: ({ pageParam = 0 }) =>
-            send(name, {
+            derivAPIClient.send(name, {
                 ...payload,
                 limit,
                 offset: Number(pageParam) * limit + initialOffset,

@@ -36,6 +36,7 @@ export class DerivAPIClient {
     subscribeHandler: SubscriptionMap;
     req_id: number;
     pauseHandler: ReturnType<typeof PromiseUtils.createPromise>;
+    keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
         this.websocket = new WebSocket(endpoint);
@@ -73,6 +74,8 @@ export class DerivAPIClient {
                 }
             }
         });
+
+        this.keepAlive();
     }
 
     async send<T extends TSocketEndpointNames>(name: T, requestPayload?: TSocketRequestPayload<T>) {
@@ -158,5 +161,15 @@ export class DerivAPIClient {
         this.requestHandler.clear();
         this.subscribeHandler.clear();
         this.disconnect();
+    }
+
+    keepAlive(interval = 30000) {
+        if (this.keepAliveIntervalId) {
+            clearInterval(this.keepAliveIntervalId);
+        }
+
+        this.keepAliveIntervalId = setInterval(async () => {
+            await this.send('ping');
+        }, interval);
     }
 }

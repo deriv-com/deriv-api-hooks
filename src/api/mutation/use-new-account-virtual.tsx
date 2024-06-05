@@ -5,10 +5,10 @@ import { AugmentedMutationOptions } from '../../base/use-mutation';
 export const useNewAccountVirtual = ({
     ...options
 }: Omit<AugmentedMutationOptions<'new_account_virtual'>, 'name'> = {}) => {
-    const { send } = useAPI();
+    const { derivAPIClient } = useAPI();
 
     return useReactQueryMutation({
-        mutationFn: payload => send('new_account_virtual', payload),
+        mutationFn: payload => derivAPIClient.send('new_account_virtual', payload),
         ...options,
     });
 };

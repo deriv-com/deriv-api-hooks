@@ -1,19 +1,13 @@
-import React, { useEffect } from 'react';
-import { useExchangeRates } from '../src/index';
+import React from 'react';
+import { useWebsiteStatus } from '../src/api/non-authorize/use-website-status';
 
 export const SandboxPage = () => {
-    const { data, subscribeRates } = useExchangeRates();
-
-    useEffect(() => {
-        subscribeRates({ base_currency: 'USD', target_currencies: ['IDR'] });
-    }, []);
-
-    console.log(data?.exchange_rates);
+    const { data } = useWebsiteStatus();
 
     return (
         <div>
             <div>
-                <button></button>
+                <div>{JSON.stringify(data)}</div>
             </div>
         </div>
     );

@@ -1,11 +1,13 @@
 import React from 'react';
-import { useWebsiteStatus } from '../src/api/non-authorize/use-website-status';
+import { useAccountList } from '../src/api/authorize';
+import { URLUtils } from '@deriv-com/utils';
 
 export const SandboxPage = () => {
-    const { data } = useWebsiteStatus();
+    const { data } = useAccountList();
 
     return (
         <div>
+            <a href={URLUtils.getOauthURL()}>Login</a>
             <div>
                 <div>{JSON.stringify(data)}</div>
             </div>

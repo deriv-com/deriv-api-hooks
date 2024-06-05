@@ -35,7 +35,7 @@ export class DerivAPIClient {
     requestHandler: RequestMap;
     subscribeHandler: SubscriptionMap;
     req_id: number;
-    pauseHandler: ReturnType<typeof PromiseUtils.createPromise>;
+    waitForWebSocketOpen: ReturnType<typeof PromiseUtils.createPromise>;
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
@@ -43,11 +43,11 @@ export class DerivAPIClient {
         this.req_id = 1;
         this.requestHandler = new Map();
         this.subscribeHandler = new Map();
-        this.pauseHandler = PromiseUtils.createPromise();
+        this.waitForWebSocketOpen = PromiseUtils.createPromise();
 
         this.websocket.addEventListener('open', e => {
             if (typeof options?.onOpen === 'function') options.onOpen(e);
-            const { resolve } = this.pauseHandler;
+            const { resolve } = this.waitForWebSocketOpen;
             resolve({});
         });
 
@@ -93,9 +93,9 @@ export class DerivAPIClient {
         };
         this.requestHandler.set(requestHash, newRequestHandler as RequestHandler<TSocketEndpointNames>);
 
-        await this.pauseHandler?.promise;
+        await this.waitForWebSocketOpen?.promise;
         this.websocket.send(JSON.stringify(payload));
-        this.req_id = this.req_id++;
+        this.req_id = this.req_id + 1;
 
         return promise;
     }
@@ -121,9 +121,9 @@ export class DerivAPIClient {
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
             );
 
-            await this.pauseHandler?.promise;
+            await this.waitForWebSocketOpen?.promise;
             this.websocket.send(JSON.stringify(payload));
-            this.req_id = this.req_id++;
+            this.req_id = this.req_id + 1;
 
             return subscriptionHash;
         }

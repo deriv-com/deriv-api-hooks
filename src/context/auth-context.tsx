@@ -28,7 +28,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const accountsList: Record<string, string> = JSON.parse(Cookies.get('accountsList') ?? '{}');
 
     const isAuthorized = useMemo(
-        () => !!activeLoginid || !!Object.keys(accountsList).length,
+        () => isSuccess && (!!activeLoginid || !!Object.keys(accountsList).length),
         [activeLoginid, accountsList]
     );
 
@@ -69,6 +69,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             Cookies.set('accountsList', JSON.stringify(accountsList));
 
             URLUtils.filterSearchParams(paramsToDelete);
+
             authorizeAccount(loginInfo[0].token);
             Cookies.set('authToken', loginInfo[0].token);
         } else {

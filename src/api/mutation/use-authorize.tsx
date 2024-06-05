@@ -4,10 +4,10 @@ import { useAPI } from '../../base/use-context-hooks';
 
 // Do not use the useMutation from base. This is a non authorized required call
 export const useAuthorize = ({ ...options }: Omit<AugmentedMutationOptions<'authorize'>, 'name'> = {}) => {
-    const { send } = useAPI();
+    const { derivAPIClient } = useAPI();
 
     return useReactQueryMutation({
-        mutationFn: payload => send('authorize', payload),
+        mutationFn: payload => derivAPIClient.send('authorize', payload),
         ...options,
     });
 };

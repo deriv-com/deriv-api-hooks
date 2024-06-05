@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useEffect } from 'react';
+import { createContext, PropsWithChildren } from 'react';
 import { DerivAPIClient } from '../client-library/deriv-api-client';
 
 export const derivAPIClient = new DerivAPIClient('wss://red.binaryws.com/websockets/v3?l=EN&app_id=1089&brand=deriv');
@@ -19,11 +19,5 @@ export const APIDataContext = createContext<APIData | null>(null);
  * @returns {JSX.Element} The provider component wrapping its children with API data context and React Query client.
  */
 export const APIProvider = ({ children }: PropsWithChildren) => {
-    useEffect(() => {
-        return () => {
-            derivAPIClient.cleanup();
-        };
-    }, []);
-
     return <APIDataContext.Provider value={{ derivAPIClient }}>{children}</APIDataContext.Provider>;
 };

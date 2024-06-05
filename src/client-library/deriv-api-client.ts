@@ -50,9 +50,10 @@ export class DerivAPIClient {
             resolve({});
         });
 
-        if (typeof options?.onClose === 'function') {
-            this.websocket.addEventListener('close', e => options.onClose(e));
-        }
+        this.websocket.addEventListener('close', e => {
+            if (typeof options?.onClose === 'function') options.onClose(e);
+        });
+
         this.websocket.addEventListener('message', async response => {
             const parsedData = JSON.parse(response.data);
 
@@ -117,11 +118,13 @@ export class DerivAPIClient {
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
             );
 
-            if (this.websocket.readyState === 1) {
-                this.websocket.send(JSON.stringify(payload));
-                this.req_id = this.req_id++;
-            }
+            await this.pauseHandler?.promise;
+            this.websocket.send(JSON.stringify(payload));
+            this.req_id = this.req_id++;
+
+            return subscriptionHash;
         }
+
         return subscriptionHash;
     }
 
@@ -132,8 +135,11 @@ export class DerivAPIClient {
             const response = await this.send('forget', { forget: subscription_id });
             if (response && !response.error) {
                 this.subscribeHandler.delete(hash);
+                return true;
             }
         }
+
+        return false;
     }
 
     switchConnection() {}
@@ -143,7 +149,7 @@ export class DerivAPIClient {
     }
 
     disconnect() {
-        if (this.isSocketClosingOrClosed()) {
+        if (!this.isSocketClosingOrClosed()) {
             this.websocket.close();
         }
     }

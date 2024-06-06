@@ -6,7 +6,7 @@ import { useSubscribe } from '../src/base';
 export const SandboxPage = () => {
     const { data } = useAccountList();
     const { data: exchangeRateData, subscribe: subscribeExchangeRates } = useSubscribe('exchange_rates');
-    const { data: ticksData, subscribe: subscribeTicks, unsubscribe: unsubscribeTicks } = useSubscribe('ticks');
+    const { data: ticksData, subscribe: subscribeTicks, unsubscribe: unsubscribeTicks, status } = useSubscribe('ticks');
 
     useEffect(() => {
         subscribeExchangeRates({ base_currency: 'USD', target_currency: 'AED' });
@@ -15,6 +15,7 @@ export const SandboxPage = () => {
 
     return (
         <div>
+            <div className=''>{status}</div>
             <a href={URLUtils.getOauthURL()}>Login</a>
             <div>
                 <div>{JSON.stringify(ticksData?.tick)}</div>

@@ -62,7 +62,8 @@ export class DerivAPIClient {
             const parsedData = JSON.parse(response.data);
 
             if (parsedData.subscription || parsedData.echo_req?.subscribe) {
-                const subscribeHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
+                const { req_id, ...payload } = parsedData.echo_req;
+                const subscribeHash = await ObjectUtils.hashObject({ ...payload });
                 const matchingHandler = this.subscribeHandler.get(subscribeHash);
                 if (matchingHandler) {
                     if (parsedData.error && typeof matchingHandler.onError === 'function') {
@@ -117,7 +118,7 @@ export class DerivAPIClient {
         onData: (data: TSocketResponseData<T>) => void,
         onError?: (error: TSocketError<T>) => void
     ) {
-        const payload = { [name]: 1, ...(subscriptionPayload ?? {}), req_id: this.req_id, subscribe: 1 };
+        const payload = { [name]: 1, ...(subscriptionPayload ?? {}), subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(payload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
@@ -135,7 +136,7 @@ export class DerivAPIClient {
             );
 
             await this.waitForWebSocketOpen?.promise;
-            this.websocket.send(JSON.stringify(payload));
+            this.websocket.send(JSON.stringify({ ...payload, req_id: this.req_id }));
             this.req_id = this.req_id + 1;
 
             return subscriptionHash;

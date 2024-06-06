@@ -4,6 +4,7 @@ import {
     TSocketResponseData,
     TSocketSubscribableEndpointNames,
 } from '../types/api.types';
+import { GenericResponse } from '../types/private-api.types';
 import { useAPI } from './use-context-hooks';
 import { useState } from 'react';
 
@@ -30,7 +31,7 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
     const { derivAPIClient } = useAPI();
     const [data, setData] = useState<TSocketResponseData<T>>();
     const [error] = useState<TSocketError<T>>();
-    const [status] = useState<TSubscriptionStatus>('loading');
+    const [status, setStatus] = useState<TSubscriptionStatus>('loading');
     const [subscription_id, setSubscriptionId] = useState('');
 
     return {
@@ -38,7 +39,13 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
         error,
         subscribe: async <T extends TSocketSubscribableEndpointNames>(payload: TSocketRequestPayload<T>) => {
             // @ts-expect-error lmao
-            const id = await derivAPIClient.subscribe(name, payload, data => setData(data));
+            const id = await derivAPIClient.subscribe(name, payload, data => {
+                setData(data);
+                if (data) {
+                    const status = !!(data as GenericResponse<'ping'>).error ? 'error' : 'active';
+                    setStatus(status);
+                }
+            });
             setSubscriptionId(id);
         },
         unsubscribe: () => derivAPIClient.unsubscribe(subscription_id),

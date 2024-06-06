@@ -66,11 +66,11 @@ export class DerivAPIClient {
                     matchingHandler.subscription_id = parsedData?.subscription?.id ?? '';
                 }
             } else if (parsedData) {
-                const requestHash = await ObjectUtils.hashObject({ ...parsedData.echo_req });
-                const matchingHandler = this.requestHandler.get(requestHash);
+                const id = parsedData.req_id?.toString();
+                const matchingHandler = this.requestHandler.get(id);
                 if (matchingHandler) {
                     matchingHandler.onData(parsedData);
-                    this.requestHandler.delete(requestHash);
+                    this.requestHandler.delete(id);
                 }
             }
         });
@@ -80,9 +80,8 @@ export class DerivAPIClient {
 
     async send<T extends TSocketEndpointNames>(name: T, requestPayload?: TSocketRequestPayload<T>) {
         const payload = { [name]: 1, ...(requestPayload ?? {}), req_id: this.req_id };
-        const requestHash = await ObjectUtils.hashObject(payload);
 
-        const matchingRequest = this.requestHandler.get(requestHash);
+        const matchingRequest = this.requestHandler.get(this.req_id.toString());
         if (matchingRequest) return matchingRequest.promise as Promise<TSocketResponseData<T>>;
 
         const { promise, resolve } = PromiseUtils.createPromise<TSocketResponseData<T>>();
@@ -91,7 +90,7 @@ export class DerivAPIClient {
             onData: data => resolve(data),
             promise,
         };
-        this.requestHandler.set(requestHash, newRequestHandler as RequestHandler<TSocketEndpointNames>);
+        this.requestHandler.set(this.req_id.toString(), newRequestHandler as RequestHandler<TSocketEndpointNames>);
 
         await this.waitForWebSocketOpen?.promise;
         this.websocket.send(JSON.stringify(payload));
@@ -105,7 +104,7 @@ export class DerivAPIClient {
         subscriptionPayload: TSocketRequestPayload<T>,
         onData: (data: TSocketResponseData<T>) => void
     ) {
-        const payload = { [name]: 1, ...(subscriptionPayload ?? {}), req_id: this.req_id };
+        const payload = { [name]: 1, ...(subscriptionPayload ?? {}), req_id: this.req_id, subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(payload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 

@@ -118,6 +118,7 @@ export class DerivAPIClient {
         onData: (data: TSocketResponseData<T>) => void,
         onError?: (error: TSocketError<T>['error']) => void
     ) {
+        this.req_id = this.req_id + 1;
         const payload = { [name]: 1, ...(subscriptionPayload ?? {}), subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(payload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
@@ -137,7 +138,6 @@ export class DerivAPIClient {
 
             await this.waitForWebSocketOpen?.promise;
             this.websocket.send(JSON.stringify({ ...payload, req_id: this.req_id }));
-            this.req_id = this.req_id + 1;
 
             return subscriptionHash;
         }

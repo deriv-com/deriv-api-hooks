@@ -15,7 +15,7 @@ type DerivAPIClientOptions = {
 type RequestHandler<T extends TSocketEndpointNames = TSocketEndpointNames> = {
     name: TSocketEndpointNames;
     onData: (data: TSocketResponseData<T>) => void;
-    onError: (error: TSocketError<T>) => void;
+    onError: (error: TSocketError<T>['error']) => void;
     promise: Promise<TSocketResponseData<T>>;
 };
 
@@ -23,7 +23,7 @@ type SubscriptionHandler<T extends TSocketSubscribableEndpointNames = TSocketSub
     name: TSocketSubscribableEndpointNames;
     status: 'active' | 'idle' | 'error';
     onData: (data: TSocketResponseData<T>) => void;
-    onError?: (error: TSocketError<T>) => void;
+    onError?: (error: TSocketError<T>['error']) => void;
     subscription_id: string;
 };
 
@@ -116,7 +116,7 @@ export class DerivAPIClient {
         name: T,
         subscriptionPayload: TSocketRequestPayload<T>,
         onData: (data: TSocketResponseData<T>) => void,
-        onError?: (error: TSocketError<T>) => void
+        onError?: (error: TSocketError<T>['error']) => void
     ) {
         const payload = { [name]: 1, ...(subscriptionPayload ?? {}), subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(payload);

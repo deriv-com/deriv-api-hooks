@@ -30,7 +30,7 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
     const timeoutRef = useRef<NodeJS.Timeout>();
     const { derivAPIClient } = useAPI();
     const [data, setData] = useState<TSocketResponseData<T>>();
-    const [error, setError] = useState<TSocketError<T>>();
+    const [error, setError] = useState<TSocketError<T>['error']>();
     const [status, setStatus] = useState<TSubscriptionStatus>('loading');
     const [subscription_id, setSubscriptionId] = useState('');
 

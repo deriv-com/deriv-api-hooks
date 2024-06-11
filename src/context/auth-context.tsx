@@ -23,7 +23,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
 
-    const { data, mutate, isSuccess, isPending } = useAuthorize();
+    const { data, mutate, isSuccess } = useAuthorize();
 
     const accountsList: Record<string, string> = JSON.parse(Cookies.get('accountsList') ?? '{}');
 
@@ -31,6 +31,11 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
         () => isSuccess && (!!activeLoginid || !!Object.keys(accountsList).length),
         [activeLoginid, accountsList]
     );
+
+    const URLParams = new URLSearchParams(window.location.search);
+    const authURLParams = !!URLParams.get('acct1') || !!URLParams.get('token1');
+
+    const isAuthorizing  = authURLParams || (!!Cookies.get('authToken') && !isAuthorized)
 
     const authorizeAccount = useCallback((token?: string) => {
         if (token) mutate({ authorize: token });
@@ -97,7 +102,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const value = useMemo(
         () => ({
             activeLoginid,
-            isAuthorizing: isPending,
+            isAuthorizing,
             switchAccount,
             appendAccountCookie,
             logout,

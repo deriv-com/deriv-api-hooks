@@ -11,7 +11,7 @@ export type AugmentedMutationResult<T extends TSocketEndpointNames> = UseMutatio
 export type AugmentedMutationOptions<T extends TSocketEndpointNames> = {
     name: T;
     bypassAuth?: boolean;
-} & UseMutationOptions<TSocketResponseData<T>, TSocketError<T>, TSocketRequestPayload<T>>;
+} & UseMutationOptions<TSocketResponseData<T>, TSocketError<T>['error'], TSocketRequestPayload<T>>;
 
 export const useMutation = <T extends TSocketEndpointNames>({
     name,

@@ -12,9 +12,11 @@ type DerivAPIClientOptions = {
     onClose: (e: CloseEvent) => void;
 };
 
+type DataHandler<T extends TSocketEndpointNames> = (data: TSocketResponseData<T>) => void;
+
 type RequestHandler<T extends TSocketEndpointNames = TSocketEndpointNames> = {
     name: TSocketEndpointNames;
-    onData: (data: TSocketResponseData<T>) => void;
+    onData: DataHandler<T>;
     onError: (error: TSocketError<T>['error']) => void;
     promise: Promise<TSocketResponseData<T>>;
 };
@@ -22,7 +24,8 @@ type RequestHandler<T extends TSocketEndpointNames = TSocketEndpointNames> = {
 type SubscriptionHandler<T extends TSocketSubscribableEndpointNames = TSocketSubscribableEndpointNames> = {
     name: TSocketSubscribableEndpointNames;
     status: 'active' | 'idle' | 'error';
-    onData: (data: TSocketResponseData<T>) => void;
+    data?: TSocketResponseData<T>;
+    subscriptions: Map<string, DataHandler<T>>;
     onError?: (error: TSocketError<T>['error']) => void;
     subscription_id: string;
 };
@@ -70,7 +73,12 @@ export class DerivAPIClient {
                         matchingHandler.onError(parsedData.error);
                         return;
                     }
-                    matchingHandler.onData(parsedData);
+                    matchingHandler.data = parsedData;
+                    if (matchingHandler.subscriptions?.size) {
+                        matchingHandler.subscriptions.forEach(onData => {
+                            onData(parsedData);
+                        });
+                    }
                     matchingHandler.subscription_id = parsedData?.subscription?.id ?? '';
                 }
             } else if (parsedData) {
@@ -118,19 +126,22 @@ export class DerivAPIClient {
         onData: (data: TSocketResponseData<T>) => void,
         onError?: (error: TSocketError<T>['error']) => void
     ) {
-        this.req_id = this.req_id + 1;
         const payload = { [name]: 1, ...(subscriptionPayload ?? {}), subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(payload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
         if (!matchingSubscription) {
+            this.req_id = this.req_id + 1;
+
             const newSubscriptionHandler: SubscriptionHandler<T> = {
                 name,
                 status: 'idle',
-                onData: onData,
                 onError: onError,
+                subscriptions: new Map(),
                 subscription_id: '',
             };
+
+            newSubscriptionHandler.subscriptions.set(this.req_id.toString(), onData);
             this.subscribeHandler.set(
                 subscriptionHash,
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
@@ -148,11 +159,14 @@ export class DerivAPIClient {
     async unsubscribe(hash: string) {
         const matchingSubscription = this.subscribeHandler.get(hash);
         if (matchingSubscription) {
-            const { subscription_id } = matchingSubscription;
-            const response = await this.send('forget', { forget: subscription_id });
-            if (response && !response.error) {
-                this.subscribeHandler.delete(hash);
-                return true;
+            if (matchingSubscription.subscriptions.size <= 1) {
+                const { subscription_id } = matchingSubscription;
+                const response = await this.send('forget', { forget: subscription_id });
+                if (response && !response.error) {
+                    matchingSubscription.subscriptions.clear();
+                    this.subscribeHandler.delete(hash);
+                    return true;
+                }
             }
         }
 

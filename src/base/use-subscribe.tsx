@@ -39,11 +39,6 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
         timeoutRef.current = setTimeout(() => {
             setStatus('idle');
         }, timeout);
-
-        return () => {
-            clearTimeout(timeoutRef.current);
-            derivAPIClient.unsubscribe(subscriptionId);
-        };
     }, [data]);
 
     const subscribe = async (payload: TSocketRequestPayload<T>) => {

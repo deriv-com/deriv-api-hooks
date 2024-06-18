@@ -25,7 +25,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
 
-    const { data, mutate, isSuccess, error } = useAuthorize();
+    const { data, mutate, isSuccess, error, status } = useAuthorize();
 
 
     const accountsList: Record<string, string> = JSON.parse(Cookies.get('accountsList') ?? '{}');
@@ -104,6 +104,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const value = useMemo(
         () => ({
+            status,
             error,
             activeLoginid,
             isAuthorizing,
@@ -112,7 +113,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             logout,
             isAuthorized,
         }),
-        [activeLoginid, isSuccess, error]
+        [activeLoginid, isSuccess, error,status]
     );
 
     return <AuthDataContext.Provider value={value}>{children}</AuthDataContext.Provider>;

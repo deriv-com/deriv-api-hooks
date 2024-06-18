@@ -6,11 +6,11 @@ export type TSocketQueryOptions<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
     queryKey?: string[];
-} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>>, 'queryKey' | 'queryFn'>;
+} & Omit<UseQueryOptions<TSocketResponseData<T>, TSocketError<T>['error']>, 'queryKey' | 'queryFn'>;
 
 export type TSocketQueryResults<T extends TSocketEndpointNames> = UseQueryResult<
     TSocketResponseData<T>,
-    TSocketError<T>
+    TSocketError<T>['error']
 >;
 
 export const useQuery = <T extends TSocketEndpointNames>({
@@ -18,10 +18,10 @@ export const useQuery = <T extends TSocketEndpointNames>({
     payload,
     queryKey,
     ...rest
-}: TSocketQueryOptions<T>) => {
+}: TSocketQueryOptions<T>): TSocketQueryResults<T> => {
     const { derivAPIClient } = useAPI();
 
-    return _useQuery<TSocketResponseData<T>, TSocketError<T>>({
+    return _useQuery<TSocketResponseData<T>, TSocketError<T>['error']>({
         queryKey: [name, ...(queryKey ?? [])],
         queryFn: () => derivAPIClient.send(name, payload),
         ...rest,

@@ -1,11 +1,11 @@
+import { useState, useEffect, useRef } from 'react';
+import { useAPI } from './use-context-hooks';
 import {
-    TSocketError,
+    TSocketSubscribableEndpointNames,
     TSocketRequestPayload,
     TSocketResponseData,
-    TSocketSubscribableEndpointNames,
+    TSocketError,
 } from '../types/api.types';
-import { useAPI } from './use-context-hooks';
-import { useEffect, useRef, useState } from 'react';
 
 type TSubscriptionStatus = 'loading' | 'error' | 'idle' | 'active';
 
@@ -26,13 +26,14 @@ type TSubscriptionStatus = 'loading' | 'error' | 'idle' | 'active';
  *   isLoading: boolean; // Flag indicating the subscription is in the process of connecting or waiting for data.
  * }}
  */
+
 export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T, timeout = 30000) => {
     const timeoutRef = useRef<NodeJS.Timeout>();
     const { derivAPIClient } = useAPI();
     const [data, setData] = useState<TSocketResponseData<T>>();
-    const [error, setError] = useState<TSocketError<T>['error']>();
+    const [error, setError] = useState<TSocketError<T>['error'] | undefined>();
     const [status, setStatus] = useState<TSubscriptionStatus>('loading');
-    const [subscription_id, setSubscriptionId] = useState('');
+    const [subscriptionId, setSubscriptionId] = useState<string>('');
 
     useEffect(() => {
         timeoutRef.current = setTimeout(() => {
@@ -41,39 +42,47 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
 
         return () => {
             clearTimeout(timeoutRef.current);
-            derivAPIClient.unsubscribe(subscription_id);
+            derivAPIClient.unsubscribe(subscriptionId);
         };
     }, [data]);
+
+    const subscribe = async (payload: TSocketRequestPayload<T>) => {
+        const id = await derivAPIClient.subscribe(
+            name,
+            payload,
+            (data: TSocketResponseData<T>) => {
+                clearTimeout(timeoutRef.current);
+                setData(data);
+                setStatus('active');
+            },
+            (error: TSocketError<T>['error']) => {
+                setError(error);
+                setStatus('error');
+            }
+        );
+        setSubscriptionId(id);
+    };
+
+    const unsubscribe = () => {
+        clearTimeout(timeoutRef.current);
+        derivAPIClient.unsubscribe(subscriptionId);
+        setStatus('loading');
+    };
+
+    const isActive = status === 'active';
+    const isError = status === 'error';
+    const isIdle = status === 'idle';
+    const isLoading = status === 'loading';
 
     return {
         data,
         error,
-        subscribe: async <T extends TSocketSubscribableEndpointNames>(payload: TSocketRequestPayload<T>) => {
-            const id = await derivAPIClient.subscribe(
-                name,
-                // @ts-expect-error will be fixed (soon)
-                payload,
-                data => {
-                    clearTimeout(timeoutRef.current);
-                    setData(data);
-                    setStatus('active');
-                },
-                error => {
-                    setError(prev => ({ ...prev, ...error }));
-                    setStatus('error');
-                }
-            );
-            setSubscriptionId(id);
-        },
-        unsubscribe: () => {
-            clearTimeout(timeoutRef.current);
-            derivAPIClient.unsubscribe(subscription_id);
-            setStatus('loading');
-        },
-        isActive: status === 'active',
-        isError: status === 'error',
-        isIdle: status === 'idle',
-        isLoading: status === 'loading',
+        subscribe,
+        unsubscribe,
+        isActive,
+        isError,
+        isIdle,
+        isLoading,
         status,
     };
 };

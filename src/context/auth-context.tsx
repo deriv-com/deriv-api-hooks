@@ -3,6 +3,7 @@ import { URLUtils } from '@deriv-com/utils';
 import { useAuthorize } from '../api/mutation/use-authorize';
 import { useAppData } from '../base';
 import Cookies from 'js-cookie';
+import { TSocketError } from '../types/api.types';
 
 type AuthData = {
     activeLoginid: string;
@@ -11,6 +12,7 @@ type AuthData = {
     switchAccount: (loginid: string) => void;
     appendAccountCookie: (loginid: string, token: string) => void;
     logout: () => void;
+    error: TSocketError<"authorize">['error'] | null;
 };
 
 export const AuthDataContext = createContext<AuthData | null>(null);
@@ -23,7 +25,8 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
 
-    const { data, mutate, isSuccess } = useAuthorize();
+    const { data, mutate, isSuccess, error } = useAuthorize();
+
 
     const accountsList: Record<string, string> = JSON.parse(Cookies.get('accountsList') ?? '{}');
 
@@ -101,6 +104,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const value = useMemo(
         () => ({
+            error,
             activeLoginid,
             isAuthorizing,
             switchAccount,
@@ -108,7 +112,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             logout,
             isAuthorized,
         }),
-        [activeLoginid, isSuccess]
+        [activeLoginid, isSuccess, error]
     );
 
     return <AuthDataContext.Provider value={value}>{children}</AuthDataContext.Provider>;

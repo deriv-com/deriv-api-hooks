@@ -27,8 +27,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const { data, mutate, isSuccess, error, status } = useAuthorize();
 
 
-    const existingAccounts = localStorage.getItem('client.accounts')
-    const accountsList: Record<string, string> = JSON.parse(existingAccounts ?? '{}');
+    const accountsList: Record<string, string> = JSON.parse(localStorage.getItem('client.accounts') ?? '{}');
 
     const isAuthorized = useMemo(
         () => isSuccess && (!!activeLoginid || !!Object.keys(accountsList).length),
@@ -38,9 +37,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const URLParams = new URLSearchParams(window.location.search);
     const authURLParams = !!URLParams.get('acct1') || !!URLParams.get('token1');
 
-    const authToken = localStorage.getItem('authToken');
-
-    const isAuthorizing = authURLParams || (!!authToken && !isAuthorized)
+    const isAuthorizing = authURLParams || (!!localStorage.getItem('authToken') && !isAuthorized)
 
     const authorizeAccount = useCallback((token?: string) => {
         if (token) mutate({ authorize: token });

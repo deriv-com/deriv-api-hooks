@@ -2,7 +2,6 @@ import { ReactNode, createContext, useCallback, useEffect, useMemo } from 'react
 import { URLUtils } from '@deriv-com/utils';
 import { useAuthorize } from '../api/mutation/use-authorize';
 import { useAppData } from '../base';
-import Cookies from 'js-cookie';
 import { TSocketError } from '../types/api.types';
 
 type AuthData = {
@@ -10,7 +9,6 @@ type AuthData = {
     isAuthorized: boolean;
     isAuthorizing: boolean;
     switchAccount: (loginid: string) => void;
-    appendAccountCookie: (loginid: string, token: string) => void;
     appendAccountLocalStorage: (loginid: string, token: string) => void;
     logout: () => void;
     error: TSocketError<"authorize">['error'] | null;
@@ -20,18 +18,17 @@ export const AuthDataContext = createContext<AuthData | null>(null);
 
 type AuthDataProviderProps = {
     children: ReactNode;
-    shouldUseLocalStorage?: boolean;
 };
 
-export const AuthDataProvider = ({ children, shouldUseLocalStorage = false }: AuthDataProviderProps) => {
+export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
 
     const { data, mutate, isSuccess, error, status } = useAuthorize();
 
 
-    const existingAccounts = shouldUseLocalStorage ? localStorage.getItem('client.accounts') : Cookies.get('accountsList');
-    const accountsList: Record<string, string> = shouldUseLocalStorage ? JSON.parse(existingAccounts ?? '{}') : JSON.parse(existingAccounts ?? '{}');
+    const existingAccounts = localStorage.getItem('client.accounts')
+    const accountsList: Record<string, string> = JSON.parse(existingAccounts ?? '{}');
 
     const isAuthorized = useMemo(
         () => isSuccess && (!!activeLoginid || !!Object.keys(accountsList).length),
@@ -41,7 +38,7 @@ export const AuthDataProvider = ({ children, shouldUseLocalStorage = false }: Au
     const URLParams = new URLSearchParams(window.location.search);
     const authURLParams = !!URLParams.get('acct1') || !!URLParams.get('token1');
 
-    const authToken = shouldUseLocalStorage ? localStorage.getItem('authToken') : Cookies.get('authToken');
+    const authToken = localStorage.getItem('authToken');
 
     const isAuthorizing = authURLParams || (!!authToken && !isAuthorized)
 
@@ -56,10 +53,7 @@ export const AuthDataProvider = ({ children, shouldUseLocalStorage = false }: Au
             if (!token) return;
             authorizeAccount(token);
 
-            if (shouldUseLocalStorage)
-                localStorage.setItem('authToken', token);
-            else
-                Cookies.set('authToken', token);
+            localStorage.setItem('authToken', token);
         },
         [loginInfo]
     );
@@ -82,34 +76,22 @@ export const AuthDataProvider = ({ children, shouldUseLocalStorage = false }: Au
                 accountsList[account.loginid] = account.token;
             });
 
-            if (shouldUseLocalStorage)
-                localStorage.setItem('accountsList', JSON.stringify(accountsList));
-            else
-                Cookies.set('accountsList', JSON.stringify(accountsList));
+            localStorage.setItem('accountsList', JSON.stringify(accountsList));
 
             URLUtils.filterSearchParams(paramsToDelete);
 
             authorizeAccount(loginInfo[0].token);
-            if (shouldUseLocalStorage)
-                localStorage.setItem('authToken', loginInfo[0].token);
-            else
-                Cookies.set('authToken', loginInfo[0].token);
+
+            localStorage.setItem('authToken', loginInfo[0].token);
+
         } else {
 
-            const token = shouldUseLocalStorage ? localStorage.getItem('authToken') : Cookies.get('authToken');
+            const token = localStorage.getItem('authToken');
 
             if (!token) return;
 
             authorizeAccount(token);
         }
-    }, []);
-
-    const appendAccountCookie = useCallback((loginid: string, token: string) => {
-        accountsList[loginid] = token;
-
-        Cookies.set('accountsList', JSON.stringify(accountsList));
-
-        switchAccount(loginid);
     }, []);
 
     const appendAccountLocalStorage = useCallback((loginid: string, token: string) => {
@@ -121,13 +103,10 @@ export const AuthDataProvider = ({ children, shouldUseLocalStorage = false }: Au
     }, []);
 
     const logout = useCallback(() => {
-        if (shouldUseLocalStorage) {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('accountsList');
-        } else {
-            Cookies.remove('authToken');
-            Cookies.remove('accountsList');
-        }
+
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('accountsList');
+
         setActiveLoginid('');
     }, []);
 
@@ -138,7 +117,6 @@ export const AuthDataProvider = ({ children, shouldUseLocalStorage = false }: Au
             activeLoginid,
             isAuthorizing,
             switchAccount,
-            appendAccountCookie,
             appendAccountLocalStorage,
             logout,
             isAuthorized,

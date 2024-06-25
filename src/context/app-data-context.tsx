@@ -20,7 +20,7 @@ export const AppDataContext = createContext<AppData | null>(null);
  * @param {PropsWithChildren} { children } - The child components to be wrapped by the provider.
  * @returns {JSX.Element} The provider component wrapping its children with App data context.
  */
-export const AppDataProvider = ({ children }: PropsWithChildren) => {
+export const AppDataProvider = ({ children, shouldUseLocalStorage = false }: PropsWithChildren<{ shouldUseLocalStorage?: boolean; }>) => {
     const [activeLoginid, setActiveLoginid] = useState('');
     const [environment, setEnvironment] = useState<Environment>('demo');
 
@@ -32,7 +32,7 @@ export const AppDataProvider = ({ children }: PropsWithChildren) => {
     return (
         <AppDataContext.Provider value={value}>
             <APIProvider>
-                <AuthDataProvider>{children}</AuthDataProvider>
+                <AuthDataProvider shouldUseLocalStorage={shouldUseLocalStorage}>{children}</AuthDataProvider>
             </APIProvider>
         </AppDataContext.Provider>
     );

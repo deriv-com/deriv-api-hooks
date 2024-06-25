@@ -43,7 +43,7 @@ export class DerivAPIClient {
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
         this.websocket = new WebSocket(endpoint);
-        this.req_id = 1;
+        this.req_id = 0;
         this.requestHandler = new Map();
         this.subscribeHandler = new Map();
         this.waitForWebSocketOpen = PromiseUtils.createPromise();

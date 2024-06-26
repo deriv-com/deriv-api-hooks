@@ -146,7 +146,6 @@ export class DerivAPIClient {
         onError,
         req_id,
     }: SubscribeFunctionArgs<T>): Promise<{ id: number; hash: string }> {
-        console.log(req_id);
         const subscriptionPayload = { [name]: 1, ...(payload ?? {}), subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(subscriptionPayload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);

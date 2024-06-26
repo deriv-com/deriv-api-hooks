@@ -26,7 +26,8 @@ type SubscriptionHandler<T extends TSocketSubscribableEndpointNames> = {
     name: T;
     status: 'active' | 'idle' | 'error';
     data?: TSocketSubscribeResponseData<T>;
-    subscriptions: Map<string, (data: TSocketSubscribeResponseData<T>) => void>;
+    counter: number;
+    subscriptions: Map<number, (data: TSocketSubscribeResponseData<T>) => void>;
     onError?: (error: TSocketError<T>['error']) => void;
     subscription_id: string;
 };
@@ -47,7 +48,6 @@ type SubscribeFunctionArgs<T extends TSocketSubscribableEndpointNames> = {
     payload?: TSocketRequestPayload<T>;
     onData: (data: TSocketSubscribeResponseData<T>) => void;
     onError?: (error: TSocketError<T>['error']) => void;
-    req_id?: number;
 };
 
 type UnsubscribeHandlerArgs = {
@@ -144,13 +144,12 @@ export class DerivAPIClient {
         payload,
         onData,
         onError,
-        req_id,
     }: SubscribeFunctionArgs<T>): Promise<{ id: number; hash: string }> {
         const subscriptionPayload = { [name]: 1, ...(payload ?? {}), subscribe: 1 };
         const subscriptionHash = await ObjectUtils.hashObject(subscriptionPayload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
-        if (!matchingSubscription || !req_id) {
+        if (!matchingSubscription) {
             this.req_id = this.req_id + 1;
 
             const newSubscriptionHandler: SubscriptionHandler<T> = {
@@ -159,9 +158,10 @@ export class DerivAPIClient {
                 onError: onError,
                 subscriptions: new Map(),
                 subscription_id: '',
+                counter: 0,
             };
 
-            newSubscriptionHandler.subscriptions.set(this.req_id.toString(), onData);
+            newSubscriptionHandler.subscriptions.set(newSubscriptionHandler.counter, onData);
             this.subscribeHandler.set(
                 subscriptionHash,
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
@@ -170,19 +170,20 @@ export class DerivAPIClient {
             await this.waitForWebSocketOpen?.promise;
             this.websocket.send(JSON.stringify({ ...subscriptionPayload, req_id: this.req_id }));
 
-            return { id: this.req_id, hash: subscriptionHash };
+            return { id: newSubscriptionHandler.counter, hash: subscriptionHash };
         } else {
-            matchingSubscription.subscriptions.delete(req_id.toString());
+            const currentCounter = matchingSubscription.counter + 1;
             matchingSubscription.subscriptions.set(
-                req_id.toString(),
+                currentCounter,
                 onData as (data: TSocketSubscribeResponseData<TSocketSubscribableEndpointNames>) => void
             );
-            const matchingHandler = matchingSubscription.subscriptions.get(req_id.toString());
+            matchingSubscription.counter = currentCounter;
+            const matchingHandler = matchingSubscription.subscriptions.get(currentCounter);
             if (typeof matchingHandler === 'function' && matchingSubscription.data) {
                 matchingHandler(matchingSubscription.data);
             }
 
-            return { id: this.req_id, hash: subscriptionHash };
+            return { id: matchingSubscription.counter, hash: subscriptionHash };
         }
     }
 
@@ -191,18 +192,16 @@ export class DerivAPIClient {
         if (matchingSubscription) {
             if (matchingSubscription.subscriptions.size <= 1) {
                 const { subscription_id } = matchingSubscription;
+                await this.waitForWebSocketOpen?.promise;
                 const response = await this.send({ name: 'forget', payload: { forget: subscription_id } });
                 if (response && !response.error) {
                     matchingSubscription.subscriptions.clear();
                     this.subscribeHandler.delete(hash);
-                    return true;
                 }
             } else {
-                matchingSubscription.subscriptions.delete(id.toString());
+                matchingSubscription.subscriptions.delete(id);
             }
         }
-
-        return false;
     }
 
     switchConnection() {}

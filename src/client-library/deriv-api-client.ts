@@ -158,7 +158,7 @@ export class DerivAPIClient {
                 onError: onError,
                 subscriptions: new Map(),
                 subscription_id: '',
-                counter: 0,
+                counter: 1,
             };
 
             newSubscriptionHandler.subscriptions.set(newSubscriptionHandler.counter, onData);
@@ -189,8 +189,11 @@ export class DerivAPIClient {
 
     async unsubscribe({ hash, id }: UnsubscribeHandlerArgs) {
         const matchingSubscription = this.subscribeHandler.get(hash);
+
         if (matchingSubscription) {
-            if (matchingSubscription.subscriptions.size <= 1) {
+            matchingSubscription.subscriptions.delete(id);
+
+            if (!matchingSubscription.subscriptions.size) {
                 const { subscription_id } = matchingSubscription;
                 await this.waitForWebSocketOpen?.promise;
                 const response = await this.send({ name: 'forget', payload: { forget: subscription_id } });
@@ -198,8 +201,6 @@ export class DerivAPIClient {
                     matchingSubscription.subscriptions.clear();
                     this.subscribeHandler.delete(hash);
                 }
-            } else {
-                matchingSubscription.subscriptions.delete(id);
             }
         }
     }

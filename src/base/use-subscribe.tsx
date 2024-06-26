@@ -42,30 +42,34 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
     const isLoading = status === 'loading';
 
     const subscribe = async (payload: TSocketRequestPayload<T>) => {
-        if (!internalHash.current && !internalId.current) {
-            const { id, hash } = await derivAPIClient.subscribe({
-                name,
-                payload,
-                onData: (data: TSocketSubscribeResponseData<TSocketSubscribableEndpointNames>) => {
-                    clearTimeout(timeoutRef.current);
-                    setData(data as TSocketSubscribeResponseData<T>);
-                    setStatus('active');
-                },
-                onError: (error: TSocketError<T>['error']) => {
-                    setError(error);
-                    setStatus('error');
-                },
-            });
-            internalHash.current = hash;
-            internalId.current = id;
-        }
+        if (internalId.current) return;
+        if (internalHash.current) return;
+
+        const { id, hash } = await derivAPIClient.subscribe({
+            name,
+            payload,
+            onData: (data: TSocketSubscribeResponseData<TSocketSubscribableEndpointNames>) => {
+                clearTimeout(timeoutRef.current);
+                setData(data as TSocketSubscribeResponseData<T>);
+                setStatus('active');
+            },
+            onError: (error: TSocketError<T>['error']) => {
+                setError(error);
+                setStatus('error');
+            },
+        });
+
+        internalHash.current = hash;
+        internalId.current = id;
     };
 
     const unsubscribe = async () => {
         if (internalId.current && internalHash.current) {
-            clearTimeout(timeoutRef.current);
             await derivAPIClient.unsubscribe({ id: internalId.current, hash: internalHash.current });
+            clearTimeout(timeoutRef.current);
             setStatus('loading');
+            internalId.current = null;
+            internalHash.current = null;
         }
     };
 

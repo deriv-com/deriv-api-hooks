@@ -36,13 +36,7 @@ export const SandboxPage = () => {
             <button onClick={async () => await subscribeTicks({ ticks: '1HZ50V' })}>
                 Subscribe to Different Ticks
             </button>
-            <button
-                onClick={async () => {
-                    await unsubscribeTicks();
-                }}
-            >
-                Unsubscribe Ticks
-            </button>
+            <button onClick={() => unsubscribeTicks()}>Unsubscribe Ticks</button>
         </div>
     );
 };

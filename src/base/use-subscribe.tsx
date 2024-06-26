@@ -67,9 +67,9 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
         setHash(hash);
     };
 
-    const unsubscribe = () => {
+    const unsubscribe = async () => {
         clearTimeout(timeoutRef.current);
-        derivAPIClient.unsubscribe({ id: subsId, hash });
+        await derivAPIClient.unsubscribe({ id: subsId, hash });
         setStatus('loading');
     };
 

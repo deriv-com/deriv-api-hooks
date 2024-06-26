@@ -13,7 +13,7 @@ export const useExchangeRates = () => {
             target_currencies.reduce(async (prevPromise, target_currency) => {
                 await prevPromise;
                 exchangeRatesSubscriptions.current.push({ base_currency, target_currency });
-                return subscribe({ base_currency, target_currency });
+                return await subscribe({ base_currency, target_currency });
             }, Promise.resolve());
 
             const newExchangeRates = { ...exchangeRates };

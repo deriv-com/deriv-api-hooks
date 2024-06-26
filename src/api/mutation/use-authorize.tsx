@@ -7,7 +7,7 @@ export const useAuthorize = ({ ...options }: Omit<AugmentedMutationOptions<'auth
     const { derivAPIClient } = useAPI();
 
     return useReactQueryMutation({
-        mutationFn: payload => derivAPIClient.send('authorize', payload),
+        mutationFn: payload => derivAPIClient.send({ name: 'authorize', payload }),
         ...options,
     });
 };

@@ -23,7 +23,7 @@ export const useQuery = <T extends TSocketEndpointNames>({
 
     return _useQuery<TSocketResponseData<T>, TSocketError<T>['error']>({
         queryKey: [name, ...(queryKey ?? [])],
-        queryFn: () => derivAPIClient.send(name, payload),
+        queryFn: () => derivAPIClient.send({ name, payload }),
         ...rest,
     });
 };

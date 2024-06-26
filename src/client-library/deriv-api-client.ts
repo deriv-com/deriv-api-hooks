@@ -5,6 +5,7 @@ import {
     TSocketRequestPayload,
     TSocketResponseData,
     TSocketSubscribableEndpointNames,
+    TSocketSubscribeResponseData,
 } from '../types/api.types';
 
 type DerivAPIClientOptions = {
@@ -12,17 +13,20 @@ type DerivAPIClientOptions = {
     onClose: (e: CloseEvent) => void;
 };
 
+type DataHandler<T extends TSocketEndpointNames> = (data: TSocketResponseData<T>) => void;
+
 type RequestHandler<T extends TSocketEndpointNames = TSocketEndpointNames> = {
     name: TSocketEndpointNames;
-    onData: (data: TSocketResponseData<T>) => void;
+    onData: DataHandler<T>;
     onError: (error: TSocketError<T>['error']) => void;
     promise: Promise<TSocketResponseData<T>>;
 };
 
-type SubscriptionHandler<T extends TSocketSubscribableEndpointNames = TSocketSubscribableEndpointNames> = {
-    name: TSocketSubscribableEndpointNames;
+type SubscriptionHandler<T extends TSocketSubscribableEndpointNames> = {
+    name: T;
     status: 'active' | 'idle' | 'error';
-    onData: (data: TSocketResponseData<T>) => void;
+    data?: TSocketSubscribeResponseData<T>;
+    subscriptions: Map<string, (data: TSocketSubscribeResponseData<T>) => void>;
     onError?: (error: TSocketError<T>['error']) => void;
     subscription_id: string;
 };
@@ -32,6 +36,24 @@ type SubscriptionMap<T extends TSocketSubscribableEndpointNames = TSocketSubscri
     string,
     SubscriptionHandler<T>
 >;
+
+type SendFunctionArgs<T extends TSocketEndpointNames> = {
+    name: T;
+    payload?: TSocketRequestPayload<T>;
+};
+
+type SubscribeFunctionArgs<T extends TSocketSubscribableEndpointNames> = {
+    name: T;
+    payload?: TSocketRequestPayload<T>;
+    onData: (data: TSocketSubscribeResponseData<T>) => void;
+    onError?: (error: TSocketError<T>['error']) => void;
+    req_id?: number;
+};
+
+type UnsubscribeHandlerArgs = {
+    id: number;
+    hash: string;
+};
 
 export class DerivAPIClient {
     websocket: WebSocket;
@@ -70,7 +92,12 @@ export class DerivAPIClient {
                         matchingHandler.onError(parsedData.error);
                         return;
                     }
-                    matchingHandler.onData(parsedData);
+                    matchingHandler.data = parsedData;
+                    if (matchingHandler.subscriptions?.size) {
+                        matchingHandler.subscriptions.forEach(onData => {
+                            onData(parsedData);
+                        });
+                    }
                     matchingHandler.subscription_id = parsedData?.subscription?.id ?? '';
                 }
             } else if (parsedData) {
@@ -90,9 +117,9 @@ export class DerivAPIClient {
         this.keepAlive();
     }
 
-    async send<T extends TSocketEndpointNames>(name: T, requestPayload?: TSocketRequestPayload<T>) {
+    async send<T extends TSocketEndpointNames>({ name, payload }: SendFunctionArgs<T>) {
         this.req_id = this.req_id + 1;
-        const payload = { [name]: 1, ...(requestPayload ?? {}), req_id: this.req_id };
+        const requestPayload = { [name]: 1, ...(payload ?? {}), req_id: this.req_id };
 
         const matchingRequest = this.requestHandler.get(this.req_id.toString());
         if (matchingRequest) return matchingRequest.promise as Promise<TSocketResponseData<T>>;
@@ -107,52 +134,72 @@ export class DerivAPIClient {
         this.requestHandler.set(this.req_id.toString(), newRequestHandler as RequestHandler<TSocketEndpointNames>);
 
         await this.waitForWebSocketOpen?.promise;
-        this.websocket.send(JSON.stringify(payload));
+        this.websocket.send(JSON.stringify(requestPayload));
 
         return promise;
     }
 
-    async subscribe<T extends TSocketSubscribableEndpointNames>(
-        name: T,
-        subscriptionPayload: TSocketRequestPayload<T>,
-        onData: (data: TSocketResponseData<T>) => void,
-        onError?: (error: TSocketError<T>['error']) => void
-    ) {
-        this.req_id = this.req_id + 1;
-        const payload = { [name]: 1, ...(subscriptionPayload ?? {}), subscribe: 1 };
-        const subscriptionHash = await ObjectUtils.hashObject(payload);
+    async subscribe<T extends TSocketSubscribableEndpointNames>({
+        name,
+        payload,
+        onData,
+        onError,
+        req_id,
+    }: SubscribeFunctionArgs<T>): Promise<{ id: number; hash: string }> {
+        console.log(req_id);
+        const subscriptionPayload = { [name]: 1, ...(payload ?? {}), subscribe: 1 };
+        const subscriptionHash = await ObjectUtils.hashObject(subscriptionPayload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
-        if (!matchingSubscription) {
+        if (!matchingSubscription || !req_id) {
+            this.req_id = this.req_id + 1;
+
             const newSubscriptionHandler: SubscriptionHandler<T> = {
                 name,
                 status: 'idle',
-                onData: onData,
                 onError: onError,
+                subscriptions: new Map(),
                 subscription_id: '',
             };
+
+            newSubscriptionHandler.subscriptions.set(this.req_id.toString(), onData);
             this.subscribeHandler.set(
                 subscriptionHash,
                 newSubscriptionHandler as SubscriptionHandler<TSocketSubscribableEndpointNames>
             );
 
             await this.waitForWebSocketOpen?.promise;
-            this.websocket.send(JSON.stringify({ ...payload, req_id: this.req_id }));
+            this.websocket.send(JSON.stringify({ ...subscriptionPayload, req_id: this.req_id }));
 
-            return subscriptionHash;
+            return { id: this.req_id, hash: subscriptionHash };
+        } else {
+            matchingSubscription.subscriptions.delete(req_id.toString());
+            matchingSubscription.subscriptions.set(
+                req_id.toString(),
+                onData as (data: TSocketSubscribeResponseData<TSocketSubscribableEndpointNames>) => void
+            );
+            const matchingHandler = matchingSubscription.subscriptions.get(req_id.toString());
+            if (typeof matchingHandler === 'function' && matchingSubscription.data) {
+                matchingHandler(matchingSubscription.data);
+            }
+
+            return { id: this.req_id, hash: subscriptionHash };
         }
-
-        return subscriptionHash;
     }
 
-    async unsubscribe(hash: string) {
+    async unsubscribe({ hash, id }: UnsubscribeHandlerArgs) {
         const matchingSubscription = this.subscribeHandler.get(hash);
         if (matchingSubscription) {
-            const { subscription_id } = matchingSubscription;
-            const response = await this.send('forget', { forget: subscription_id });
-            if (response && !response.error) {
-                this.subscribeHandler.delete(hash);
-                return true;
+            if (matchingSubscription.subscriptions.size <= 1) {
+                const { subscription_id } = matchingSubscription;
+                const response = await this.send({ name: 'forget', payload: { forget: subscription_id } });
+                if (response && !response.error) {
+                    matchingSubscription.subscriptions.clear();
+                    this.subscribeHandler.delete(hash);
+                    return true;
+                }
+            } else {
+                matchingSubscription.subscriptions.delete(id.toString());
             }
         }
 
@@ -183,7 +230,7 @@ export class DerivAPIClient {
         }
 
         this.keepAliveIntervalId = setInterval(async () => {
-            await this.send('ping');
+            await this.send({ name: 'ping' });
         }, interval);
     }
 }

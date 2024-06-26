@@ -16,7 +16,7 @@ export const SandboxPage = () => {
 
     useEffect(() => {
         subscribeExchangeRates({ base_currency: 'USD', target_currency: 'AED' });
-        subscribeTicks({ ticks: 'R_50' });
+        subscribeTicks({ ticks: 'R_100' });
     }, []);
 
     return (
@@ -29,7 +29,7 @@ export const SandboxPage = () => {
                 <div>{JSON.stringify(exchangeRateData && exchangeRateData.exchange_rates)}</div>
                 <div>{JSON.stringify(data)}</div>
             </div>
-            <button onClick={() => subscribeTicks({ ticks: '1HZ50Vdeez' })}>Subscribe to Different Ticks</button>
+            <button onClick={() => subscribeTicks({ ticks: '1HZ50V' })}>Subscribe to Different Ticks</button>
             <button onClick={() => unsubscribeTicks()}>Unsubscribe Ticks</button>
         </div>
     );

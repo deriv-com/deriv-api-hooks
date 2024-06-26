@@ -1488,7 +1488,28 @@ type TSocketEndpoints = {
 
 export type TSocketEndpointNames = keyof TSocketEndpoints;
 
-export type TSocketSubscribableEndpointNames = KeysMatching<TSocketEndpoints, { request: { subscribe?: number } }>;
+export type TSocketSubscribableEndpointNames = Extract<
+    TSocketEndpointNames,
+    | 'balance'
+    | 'buy'
+    | 'cashier_payments'
+    | 'crypto_estimations'
+    | 'exchange_rates'
+    | 'p2p_advert_info'
+    | 'p2p_advertiser_create'
+    | 'p2p_advertiser_info'
+    | 'p2p_order_create'
+    | 'p2p_order_info'
+    | 'p2p_order_list'
+    | 'p2p_settings'
+    | 'proposal'
+    | 'proposal_open_contract'
+    | 'ticks'
+    | 'ticks_history'
+    | 'trading_platform_asset_listing'
+    | 'transaction'
+    | 'website_status'
+>;
 
 export type TSocketResponse<T extends TSocketEndpointNames> = TSocketEndpoints[T]['response'] & TSocketError<T>;
 
@@ -1517,6 +1538,11 @@ export type TSocketError<T extends TSocketEndpointNames> = {
 };
 
 export type TSocketResponseData<T extends TSocketEndpointNames> = Omit<
+    NoStringIndex<TSocketResponse<T>>,
+    'req_id' | 'msg_type' | 'echo_req' | 'subscription'
+>;
+
+export type TSocketSubscribeResponseData<T extends TSocketSubscribableEndpointNames> = Omit<
     NoStringIndex<TSocketResponse<T>>,
     'req_id' | 'msg_type' | 'echo_req' | 'subscription'
 >;

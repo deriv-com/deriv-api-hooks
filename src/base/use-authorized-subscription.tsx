@@ -1,7 +1,7 @@
-import { useRef } from "react";
-import { TSocketSubscribableEndpointNames } from "../types/api.types";
-import { useAuthData } from "./use-context-hooks";
-import { useSubscribe } from "./use-subscribe";
+import { useRef } from 'react';
+import { TSocketSubscribableEndpointNames } from '../types/api.types';
+import { useAuthData } from './use-context-hooks';
+import { useSubscribe } from './use-subscribe';
 
 export const useAuthorizedSubscription = <T extends TSocketSubscribableEndpointNames>(name: T) => {
     const { isAuthorized, activeLoginid, isAuthorizing } = useAuthData();
@@ -22,5 +22,6 @@ export const useAuthorizedSubscription = <T extends TSocketSubscribableEndpointN
             });
         }
     };
-    return { ...rest, subscribe: authorizedSubscribe, };
+
+    return { ...rest, subscribe: authorizedSubscribe };
 };

@@ -90,6 +90,7 @@ export class DerivAPIClient {
                 if (!matchingHandler) return;
 
                 if (parsedData.error && typeof matchingHandler.onError === 'function') {
+                    this.subscribeHandler.delete(subscribeHash);
                     matchingHandler.onError(parsedData.error);
                     return;
                 }
@@ -105,9 +106,9 @@ export class DerivAPIClient {
 
                 if (parsedData.error) {
                     matchingHandler.onError(parsedData.error);
-                    return;
+                } else {
+                    matchingHandler.onData(parsedData);
                 }
-                matchingHandler.onData(parsedData);
                 this.requestHandler.delete(id);
             }
         });

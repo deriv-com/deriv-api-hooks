@@ -87,30 +87,28 @@ export class DerivAPIClient {
                 const { req_id, ...payload } = parsedData.echo_req;
                 const subscribeHash = await ObjectUtils.hashObject({ ...payload });
                 const matchingHandler = this.subscribeHandler.get(subscribeHash);
-                if (matchingHandler) {
-                    if (parsedData.error && typeof matchingHandler.onError === 'function') {
-                        matchingHandler.onError(parsedData.error);
-                        return;
-                    }
-                    matchingHandler.data = parsedData;
-                    if (matchingHandler.subscriptions?.size) {
-                        matchingHandler.subscriptions.forEach(onData => {
-                            onData(parsedData);
-                        });
-                    }
-                    matchingHandler.subscription_id = parsedData?.subscription?.id ?? '';
+                if (!matchingHandler) return;
+
+                if (parsedData.error && typeof matchingHandler.onError === 'function') {
+                    matchingHandler.onError(parsedData.error);
+                    return;
                 }
+                matchingHandler.data = parsedData;
+                if (matchingHandler.subscriptions?.size) {
+                    matchingHandler.subscriptions.forEach(onData => onData(parsedData));
+                }
+                matchingHandler.subscription_id = parsedData?.subscription?.id ?? '';
             } else if (parsedData) {
                 const id = parsedData.req_id?.toString();
                 const matchingHandler = this.requestHandler.get(id);
-                if (matchingHandler) {
-                    if (parsedData.error) {
-                        matchingHandler.onError(parsedData.error);
-                        return;
-                    }
-                    matchingHandler.onData(parsedData);
-                    this.requestHandler.delete(id);
+                if (!matchingHandler) return;
+
+                if (parsedData.error) {
+                    matchingHandler.onError(parsedData.error);
+                    return;
                 }
+                matchingHandler.onData(parsedData);
+                this.requestHandler.delete(id);
             }
         });
 
@@ -189,19 +187,17 @@ export class DerivAPIClient {
 
     async unsubscribe({ hash, id }: UnsubscribeHandlerArgs) {
         const matchingSubscription = this.subscribeHandler.get(hash);
+        if (!matchingSubscription) return;
+        matchingSubscription.subscriptions.delete(id);
 
-        if (matchingSubscription) {
-            matchingSubscription.subscriptions.delete(id);
+        if (matchingSubscription.subscriptions.size > 0) return;
+        const { subscription_id } = matchingSubscription;
 
-            if (!matchingSubscription.subscriptions.size) {
-                const { subscription_id } = matchingSubscription;
-                await this.waitForWebSocketOpen?.promise;
-                const response = await this.send({ name: 'forget', payload: { forget: subscription_id } });
-                if (response && !response.error) {
-                    matchingSubscription.subscriptions.clear();
-                    this.subscribeHandler.delete(hash);
-                }
-            }
+        await this.waitForWebSocketOpen?.promise;
+        const response = await this.send({ name: 'forget', payload: { forget: subscription_id } });
+        if (response && !response.error) {
+            matchingSubscription.subscriptions.clear();
+            this.subscribeHandler.delete(hash);
         }
     }
 

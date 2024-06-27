@@ -74,6 +74,13 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
     };
 
     useEffect(() => {
+        if (error) {
+            internalHash.current = null;
+            internalId.current = null;
+        }
+    }, [error]);
+
+    useEffect(() => {
         timeoutRef.current = setTimeout(() => {
             setStatus('idle');
         }, timeout);

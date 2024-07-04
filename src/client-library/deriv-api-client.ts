@@ -69,6 +69,12 @@ export class DerivAPIClient {
         this.requestHandler = new Map();
         this.subscribeHandler = new Map();
         this.waitForWebSocketOpen = PromiseUtils.createPromise();
+        this.initializeWebSocket(endpoint, options);
+    }
+
+    initializeWebSocket(endpoint: string, options?: DerivAPIClientOptions) {
+        this.websocket = new WebSocket(endpoint);
+        this.waitForWebSocketOpen = PromiseUtils.createPromise();
 
         this.websocket.addEventListener('open', e => {
             if (typeof options?.onOpen === 'function') options.onOpen(e);

@@ -78,6 +78,9 @@ export class DerivAPIClient {
 
         this.websocket.addEventListener('close', e => {
             if (typeof options?.onClose === 'function') options.onClose(e);
+            setTimeout(() => {
+                this.websocket = new WebSocket(endpoint);
+            }, 5000);
         });
 
         this.websocket.addEventListener('message', async response => {
@@ -117,6 +120,9 @@ export class DerivAPIClient {
     }
 
     async send<T extends TSocketEndpointNames>({ name, payload }: SendFunctionArgs<T>) {
+        if (this.websocket.readyState !== WebSocket.OPEN) {
+            await this.waitForWebSocketOpen?.promise;
+        }
         this.req_id = this.req_id + 1;
         const requestPayload = { [name]: 1, ...(payload ?? {}), req_id: this.req_id };
 

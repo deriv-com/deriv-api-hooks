@@ -9,8 +9,8 @@ import {
 } from '../types/api.types';
 
 type DerivAPIClientOptions = {
-    onOpen: (e: Event) => void;
-    onClose: (e: CloseEvent) => void;
+    onOpen?: (e: Event) => void;
+    onClose?: (e: CloseEvent) => void;
 };
 
 type DataHandler<T extends TSocketEndpointNames> = (data: TSocketResponseData<T>) => void;

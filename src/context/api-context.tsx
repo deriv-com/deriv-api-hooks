@@ -2,7 +2,9 @@ import { createContext, PropsWithChildren } from 'react';
 import { URLUtils } from '@deriv-com/utils';
 import { DerivAPIClient } from '../client-library/deriv-api-client';
 
-export const derivAPIClient = new DerivAPIClient(URLUtils.getWebsocketURL());
+export const derivAPIClient = new DerivAPIClient(URLUtils.getWebsocketURL(), {
+    onClose: () => window.location.reload(),
+});
 
 type APIData = {
     derivAPIClient: DerivAPIClient;

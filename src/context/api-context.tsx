@@ -2,8 +2,18 @@ import { createContext, PropsWithChildren } from 'react';
 import { URLUtils } from '@deriv-com/utils';
 import { DerivAPIClient } from '../client-library/deriv-api-client';
 
+let isConnecting = false;
+
 export const derivAPIClient = new DerivAPIClient(URLUtils.getWebsocketURL(), {
-    onClose: () => window.location.reload(),
+    onOpen: () => {
+        isConnecting = false;
+    },
+    onClose: () => {
+        if (!isConnecting) {
+            window.location.reload();
+            isConnecting = true;
+        }
+    },
 });
 
 type APIData = {

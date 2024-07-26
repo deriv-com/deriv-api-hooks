@@ -8,6 +8,7 @@ import { useAppDelete } from './use-app-delete';
 import { useAppRegister } from './use-app-register';
 import { useAppUpdate } from './use-app-update';
 import { useAuthorize } from './use-authorize';
+import { useBuy } from './use-buy';
 import { useBuyContractForMultipleAccounts } from './use-buy-contract-for-multiple-accounts';
 import { useCancel } from './use-cancel';
 import { useCashierWithdrawalCancel } from './use-cashier-withdrawal-cancel';
@@ -87,6 +88,7 @@ export {
     useAppRegister,
     useAppUpdate,
     useAuthorize,
+    useBuy,
     useBuyContractForMultipleAccounts,
     useCancel,
     useCashierWithdrawalCancel,

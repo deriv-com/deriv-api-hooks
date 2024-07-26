@@ -205,7 +205,7 @@ export class DerivAPIClient {
     switchConnection() {}
 
     isSocketClosingOrClosed() {
-        return [!2, 3].includes(this.websocket.readyState);
+        return ![2, 3].includes(this.websocket.readyState);
     }
 
     disconnect() {

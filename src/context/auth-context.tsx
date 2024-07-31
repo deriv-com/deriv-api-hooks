@@ -3,6 +3,7 @@ import { URLUtils } from '@deriv-com/utils';
 import { useAuthorize } from '../api/mutation/use-authorize';
 import { useAppData } from '../base';
 import { TSocketError } from '../types/api.types';
+import { useLogout } from '../api';
 
 type AuthData = {
     activeLoginid: string;
@@ -11,7 +12,7 @@ type AuthData = {
     switchAccount: (loginid: string) => void;
     appendAccountLocalStorage: (loginid: string, token: string) => void;
     logout: () => void;
-    error: TSocketError<"authorize">['error'] | null;
+    error: TSocketError<'authorize'>['error'] | null;
 };
 
 export const AuthDataContext = createContext<AuthData | null>(null);
@@ -26,6 +27,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const { data, mutate, isSuccess, error, status } = useAuthorize();
 
+    const { mutateAsync: requestLogout } = useLogout();
 
     const accountsList: Record<string, string> = JSON.parse(localStorage.getItem('client.accounts') ?? '{}');
 
@@ -37,7 +39,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const URLParams = new URLSearchParams(window.location.search);
     const authURLParams = !!URLParams.get('acct1') || !!URLParams.get('token1');
 
-    const isAuthorizing = authURLParams || (!!localStorage.getItem('authToken') && !isAuthorized)
+    const isAuthorizing = authURLParams || (!!localStorage.getItem('authToken') && !isAuthorized);
 
     const authorizeAccount = useCallback((token?: string) => {
         if (token) mutate({ authorize: token });
@@ -80,9 +82,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             authorizeAccount(loginInfo[0].token);
 
             localStorage.setItem('authToken', loginInfo[0].token);
-
         } else {
-
             const token = localStorage.getItem('authToken');
 
             if (!token) return;
@@ -100,7 +100,9 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     }, []);
 
     const logout = useCallback(() => {
-
+        requestLogout({
+            loginid: activeLoginid,
+        });
         localStorage.removeItem('authToken');
         localStorage.removeItem('accountsList');
 

@@ -26,6 +26,7 @@ type SubscriptionHandler<T extends TSocketSubscribableEndpointNames> = {
     name: T;
     status: 'active' | 'idle' | 'error';
     data?: TSocketSubscribeResponseData<T>;
+    payload: TSocketRequestPayload<T>;
     counter: number;
     subscriptions: Map<number, (data: TSocketSubscribeResponseData<T>) => void>;
     onError?: (error: TSocketError<T>['error']) => void;
@@ -61,7 +62,10 @@ export class DerivAPIClient {
     subscribeHandler: SubscriptionMap;
     req_id: number;
     waitForWebSocketOpen: ReturnType<typeof PromiseUtils.createPromise>;
-    waitForWebSocketCall?: ReturnType<typeof PromiseUtils.createPromise> & { name: TSocketEndpointNames };
+    waitForWebSocketCall?: ReturnType<typeof PromiseUtils.createPromise> & {
+        name: TSocketEndpointNames;
+        type: 'all' | 'subscribe' | 'request';
+    };
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
@@ -83,6 +87,12 @@ export class DerivAPIClient {
 
         this.websocket.addEventListener('message', async response => {
             const parsedData = JSON.parse(response.data);
+
+            // If name matches for the calls you asynchronously wait, resolve
+            if (this.waitForWebSocketCall && parsedData.msg_type === this.waitForWebSocketCall?.name) {
+                const { resolve } = this.waitForWebSocketCall;
+                resolve({});
+            }
 
             if (parsedData.subscription || parsedData.echo_req?.subscribe) {
                 const { req_id, ...payload } = parsedData.echo_req;
@@ -134,6 +144,9 @@ export class DerivAPIClient {
         this.requestHandler.set(this.req_id.toString(), newRequestHandler as RequestHandler<TSocketEndpointNames>);
 
         await this.waitForWebSocketOpen?.promise;
+        if (this.waitForWebSocketCall?.type === 'request' || this.waitForWebSocketCall?.type === 'all') {
+            await this.waitForWebSocketCall.promise;
+        }
         this.websocket.send(JSON.stringify(requestPayload));
 
         return promise;
@@ -149,12 +162,14 @@ export class DerivAPIClient {
         const subscriptionHash = await ObjectUtils.hashObject(subscriptionPayload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
+        // If no existing subscription, create a new handler and send the subscribe payload
         if (!matchingSubscription) {
             this.req_id = this.req_id + 1;
 
             const newSubscriptionHandler: SubscriptionHandler<T> = {
                 name,
                 status: 'idle',
+                payload: subscriptionPayload as unknown as TSocketRequestPayload<T>,
                 onError: onError,
                 subscriptions: new Map(),
                 subscription_id: '',
@@ -168,10 +183,14 @@ export class DerivAPIClient {
             );
 
             await this.waitForWebSocketOpen?.promise;
+            if (this.waitForWebSocketCall?.type === 'subscribe' || this.waitForWebSocketCall?.type === 'all') {
+                await this.waitForWebSocketCall.promise;
+            }
             this.websocket.send(JSON.stringify({ ...subscriptionPayload, req_id: this.req_id }));
 
             return { id: newSubscriptionHandler.counter, hash: subscriptionHash };
         } else {
+            // If there is already a subscription, simply append the onData callback directly to the subscription list
             const currentCounter = matchingSubscription.counter + 1;
             matchingSubscription.subscriptions.set(
                 currentCounter,
@@ -203,7 +222,13 @@ export class DerivAPIClient {
         }
     }
 
-    async waitFor(name: TSocketEndpointNames) {}
+    async waitFor(name: TSocketEndpointNames, type: 'all' | 'subscribe' | 'request') {
+        this.waitForWebSocketCall = { ...PromiseUtils.createPromise(), name, type };
+    }
+
+    reinitializeSubscriptions(subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>) {
+        this.subscribeHandler = subscribeHandler;
+    }
 
     isSocketClosingOrClosed() {
         return ![2, 3].includes(this.websocket.readyState);

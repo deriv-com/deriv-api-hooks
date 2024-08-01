@@ -34,7 +34,7 @@
     "license": "ISC",
     "dependencies": {
         "@deriv-com/utils": "^0.0.30",
-        "@deriv/api-types": "^1.0.1447",
+        "@deriv/api-types": "^1.0.1448",
         "@deriv/deriv-api": "^1.0.15",
         "@tanstack/react-query": "^5.51.16"
     },

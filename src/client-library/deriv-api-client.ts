@@ -8,7 +8,7 @@ import {
     TSocketSubscribeResponseData,
 } from '../types/api.types';
 
-type DerivAPIClientOptions = {
+export type DerivAPIClientOptions = {
     onOpen?: (e: Event) => void;
     onClose?: (e: CloseEvent) => void;
 };
@@ -38,19 +38,19 @@ type SubscriptionMap<T extends TSocketSubscribableEndpointNames = TSocketSubscri
     SubscriptionHandler<T>
 >;
 
-type SendFunctionArgs<T extends TSocketEndpointNames> = {
+export type SendFunctionArgs<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
 };
 
-type SubscribeFunctionArgs<T extends TSocketSubscribableEndpointNames> = {
+export type SubscribeFunctionArgs<T extends TSocketSubscribableEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
     onData: (data: TSocketSubscribeResponseData<T>) => void;
     onError?: (error: TSocketError<T>['error']) => void;
 };
 
-type UnsubscribeHandlerArgs = {
+export type UnsubscribeHandlerArgs = {
     id: number;
     hash: string;
 };
@@ -61,6 +61,7 @@ export class DerivAPIClient {
     subscribeHandler: SubscriptionMap;
     req_id: number;
     waitForWebSocketOpen: ReturnType<typeof PromiseUtils.createPromise>;
+    waitForWebSocketCall?: ReturnType<typeof PromiseUtils.createPromise> & { name: TSocketEndpointNames };
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
@@ -202,7 +203,7 @@ export class DerivAPIClient {
         }
     }
 
-    switchConnection() {}
+    async waitFor(name: TSocketEndpointNames) {}
 
     isSocketClosingOrClosed() {
         return ![2, 3].includes(this.websocket.readyState);

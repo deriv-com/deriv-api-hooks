@@ -226,8 +226,11 @@ export class DerivAPIClient {
         this.waitForWebSocketCall = { ...PromiseUtils.createPromise(), name, type };
     }
 
-    reinitializeSubscriptions(subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>) {
+    async reinitializeSubscriptions(subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>) {
         this.subscribeHandler = subscribeHandler;
+        for (const subs of this.subscribeHandler.values()) {
+            await this.send({ name: subs.name, payload: subs.payload });
+        }
     }
 
     isSocketClosingOrClosed() {

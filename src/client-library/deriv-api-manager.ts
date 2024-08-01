@@ -31,7 +31,7 @@ export class DerivAPIManager {
         return this.activeClient.unsubscribe(args);
     }
 
-    switchConnection(endpoint: string) {
+    async switchConnection(endpoint: string) {
         const matchingInstance = this.clientList.get(endpoint);
         if (matchingInstance) {
             this.activeClient = matchingInstance;
@@ -39,7 +39,7 @@ export class DerivAPIManager {
         }
         const subscribeHandlers = { ...this.activeClient.subscribeHandler };
         const newInstance = new DerivAPIClient(endpoint, this.options);
-        newInstance.reinitializeSubscriptions(subscribeHandlers);
+        await newInstance.reinitializeSubscriptions(subscribeHandlers);
         this.clientList.set(endpoint, newInstance);
         this.activeClient = newInstance;
     }

@@ -1,11 +1,12 @@
-import { useMutation } from '../../base';
+import { useMutation as useReactQueryMutation } from '@tanstack/react-query';
+import { useAPI } from '../../base/use-context-hooks';
 import { AugmentedMutationOptions } from '../../base/use-mutation';
 
-export const useLogout = ({ ...props }: Omit<AugmentedMutationOptions<'logout'>, 'name'> = {}) => {
-    const { data, ...rest } = useMutation({ name: 'logout', ...props });
+export const useLogout = ({ ...options }: Omit<AugmentedMutationOptions<'logout'>, 'name'> = {}) => {
+    const { derivAPIClient } = useAPI();
 
-    return {
-        data: data?.logout,
-        ...rest,
-    };
+    return useReactQueryMutation({
+        mutationFn: payload => derivAPIClient.send({ name: 'authorize', payload }),
+        ...options,
+    });
 };

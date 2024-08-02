@@ -100,9 +100,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     }, []);
 
     const logout = useCallback(async () => {
-        await requestLogout({
-            loginid: activeLoginid,
-        });
+        await requestLogout({});
         localStorage.removeItem('authToken');
         localStorage.removeItem('accountsList');
 

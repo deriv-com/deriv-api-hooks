@@ -1,11 +1,4 @@
-import { TSocketEndpointNames, TSocketSubscribableEndpointNames } from '../types/api.types';
-import {
-    DerivAPIClient,
-    DerivAPIClientOptions,
-    SendFunctionArgs,
-    SubscribeFunctionArgs,
-    UnsubscribeHandlerArgs,
-} from './deriv-api-client';
+import { DerivAPIClient, DerivAPIClientOptions } from './deriv-api-client';
 
 export class DerivAPIManager {
     options?: DerivAPIClientOptions;
@@ -19,26 +12,30 @@ export class DerivAPIManager {
         this.options = options;
     }
 
-    async send<T extends TSocketEndpointNames>(args: SendFunctionArgs<T>) {
-        return this.activeClient.send(args);
-    }
-
-    async subscribe<T extends TSocketSubscribableEndpointNames>(args: SubscribeFunctionArgs<T>) {
-        return this.activeClient.subscribe(args);
-    }
-
-    async unsubscribe(args: UnsubscribeHandlerArgs) {
-        return this.activeClient.unsubscribe(args);
+    getActiveClient() {
+        return this.activeClient;
     }
 
     async switchConnection(endpoint: string) {
         const matchingInstance = this.clientList.get(endpoint);
         if (matchingInstance) {
+            if (this.activeClient.websocket.url !== matchingInstance.websocket.url) {
+                // If does not match means we have to reinit and forget same like how we are doing with the new instances
+                await this.activeClient.unsubscribeAll();
+                await matchingInstance.reinitializeSubscriptions(
+                    this.activeClient.subscribeHandler,
+                    this.activeClient.authorizePayload
+                );
+            }
             this.activeClient = matchingInstance;
+
             return;
         }
         const subscribeHandlers = this.activeClient.subscribeHandler;
         const newInstance = new DerivAPIClient(endpoint, this.options);
+        // We will call forget on all subscriptions in the old subscription list but maintain the onData reference of the subscription list
+        await this.activeClient.unsubscribeAll();
+        // Pass the reference to the new connection. Here we will re-subscribe and attach it to the handlers of the new one
         await newInstance.reinitializeSubscriptions(subscribeHandlers, this.activeClient.authorizePayload);
         this.clientList.set(endpoint, newInstance);
         this.activeClient = newInstance;

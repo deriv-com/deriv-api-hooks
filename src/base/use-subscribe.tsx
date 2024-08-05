@@ -45,7 +45,7 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
         if (internalId.current) return;
         if (internalHash.current) return;
 
-        const { id, hash } = await derivAPIClient.subscribe({
+        const { id, hash } = await derivAPIClient.getActiveClient().subscribe({
             name,
             payload,
             onData: (data: TSocketSubscribeResponseData<TSocketSubscribableEndpointNames>) => {
@@ -65,7 +65,7 @@ export const useSubscribe = <T extends TSocketSubscribableEndpointNames>(name: T
 
     const unsubscribe = async () => {
         if (internalId.current && internalHash.current) {
-            await derivAPIClient.unsubscribe({ id: internalId.current, hash: internalHash.current });
+            await derivAPIClient.getActiveClient().unsubscribe({ id: internalId.current, hash: internalHash.current });
             clearTimeout(timeoutRef.current);
             setStatus('loading');
             internalId.current = null;

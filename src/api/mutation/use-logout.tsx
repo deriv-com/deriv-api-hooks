@@ -6,7 +6,7 @@ export const useLogout = ({ ...options }: Omit<AugmentedMutationOptions<'logout'
     const { derivAPIClient } = useAPI();
 
     return useReactQueryMutation({
-        mutationFn: () => derivAPIClient.send({ name: 'logout' }),
+        mutationFn: () => derivAPIClient.getActiveClient().send({ name: 'logout' }),
         ...options,
     });
 };

@@ -8,7 +8,7 @@ export const useNewAccountVirtual = ({
     const { derivAPIClient } = useAPI();
 
     return useReactQueryMutation({
-        mutationFn: payload => derivAPIClient.send({ name: 'new_account_virtual', payload }),
+        mutationFn: payload => derivAPIClient.getActiveClient().send({ name: 'new_account_virtual', payload }),
         ...options,
     });
 };

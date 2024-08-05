@@ -31,7 +31,7 @@ export const useInfiniteQuery = <T extends TSocketPaginateableEndpointNames>({
                 limit,
                 offset: Number(pageParam) * limit + initialOffset,
             } as TSocketRequestPayload<T>;
-            return derivAPIClient.send({ name, payload: requestPayload });
+            return derivAPIClient.getActiveClient().send({ name, payload: requestPayload });
         },
         ...options,
         initialPageParam: options?.initialPageParam ? options.initialPageParam : 0,

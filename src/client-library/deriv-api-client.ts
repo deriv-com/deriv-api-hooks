@@ -248,6 +248,12 @@ export class DerivAPIClient {
         }
     }
 
+    async unsubscribeAll() {
+        for (const subs of this.subscribeHandler.values()) {
+            await this.send({ name: 'forget', payload: { forget: subs.subscription_id } });
+        }
+    }
+
     isSocketClosingOrClosed() {
         return ![2, 3].includes(this.websocket.readyState);
     }

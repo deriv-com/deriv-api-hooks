@@ -22,7 +22,7 @@ export const useMutation = <T extends TSocketEndpointNames>({
     const { derivAPIClient } = useAPI();
 
     const { mutate, mutateAsync, ...props } = useReactQueryMutation({
-        mutationFn: payload => derivAPIClient.send({ name, payload }),
+        mutationFn: payload => derivAPIClient.getActiveClient().send({ name, payload }),
         ...options,
     });
 

@@ -8,7 +8,7 @@ import {
     TSocketSubscribeResponseData,
 } from '../types/api.types';
 
-type DerivAPIClientOptions = {
+export type DerivAPIClientOptions = {
     onOpen?: (e: Event) => void;
     onClose?: (e: CloseEvent) => void;
 };
@@ -26,6 +26,7 @@ type SubscriptionHandler<T extends TSocketSubscribableEndpointNames> = {
     name: T;
     status: 'active' | 'idle' | 'error';
     data?: TSocketSubscribeResponseData<T>;
+    payload: TSocketRequestPayload<T>;
     counter: number;
     subscriptions: Map<number, (data: TSocketSubscribeResponseData<T>) => void>;
     onError?: (error: TSocketError<T>['error']) => void;
@@ -38,19 +39,19 @@ type SubscriptionMap<T extends TSocketSubscribableEndpointNames = TSocketSubscri
     SubscriptionHandler<T>
 >;
 
-type SendFunctionArgs<T extends TSocketEndpointNames> = {
+export type SendFunctionArgs<T extends TSocketEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
 };
 
-type SubscribeFunctionArgs<T extends TSocketSubscribableEndpointNames> = {
+export type SubscribeFunctionArgs<T extends TSocketSubscribableEndpointNames> = {
     name: T;
     payload?: TSocketRequestPayload<T>;
     onData: (data: TSocketSubscribeResponseData<T>) => void;
     onError?: (error: TSocketError<T>['error']) => void;
 };
 
-type UnsubscribeHandlerArgs = {
+export type UnsubscribeHandlerArgs = {
     id: number;
     hash: string;
 };
@@ -61,6 +62,11 @@ export class DerivAPIClient {
     subscribeHandler: SubscriptionMap;
     req_id: number;
     waitForWebSocketOpen: ReturnType<typeof PromiseUtils.createPromise>;
+    waitForWebSocketCall?: ReturnType<typeof PromiseUtils.createPromise> & {
+        name: TSocketEndpointNames;
+        type: 'all' | 'subscribe' | 'request';
+    };
+    authorizePayload: TSocketRequestPayload<'authorize'> | null = null;
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
@@ -82,6 +88,12 @@ export class DerivAPIClient {
 
         this.websocket.addEventListener('message', async response => {
             const parsedData = JSON.parse(response.data);
+
+            // If name matches for the calls you asynchronously wait, resolve
+            if (this.waitForWebSocketCall && parsedData.msg_type === this.waitForWebSocketCall?.name) {
+                const { resolve } = this.waitForWebSocketCall;
+                resolve({});
+            }
 
             if (parsedData.subscription || parsedData.echo_req?.subscribe) {
                 const { req_id, ...payload } = parsedData.echo_req;
@@ -133,7 +145,17 @@ export class DerivAPIClient {
         this.requestHandler.set(this.req_id.toString(), newRequestHandler as RequestHandler<TSocketEndpointNames>);
 
         await this.waitForWebSocketOpen?.promise;
+        if (this.waitForWebSocketCall?.type === 'request' || this.waitForWebSocketCall?.type === 'all') {
+            await this.waitForWebSocketCall.promise;
+        }
         this.websocket.send(JSON.stringify(requestPayload));
+
+        if (name === 'authorize') {
+            const { req_id, ...cleanedPayload } = requestPayload as TSocketRequestPayload<'authorize'> & {
+                req_id: number;
+            };
+            this.authorizePayload = cleanedPayload;
+        }
 
         return promise;
     }
@@ -148,12 +170,14 @@ export class DerivAPIClient {
         const subscriptionHash = await ObjectUtils.hashObject(subscriptionPayload);
         const matchingSubscription = this.subscribeHandler.get(subscriptionHash);
 
+        // If no existing subscription, create a new handler and send the subscribe payload
         if (!matchingSubscription) {
             this.req_id = this.req_id + 1;
 
             const newSubscriptionHandler: SubscriptionHandler<T> = {
                 name,
                 status: 'idle',
+                payload: subscriptionPayload as unknown as TSocketRequestPayload<T>,
                 onError: onError,
                 subscriptions: new Map(),
                 subscription_id: '',
@@ -167,10 +191,14 @@ export class DerivAPIClient {
             );
 
             await this.waitForWebSocketOpen?.promise;
+            if (this.waitForWebSocketCall?.type === 'subscribe' || this.waitForWebSocketCall?.type === 'all') {
+                await this.waitForWebSocketCall.promise;
+            }
             this.websocket.send(JSON.stringify({ ...subscriptionPayload, req_id: this.req_id }));
 
             return { id: newSubscriptionHandler.counter, hash: subscriptionHash };
         } else {
+            // If there is already a subscription, simply append the onData callback directly to the subscription list
             const currentCounter = matchingSubscription.counter + 1;
             matchingSubscription.subscriptions.set(
                 currentCounter,
@@ -202,7 +230,23 @@ export class DerivAPIClient {
         }
     }
 
-    switchConnection() {}
+    async waitFor(name: TSocketEndpointNames, type: 'all' | 'subscribe' | 'request') {
+        this.waitForWebSocketCall = { ...PromiseUtils.createPromise(), name, type };
+    }
+
+    async reinitializeSubscriptions(
+        subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>,
+        authorizeData?: TSocketRequestPayload<'authorize'> | null
+    ) {
+        if (authorizeData) {
+            this.authorizePayload = authorizeData;
+            await this.send({ name: 'authorize', payload: { ...authorizeData } });
+        }
+        this.subscribeHandler = subscribeHandler;
+        for (const subs of subscribeHandler.values()) {
+            await this.send({ name: subs.name, payload: subs.payload });
+        }
+    }
 
     isSocketClosingOrClosed() {
         return ![2, 3].includes(this.websocket.readyState);

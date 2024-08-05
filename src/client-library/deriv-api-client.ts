@@ -66,6 +66,7 @@ export class DerivAPIClient {
         name: TSocketEndpointNames;
         type: 'all' | 'subscribe' | 'request';
     };
+    authorizePayload: TSocketRequestPayload<'authorize'> | null = null;
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
@@ -149,6 +150,13 @@ export class DerivAPIClient {
         }
         this.websocket.send(JSON.stringify(requestPayload));
 
+        if (name === 'authorize') {
+            const { req_id, ...cleanedPayload } = requestPayload as TSocketRequestPayload<'authorize'> & {
+                req_id: number;
+            };
+            this.authorizePayload = cleanedPayload;
+        }
+
         return promise;
     }
 
@@ -226,7 +234,14 @@ export class DerivAPIClient {
         this.waitForWebSocketCall = { ...PromiseUtils.createPromise(), name, type };
     }
 
-    async reinitializeSubscriptions(subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>) {
+    async reinitializeSubscriptions(
+        subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>,
+        authorizeData?: TSocketRequestPayload<'authorize'> | null
+    ) {
+        if (authorizeData) {
+            this.authorizePayload = authorizeData;
+            await this.send({ name: 'authorize', ...authorizeData });
+        }
         this.subscribeHandler = subscribeHandler;
         for (const subs of this.subscribeHandler.values()) {
             await this.send({ name: subs.name, payload: subs.payload });

@@ -39,7 +39,7 @@ export class DerivAPIManager {
         }
         const subscribeHandlers = { ...this.activeClient.subscribeHandler };
         const newInstance = new DerivAPIClient(endpoint, this.options);
-        await newInstance.reinitializeSubscriptions(subscribeHandlers);
+        await newInstance.reinitializeSubscriptions(subscribeHandlers, this.activeClient.authorizePayload);
         this.clientList.set(endpoint, newInstance);
         this.activeClient = newInstance;
     }

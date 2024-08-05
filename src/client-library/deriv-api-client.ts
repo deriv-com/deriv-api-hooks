@@ -240,10 +240,10 @@ export class DerivAPIClient {
     ) {
         if (authorizeData) {
             this.authorizePayload = authorizeData;
-            await this.send({ name: 'authorize', ...authorizeData });
+            await this.send({ name: 'authorize', payload: { ...authorizeData } });
         }
         this.subscribeHandler = subscribeHandler;
-        for (const subs of this.subscribeHandler.values()) {
+        for (const subs of subscribeHandler.values()) {
             await this.send({ name: subs.name, payload: subs.payload });
         }
     }

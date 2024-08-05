@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useAccountList } from '../src/api/authorize';
 import { URLUtils } from '@deriv-com/utils';
-import { useSubscribe } from '../src/base';
+import { useAPI, useSubscribe } from '../src/base';
 
 export const SandboxPage = () => {
+    const { derivAPIClient } = useAPI();
     const { data } = useAccountList();
     const { data: exchangeRateData, subscribe: subscribeExchangeRates } = useSubscribe('exchange_rates');
     const {
@@ -13,6 +14,10 @@ export const SandboxPage = () => {
         status,
         error: ticksError,
     } = useSubscribe('ticks');
+
+    const handleSwitchFrench = async () => {
+        await derivAPIClient.switchConnection('wss://blue.derivws.com/websockets/v3?app_id=36300&l=FR&brand=deriv');
+    };
 
     useEffect(() => {
         const handleSubscribe = async () => {
@@ -37,6 +42,7 @@ export const SandboxPage = () => {
                 Subscribe to Different Ticks
             </button>
             <button onClick={() => unsubscribeTicks()}>Unsubscribe Ticks</button>
+            <button onClick={async () => handleSwitchFrench()}>Switch to French</button>
         </div>
     );
 };

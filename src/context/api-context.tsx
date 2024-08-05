@@ -1,22 +1,11 @@
 import { createContext, PropsWithChildren } from 'react';
 import { URLUtils } from '@deriv-com/utils';
-import { DerivAPIClient } from '../client-library/deriv-api-client';
+import { DerivAPIManager } from '../client-library/deriv-api-manager';
 
-export const derivAPIClient = new DerivAPIClient(URLUtils.getWebsocketURL(), {
-    onOpen: () => {
-        localStorage.setItem('api.connecting', 'false');
-    },
-    onClose: () => {
-        const isConnecting = localStorage.getItem('api.connecting') ?? 'false';
-        if (isConnecting === 'false') {
-            localStorage.setItem('api.connecting', 'true');
-            window.location.reload();
-        }
-    },
-});
+export const derivAPIClient = new DerivAPIManager(URLUtils.getWebsocketURL());
 
 type APIData = {
-    derivAPIClient: DerivAPIClient;
+    derivAPIClient: DerivAPIManager;
 };
 
 export const APIDataContext = createContext<APIData | null>(null);

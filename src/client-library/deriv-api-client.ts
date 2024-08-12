@@ -239,13 +239,17 @@ export class DerivAPIClient {
         authorizeData?: TSocketRequestPayload<'authorize'> | null
     ) {
         if (authorizeData) {
-            this.authorizePayload = authorizeData;
+            this.authorizePayload = { ...authorizeData };
             await this.send({ name: 'authorize', payload: { ...authorizeData } });
         }
-        this.subscribeHandler = subscribeHandler;
-        for (const subs of subscribeHandler.values()) {
-            await this.send({ name: subs.name, payload: subs.payload });
-        }
+
+        let subscriptionList: Promise<unknown>[] = [];
+        subscribeHandler.forEach(handler => {
+            handler.subscriptions.forEach(onData => {
+                subscriptionList.push(this.subscribe({ name: handler.name, payload: handler.payload, onData }));
+            });
+        });
+        await Promise.all(subscriptionList);
     }
 
     async unsubscribeAll() {

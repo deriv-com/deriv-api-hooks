@@ -16,7 +16,7 @@ export const SandboxPage = () => {
     } = useSubscribe('ticks');
 
     const handleSwitchFrench = async () => {
-        await derivAPIClient.switchConnection('wss://blue.derivws.com/websockets/v3?app_id=36300&l=FR&brand=deriv');
+        await derivAPIClient.createNewConnection('wss://blue.derivws.com/websockets/v3?app_id=36300&l=FR&brand=deriv');
     };
 
     useEffect(() => {

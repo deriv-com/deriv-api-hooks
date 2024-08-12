@@ -16,7 +16,13 @@ export class DerivAPIManager {
         return this.activeClient;
     }
 
-    async switchConnection(endpoint: string) {
+    /**
+     * Creates a new connection and swap out the current active connection with it.
+     * Brings authorize and subscription context to the new connection.
+     * @param endpoint
+     * @returns {void}
+     */
+    async createNewConnection(endpoint: string) {
         const matchingInstance = this.clientList.get(endpoint);
         if (matchingInstance) {
             if (this.activeClient.websocket.url !== matchingInstance.websocket.url) {

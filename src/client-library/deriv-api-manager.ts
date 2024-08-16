@@ -16,6 +16,18 @@ export class DerivAPIManager {
         return this.activeClient;
     }
 
+    async reconnect() {
+        const current_url = this.activeClient.websocket.url;
+        const current_handler = this.activeClient.subscribeHandler;
+        const current_authorize_payload = this.activeClient.authorizePayload;
+
+        this.clientList.delete(current_url);
+        const reinitialized_instance = new DerivAPIClient(current_url, this.options);
+        await reinitialized_instance.reinitializeSubscriptions(current_handler, current_authorize_payload);
+        this.clientList.set(current_url, reinitialized_instance);
+        this.activeClient = reinitialized_instance;
+    }
+
     /**
      * Creates a new connection and swap out the current active connection with it.
      * Brings authorize and subscription context to the new connection.

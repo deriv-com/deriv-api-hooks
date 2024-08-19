@@ -1,12 +1,24 @@
 import { DerivAPIClient, DerivAPIClientOptions } from './deriv-api-client';
 
+export interface DerivAPIManagerOptions extends DerivAPIClientOptions {
+    reconnect?: boolean;
+}
+
 export class DerivAPIManager {
     options?: DerivAPIClientOptions;
     activeClient: DerivAPIClient;
     clientList: Map<string, DerivAPIClient> = new Map();
 
-    constructor(endpoint: string, options?: DerivAPIClientOptions) {
-        const client = new DerivAPIClient(endpoint, options);
+    constructor(endpoint: string, options?: DerivAPIClientOptions & DerivAPIManagerOptions) {
+        const { reconnect = true, ...api_options } = options || {};
+
+        const client = new DerivAPIClient(endpoint, {
+            onClose: () => {
+                api_options?.onClose;
+                if (reconnect) this.handleReconnect();
+            },
+            onOpen: api_options?.onOpen,
+        });
         this.clientList.set(endpoint, client);
         this.activeClient = client;
         this.options = options;
@@ -16,16 +28,8 @@ export class DerivAPIManager {
         return this.activeClient;
     }
 
-    async reconnect() {
-        const current_url = this.activeClient.websocket.url;
-        const current_handler = this.activeClient.subscribeHandler;
-        const current_authorize_payload = this.activeClient.authorizePayload;
-
-        this.clientList.delete(current_url);
-        const reinitialized_instance = new DerivAPIClient(current_url, this.options);
-        await reinitialized_instance.reinitializeSubscriptions(current_handler, current_authorize_payload);
-        this.clientList.set(current_url, reinitialized_instance);
-        this.activeClient = reinitialized_instance;
+    async handleReconnect() {
+        await this.activeClient.reconnect();
     }
 
     /**

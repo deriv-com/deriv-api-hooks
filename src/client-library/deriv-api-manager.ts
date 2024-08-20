@@ -5,6 +5,7 @@ export interface DerivAPIManagerOptions extends DerivAPIClientOptions {
 }
 
 export class DerivAPIManager {
+    is_reconnecting: boolean;
     options?: DerivAPIClientOptions;
     activeClient: DerivAPIClient;
     clientList: Map<string, DerivAPIClient> = new Map();
@@ -13,12 +14,20 @@ export class DerivAPIManager {
         const { reconnect = true, ...api_options } = options || {};
 
         const client = new DerivAPIClient(endpoint, {
-            onClose: () => {
+            onClose: async () => {
                 api_options?.onClose;
-                if (reconnect) this.handleReconnect();
+                // Only reconnect if the reconnect option is true and is not already reconnecting.
+                if (reconnect && !this.is_reconnecting) {
+                    this.is_reconnecting = true;
+                    await this.handleReconnect();
+                    // Wait before WebSocket is open before setting is_reconnecting to false
+                    await this.activeClient.waitForWebSocketOpen;
+                    this.is_reconnecting = false;
+                }
             },
             onOpen: api_options?.onOpen,
         });
+        this.is_reconnecting = false;
         this.clientList.set(endpoint, client);
         this.activeClient = client;
         this.options = options;

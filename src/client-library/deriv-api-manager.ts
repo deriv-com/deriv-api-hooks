@@ -53,7 +53,7 @@ export class DerivAPIManager {
             if (this.activeClient.websocket.url !== matchingInstance.websocket.url) {
                 // If does not match means we have to reinit and forget same like how we are doing with the new instances
                 await this.activeClient.unsubscribeAll();
-                await matchingInstance.reinitializeSubscriptions(
+                await matchingInstance.reinitializeData(
                     this.activeClient.subscribeHandler,
                     this.activeClient.authorizePayload
                 );
@@ -67,7 +67,7 @@ export class DerivAPIManager {
         // We will call forget on all subscriptions in the old subscription list but maintain the onData reference of the subscription list
         await this.activeClient.unsubscribeAll();
         // Pass the reference to the new connection. Here we will re-subscribe and attach it to the handlers of the new one
-        await newInstance.reinitializeSubscriptions(subscribeHandlers, this.activeClient.authorizePayload);
+        await newInstance.reinitializeData(subscribeHandlers, this.activeClient.authorizePayload);
         this.clientList.set(endpoint, newInstance);
         this.activeClient = newInstance;
     }

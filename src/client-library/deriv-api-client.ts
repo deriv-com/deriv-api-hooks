@@ -8,10 +8,10 @@ import {
     TSocketSubscribeResponseData,
 } from '../types/api.types';
 
-export type DerivAPIClientOptions = {
+export interface DerivAPIClientOptions {
     onOpen?: (e: Event) => void;
     onClose?: (e: CloseEvent) => void;
-};
+}
 
 type DataHandler<T extends TSocketEndpointNames> = (data: TSocketResponseData<T>) => void;
 
@@ -57,6 +57,8 @@ export type UnsubscribeHandlerArgs = {
 };
 
 export class DerivAPIClient {
+    options?: DerivAPIClientOptions;
+    endpoint: string;
     websocket: WebSocket;
     requestHandler: RequestMap;
     subscribeHandler: SubscriptionMap;
@@ -70,20 +72,25 @@ export class DerivAPIClient {
     keepAliveIntervalId: NodeJS.Timeout | null = null;
 
     constructor(endpoint: string, options?: DerivAPIClientOptions) {
-        this.websocket = new WebSocket(endpoint);
+        this.options = options;
+        this.endpoint = endpoint;
+        this.websocket = new WebSocket(this.endpoint);
         this.req_id = 0;
         this.requestHandler = new Map();
         this.subscribeHandler = new Map();
         this.waitForWebSocketOpen = PromiseUtils.createPromise();
+        this.init();
+    }
 
+    async init() {
         this.websocket.addEventListener('open', e => {
-            if (typeof options?.onOpen === 'function') options.onOpen(e);
+            if (typeof this.options?.onOpen === 'function') this.options.onOpen(e);
             const { resolve } = this.waitForWebSocketOpen;
             resolve({});
         });
 
         this.websocket.addEventListener('close', e => {
-            if (typeof options?.onClose === 'function') options.onClose(e);
+            if (typeof this.options?.onClose === 'function') this.options.onClose(e);
         });
 
         this.websocket.addEventListener('message', async response => {
@@ -256,6 +263,13 @@ export class DerivAPIClient {
         for (const subs of this.subscribeHandler.values()) {
             await this.send({ name: 'forget', payload: { forget: subs.subscription_id } });
         }
+    }
+
+    async reconnect() {
+        this.websocket = new WebSocket(this.endpoint);
+        this.waitForWebSocketOpen = PromiseUtils.createPromise();
+        this.init();
+        this.reinitializeSubscriptions(this.subscribeHandler, this.authorizePayload);
     }
 
     isSocketClosingOrClosed() {

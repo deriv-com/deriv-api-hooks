@@ -237,7 +237,7 @@ export class DerivAPIClient {
         }
     }
 
-    async waitFor(name: TSocketEndpointNames, type: 'all' | 'subscribe' | 'request') {
+    async waitFor(name: TSocketEndpointNames, type: 'all' | 'subscribe' | 'request' = 'all') {
         this.waitForWebSocketCall = { ...PromiseUtils.createPromise(), name, type };
     }
 
@@ -245,9 +245,10 @@ export class DerivAPIClient {
         subscribeHandler: SubscriptionMap<TSocketSubscribableEndpointNames>,
         authorizeData?: TSocketRequestPayload<'authorize'> | null
     ) {
-        await this.waitForWebSocketCall;
+        await this.waitForWebSocketOpen;
 
         if (authorizeData) {
+            this.waitFor('authorize');
             this.authorizePayload = { ...authorizeData };
             await this.send({ name: 'authorize', payload: { ...authorizeData } });
         }
@@ -270,8 +271,8 @@ export class DerivAPIClient {
     async reconnect() {
         this.websocket = new WebSocket(this.endpoint);
         this.waitForWebSocketOpen = PromiseUtils.createPromise();
-        this.init();
-        this.reinitializeData(this.subscribeHandler, this.authorizePayload);
+        await this.init();
+        await this.reinitializeData(this.subscribeHandler, this.authorizePayload);
     }
 
     isSocketClosingOrClosed() {

@@ -248,7 +248,6 @@ export class DerivAPIClient {
         await this.waitForWebSocketOpen;
 
         if (authorizeData) {
-            this.waitFor('authorize');
             this.authorizePayload = { ...authorizeData };
             await this.send({ name: 'authorize', payload: { ...authorizeData } });
         }

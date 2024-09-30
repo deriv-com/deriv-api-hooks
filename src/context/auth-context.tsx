@@ -75,7 +75,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
                 accountsList[account.loginid] = account.token;
             });
 
-            localStorage.setItem('accountsList', JSON.stringify(accountsList));
+            localStorage.setItem('client.accounts', JSON.stringify(accountsList));
 
             URLUtils.filterSearchParams(paramsToDelete);
 
@@ -94,7 +94,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const appendAccountLocalStorage = useCallback((loginid: string, token: string) => {
         accountsList[loginid] = token;
 
-        localStorage.setItem('accountsList', JSON.stringify(accountsList));
+        localStorage.setItem('client.accounts', JSON.stringify(accountsList));
 
         switchAccount(loginid);
     }, []);
@@ -102,7 +102,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const logout = useCallback(async () => {
         await requestLogout({});
         localStorage.removeItem('authToken');
-        localStorage.removeItem('accountsList');
+        localStorage.removeItem('client.accounts');
 
         setActiveLoginid('');
     }, []);

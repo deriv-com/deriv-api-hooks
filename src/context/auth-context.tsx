@@ -29,7 +29,9 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
     const { mutateAsync: requestLogout } = useLogout();
 
-    const accountsList: Record<string, string> = JSON.parse(localStorage.getItem('client.accounts') ?? '{}');
+    const accountsList: Record<string, string> = JSON.parse(
+        localStorage.getItem('client.accounts') ?? localStorage.getItem('accountsList') ?? '{}'
+    );
 
     const isAuthorized = useMemo(
         () => isSuccess && (!!activeLoginid || !!Object.keys(accountsList).length),

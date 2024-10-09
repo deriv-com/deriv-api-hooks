@@ -274,12 +274,12 @@ export class DerivAPIClient {
         await this.reinitializeData(this.subscribeHandler, this.authorizePayload);
     }
 
-    isSocketClosingOrClosed() {
-        return ![2, 3].includes(this.websocket.readyState);
+    isSocketReadyForSending() {
+        return this.websocket.readyState === WebSocket.OPEN; // 1
     }
 
     disconnect() {
-        if (!this.isSocketClosingOrClosed()) {
+        if (!this.isSocketReadyForSending()) {
             this.websocket.close();
         }
     }

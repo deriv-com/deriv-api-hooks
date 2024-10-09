@@ -279,7 +279,7 @@ export class DerivAPIClient {
     }
 
     disconnect() {
-        if (!this.isSocketReadyForSending()) {
+        if (this.isSocketReadyForSending()) {
             this.websocket.close();
         }
     }

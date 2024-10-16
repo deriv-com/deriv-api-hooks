@@ -101,6 +101,8 @@ import type {
     NewRealMoneyAccountDerivInvestmentEuropeLtdResponse,
     NewVirtualMoneyAccountRequest,
     NewVirtualMoneyAccountResponse,
+    NotificationsListRequest,
+    NotificationsListResponse,
     OAuthApplicationsRequest,
     OAuthApplicationsResponse,
     P2PAdvertCreateRequest,
@@ -496,64 +498,64 @@ export type TPrivateSocketEndpoints = {
              * Available Trading Accounts
              */
             trading_platform_available_accounts?:
-                | {
-                      /**
-                       * A list of Deriv landing companies that can work with this account type
-                       */
-                      linkable_landing_companies?: ('svg' | 'maltainvest')[];
-                      /**
-                       * The type of market tradable by this account
-                       */
-                      market_type?: 'financial' | 'gaming' | 'all';
-                      /**
-                       * Landing Company legal name
-                       */
-                      name?: string;
-                      /**
-                       * Legal requirements for the Landing Company
-                       */
-                      requirements?: {
-                          /**
-                           * After first deposit requirements
-                           */
-                          after_first_deposit?: {
-                              /**
-                               * Financial assessment requirements
-                               */
-                              financial_assessment?: string[];
-                          };
-                          /**
-                           * Compliance requirements
-                           */
-                          compliance?: {
-                              /**
-                               * Compliance MT5 requirements
-                               */
-                              mt5?: string[];
-                              /**
-                               * Compliance tax information requirements
-                               */
-                              tax_information?: string[];
-                          };
-                          /**
-                           * Sign up requirements
-                           */
-                          signup?: string[];
-                          /**
-                           * Withdrawal requirements
-                           */
-                          withdrawal?: string[];
-                      };
-                      /**
-                       * Landing Company short code
-                       */
-                      shortcode?: string;
-                      /**
-                       * Sub account type
-                       */
-                      sub_account_type?: 'standard' | 'swap_free' | 'stp';
-                  }[]
-                | null;
+            | {
+                /**
+                 * A list of Deriv landing companies that can work with this account type
+                 */
+                linkable_landing_companies?: ('svg' | 'maltainvest')[];
+                /**
+                 * The type of market tradable by this account
+                 */
+                market_type?: 'financial' | 'gaming' | 'all';
+                /**
+                 * Landing Company legal name
+                 */
+                name?: string;
+                /**
+                 * Legal requirements for the Landing Company
+                 */
+                requirements?: {
+                    /**
+                     * After first deposit requirements
+                     */
+                    after_first_deposit?: {
+                        /**
+                         * Financial assessment requirements
+                         */
+                        financial_assessment?: string[];
+                    };
+                    /**
+                     * Compliance requirements
+                     */
+                    compliance?: {
+                        /**
+                         * Compliance MT5 requirements
+                         */
+                        mt5?: string[];
+                        /**
+                         * Compliance tax information requirements
+                         */
+                        tax_information?: string[];
+                    };
+                    /**
+                     * Sign up requirements
+                     */
+                    signup?: string[];
+                    /**
+                     * Withdrawal requirements
+                     */
+                    withdrawal?: string[];
+                };
+                /**
+                 * Landing Company short code
+                 */
+                shortcode?: string;
+                /**
+                 * Sub account type
+                 */
+                sub_account_type?: 'standard' | 'swap_free' | 'stp';
+            }[]
+            | null;
             /**
              * Echo of the request made.
              */
@@ -880,14 +882,14 @@ export type TPrivateSocketEndpoints = {
         };
         response: {
             trading_platform_deposit?:
-                | {
-                      /**
-                       * The reference number for the related deposit to the trading account
-                       */
-                      transaction_id?: number;
-                      [k: string]: unknown;
-                  }
-                | 1;
+            | {
+                /**
+                 * The reference number for the related deposit to the trading account
+                 */
+                transaction_id?: number;
+                [k: string]: unknown;
+            }
+            | 1;
         };
         /**
          * Echo of the request made.
@@ -1218,6 +1220,10 @@ type TSocketEndpoints = {
         request: NewVirtualMoneyAccountRequest;
         response: NewVirtualMoneyAccountResponse;
     };
+    notifications_list: {
+        request: NotificationsListRequest;
+        response: NotificationsListResponse;
+    };
     oauth_apps: {
         request: OAuthApplicationsRequest;
         response: OAuthApplicationsResponse;
@@ -1489,6 +1495,7 @@ export type TSocketSubscribableEndpointNames = Extract<
     | 'cashier_payments'
     | 'crypto_estimations'
     | 'exchange_rates'
+    | 'notifications_list'
     | 'p2p_advert_info'
     | 'p2p_advertiser_create'
     | 'p2p_advertiser_info'
@@ -1564,12 +1571,12 @@ export type TSocketRequestPayload<
     T extends TSocketEndpointNames | TSocketPaginateableEndpointNames = TSocketEndpointNames,
 > =
     Partial<TSocketRequestCleaned<T>> extends TSocketRequestCleaned<T>
-        ? T extends TSocketPaginateableEndpointNames
-            ? TSocketPaginatateableRequestCleaned<T>
-            : TSocketRequestCleaned<T>
-        : T extends TSocketPaginateableEndpointNames
-          ? TSocketPaginatateableRequestCleaned<T>
-          : TSocketRequestCleaned<T>;
+    ? T extends TSocketPaginateableEndpointNames
+    ? TSocketPaginatateableRequestCleaned<T>
+    : TSocketRequestCleaned<T>
+    : T extends TSocketPaginateableEndpointNames
+    ? TSocketPaginatateableRequestCleaned<T>
+    : TSocketRequestCleaned<T>;
 
 export type TSocketPaginateableEndpointNames = KeysMatching<
     TSocketEndpoints,

@@ -35,6 +35,7 @@ import { useNewAccountReal } from './use-new-account-real';
 import { useNewAccountVirtual } from './use-new-account-virtual';
 import { useNewAccountWallet } from './use-new-account-wallet';
 import { useNotificationEvent } from './use-notification-event';
+import { useNotificationsUpdateStatus } from './use-notifications-update-status';
 import { useP2pAdvertCreate } from './use-p2p-advert-create';
 import { useP2pAdvertUpdate } from './use-p2p-advert-update';
 import { useP2pAdvertiserUpdate } from './use-p2p-advertiser-update';
@@ -115,6 +116,7 @@ export {
     useNewAccountVirtual,
     useNewAccountWallet,
     useNotificationEvent,
+    useNotificationsUpdateStatus,
     useP2pAdvertCreate,
     useP2pAdvertUpdate,
     useP2pAdvertiserUpdate,

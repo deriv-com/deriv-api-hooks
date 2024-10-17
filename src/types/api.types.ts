@@ -101,8 +101,6 @@ import type {
     NewRealMoneyAccountDerivInvestmentEuropeLtdResponse,
     NewVirtualMoneyAccountRequest,
     NewVirtualMoneyAccountResponse,
-    NotificationsListRequest,
-    NotificationsListResponse,
     OAuthApplicationsRequest,
     OAuthApplicationsResponse,
     P2PAdvertCreateRequest,
@@ -1221,9 +1219,112 @@ type TSocketEndpoints = {
         response: NewVirtualMoneyAccountResponse;
     };
     notifications_list: {
-        request: NotificationsListRequest;
-        response: NotificationsListResponse;
+        request: {
+            /**
+               * Must be 1
+               */
+            notifications_list: 1;
+            /**
+             * [Optional] Used to map request to response.
+             */
+            req_id?: number;
+            /**
+             * [Optional] If set to 1, will send updates whenever there is a change to any notification belonging to you.
+             */
+            subscribe?: 1;
+        };
+        response: {
+            /**
+             * Echo of the request made.
+             */
+            echo_req: {
+                [k: string]: unknown;
+            };
+            /**
+             * Action name of the request made.
+             */
+            msg_type: "notifications_list";
+            notifications_list: {
+                /**
+                 * Total no. of notifications that are actionable.
+                 */
+                count_actionable: number,
+                /**
+                 * Total no. of notifications.
+                 */
+                count_total: number,
+                /**
+                 * Total no. of unread notifications.
+                 */
+                count_unread: number,
+                /**
+                 * List of notifications.
+                 */
+                messages: {
+                    /**
+                     * `Act` if the notification is actionable.
+                     */
+                    category: "act" | "see";
+                    /**
+                     * Id of the notification.
+                     */
+                    id: number;
+                    links: {
+                        href: string;
+                        rel: string;
+                    }[];
+                    /**
+                     * Unique key of the notification.
+                     */
+                    message_key: string;
+                    /**
+                     * Contains keys and values use for transforming the notification message.
+                     */
+                    payload: string;
+                    /**
+                     * Flag indicating if the notification has been read.
+                     */
+                    read: boolean;
+                    /**
+                     * Flag indicating if the notification has been removed.
+                     */
+                    removed: boolean;
+                }[]
+            };
+            /**
+             * Optional field sent in request to map to response, present only when request contains `req_id`.
+             */
+            req_id?: number;
+        };
     };
+    notifications_update_status: {
+        request: {
+            /**
+             * Action to call. Must be `read`, `unread`, or `remove`.
+             */
+            notifications_update_status: "read" | "unread" | "remove";
+            /**
+             * Array of notification ids to update.
+             */
+            ids: string[];
+        };
+        response: {
+            /**
+             * Echo of the request made.
+             */
+            echo_req: {
+                [k: string]: unknown;
+            };
+            /**
+             * Action name of the request made.
+             */
+            msg_type: "notifications_update_status";
+            /**
+             * List of updated notifications.
+             */
+            notifications_update_status: string[];
+        };
+    }
     oauth_apps: {
         request: OAuthApplicationsRequest;
         response: OAuthApplicationsResponse;

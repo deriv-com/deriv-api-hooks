@@ -2,7 +2,7 @@ import { ReactNode, createContext, useCallback, useEffect, useMemo } from 'react
 import { URLUtils } from '@deriv-com/utils';
 import { useAuthorize } from '../api/mutation/use-authorize';
 import { useAppData } from '../base';
-import { TSocketError } from '../types/api.types';
+import { TSocketError, TSocketResponseData } from '../types/api.types';
 import { useLogout } from '../api';
 
 type AuthData = {
@@ -13,6 +13,7 @@ type AuthData = {
     appendAccountLocalStorage: (loginid: string, token: string) => void;
     logout: () => void;
     error: TSocketError<'authorize'>['error'] | null;
+    data: TSocketResponseData<"authorize"> | undefined
 };
 
 export const AuthDataContext = createContext<AuthData | null>(null);
@@ -119,6 +120,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             appendAccountLocalStorage,
             logout,
             isAuthorized,
+            data
         }),
         [activeLoginid, isSuccess, error, status]
     );

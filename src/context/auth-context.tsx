@@ -13,16 +13,18 @@ type AuthData = {
     appendAccountLocalStorage: (loginid: string, token: string) => void;
     logout: () => void;
     error: TSocketError<'authorize'>['error'] | null;
-    data: TSocketResponseData<"authorize"> | undefined
+    data: TSocketResponseData<'authorize'> | undefined;
 };
 
 export const AuthDataContext = createContext<AuthData | null>(null);
 
 type AuthDataProviderProps = {
+    accountType: string;
     children: ReactNode;
+    currency: string;
 };
 
-export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
+export const AuthDataProvider = ({ accountType = '', children, currency = '' }: AuthDataProviderProps) => {
     const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
 
@@ -33,6 +35,10 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
     const accountsList: Record<string, string> = JSON.parse(
         localStorage.getItem('client.accounts') ?? localStorage.getItem('accountsList') ?? '{}'
     );
+
+    const getAccountInfo = useCallback(() => {
+        return loginInfo.find(account => account.currency === currency && account.loginid.includes(accountType));
+    }, [loginInfo]);
 
     const isAuthorized = useMemo(
         () => isSuccess && (!!activeLoginid || !!Object.keys(accountsList).length),
@@ -70,8 +76,15 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
         if (loginInfo.length) {
             const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);
             if (!defaultActiveAccount) return;
+            const accountInfo = getAccountInfo();
+            const hasAccountInfo = currency && accountType && accountInfo;
 
-            setActiveLoginid(loginInfo[0].loginid);
+            if (hasAccountInfo) {
+                setActiveLoginid(accountInfo?.loginid ?? '');
+            } else {
+                setActiveLoginid(loginInfo[0].loginid);
+            }
+
             const accountsList: Record<string, string> = {};
 
             loginInfo.forEach(account => {
@@ -82,9 +95,13 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
 
             URLUtils.filterSearchParams(paramsToDelete);
 
-            authorizeAccount(loginInfo[0].token);
-
-            localStorage.setItem('authToken', loginInfo[0].token);
+            if (hasAccountInfo) {
+                authorizeAccount(accountInfo?.token ?? '');
+                localStorage.setItem('authToken', accountInfo?.token ?? '');
+            } else {
+                authorizeAccount(loginInfo[0].token);
+                localStorage.setItem('authToken', loginInfo[0].token);
+            }
         } else {
             const token = localStorage.getItem('authToken');
 
@@ -120,7 +137,7 @@ export const AuthDataProvider = ({ children }: AuthDataProviderProps) => {
             appendAccountLocalStorage,
             logout,
             isAuthorized,
-            data
+            data,
         }),
         [activeLoginid, isSuccess, error, status]
     );

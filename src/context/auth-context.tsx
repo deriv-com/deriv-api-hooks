@@ -36,7 +36,7 @@ export const AuthDataProvider = ({ accountType = '', children, currency = '' }: 
         localStorage.getItem('client.accounts') ?? localStorage.getItem('accountsList') ?? '{}'
     );
 
-    const getAccountWithCurrency = useCallback(() => {
+    const getAccountInfo = useCallback(() => {
         return loginInfo.find(account => account.currency === currency && account.loginid.includes(accountType));
     }, [loginInfo]);
 
@@ -76,10 +76,11 @@ export const AuthDataProvider = ({ accountType = '', children, currency = '' }: 
         if (loginInfo.length) {
             const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);
             if (!defaultActiveAccount) return;
-            const hasAccountWithCurrency = currency && accountType && getAccountWithCurrency();
+            const hasAccountInfo = currency && accountType && getAccountInfo();
+            const accountInfo = getAccountInfo();
 
-            if (hasAccountWithCurrency) {
-                setActiveLoginid(getAccountWithCurrency()?.loginid ?? '');
+            if (hasAccountInfo) {
+                setActiveLoginid(accountInfo?.loginid ?? '');
             } else {
                 setActiveLoginid(loginInfo[0].loginid);
             }
@@ -94,9 +95,9 @@ export const AuthDataProvider = ({ accountType = '', children, currency = '' }: 
 
             URLUtils.filterSearchParams(paramsToDelete);
 
-            if (hasAccountWithCurrency) {
-                authorizeAccount(getAccountWithCurrency()?.token ?? '');
-                localStorage.setItem('authToken', getAccountWithCurrency()?.token ?? '');
+            if (hasAccountInfo) {
+                authorizeAccount(accountInfo?.token ?? '');
+                localStorage.setItem('authToken', accountInfo?.token ?? '');
             } else {
                 authorizeAccount(loginInfo[0].token);
                 localStorage.setItem('authToken', loginInfo[0].token);

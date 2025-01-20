@@ -76,8 +76,8 @@ export const AuthDataProvider = ({ accountType = '', children, currency = '' }: 
         if (loginInfo.length) {
             const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);
             if (!defaultActiveAccount) return;
-            const hasAccountInfo = currency && accountType && getAccountInfo();
             const accountInfo = getAccountInfo();
+            const hasAccountInfo = currency && accountType && accountInfo;
 
             if (hasAccountInfo) {
                 setActiveLoginid(accountInfo?.loginid ?? '');

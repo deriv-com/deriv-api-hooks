@@ -19,12 +19,12 @@ type AuthData = {
 export const AuthDataContext = createContext<AuthData | null>(null);
 
 type AuthDataProviderProps = {
-    accountType: string;
+    accountTypes: string[];
     children: ReactNode;
-    currency: string;
+    currencies: string[];
 };
 
-export const AuthDataProvider = ({ accountType = '', children, currency = '' }: AuthDataProviderProps) => {
+export const AuthDataProvider = ({ accountTypes = [], children, currencies = [] }: AuthDataProviderProps) => {
     const { activeLoginid, setActiveLoginid } = useAppData();
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
 
@@ -37,7 +37,7 @@ export const AuthDataProvider = ({ accountType = '', children, currency = '' }: 
     );
 
     const getAccountInfo = useCallback(() => {
-        return loginInfo.find(account => account.currency === currency && account.loginid.includes(accountType));
+        return loginInfo.find(account => currencies.includes(account.currency) && accountTypes.some(accountType => account.loginid.includes(accountType)));
     }, [loginInfo]);
 
     const isAuthorized = useMemo(
@@ -77,7 +77,7 @@ export const AuthDataProvider = ({ accountType = '', children, currency = '' }: 
             const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);
             if (!defaultActiveAccount) return;
             const accountInfo = getAccountInfo();
-            const hasAccountInfo = currency && accountType && accountInfo;
+            const hasAccountInfo = currencies.length > 0 && accountTypes.length > 0 && accountInfo;
 
             if (hasAccountInfo) {
                 setActiveLoginid(accountInfo?.loginid ?? '');

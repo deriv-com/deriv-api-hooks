@@ -13,18 +13,18 @@ type AppData = {
 
 export const AppDataContext = createContext<AppData | null>(null);
 
-type AppDataProviderProps = PropsWithChildren & { accountType?: string; currency?: string };
+type AppDataProviderProps = PropsWithChildren & { accountTypes?: string[]; currencies?: string[] };
 
 /**
  * By design, this is the only provider that should be exported out.
  * Absrtracts out the sequence of the providers.
  *
- * @param {string} accountType - The desired account type tied to the login ID eg. CR, VRTC, MF, etc.
- * @param {string} currency - The desired currency tied to the login ID, eg. USD, EUR, BTC etc.
+ * @param {Array<string>} accountTypes - The desired account types tied to the login ID eg. CR, VRTC, MF, etc.
+ * @param {Array<string>} currencies - The desired currencies tied to the login ID, eg. USD, EUR, BTC etc.
  * @param {PropsWithChildren} { children } - The child components to be wrapped by the provider.
  * @returns {JSX.Element} The provider component wrapping its children with App data context.
  */
-export const AppDataProvider = ({ accountType = '', children, currency = '' }: AppDataProviderProps) => {
+export const AppDataProvider = ({ accountTypes = [], children, currencies = [] }: AppDataProviderProps) => {
     const [activeLoginid, setActiveLoginid] = useState('');
     const [environment, setEnvironment] = useState<Environment>('demo');
 
@@ -36,7 +36,7 @@ export const AppDataProvider = ({ accountType = '', children, currency = '' }: A
     return (
         <AppDataContext.Provider value={value}>
             <APIProvider>
-                <AuthDataProvider accountType={accountType} currency={currency}>
+                <AuthDataProvider accountTypes={accountTypes} currencies={currencies}>
                     {children}
                 </AuthDataProvider>
             </APIProvider>

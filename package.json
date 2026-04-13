@@ -36,7 +36,8 @@
         "@deriv-com/utils": "^0.0.30",
         "@deriv/api-types": "^1.0.1449",
         "@deriv/deriv-api": "^1.0.15",
-        "@tanstack/react-query": "^5.51.16"
+        "@tanstack/react-query": "^5.51.16",
+        "axios": "^1.15.0"
     },
     "devDependencies": {
         "@semantic-release/changelog": "^6.0.3",
@@ -65,6 +66,7 @@
         "@rollup/rollup-linux-x64-gnu": "^4.19.1"
     },
     "overrides": {
-        "handlebars": ">=4.7.9"
+        "handlebars": ">=4.7.9",
+        "axios": "^1.15.0"
     }
 }

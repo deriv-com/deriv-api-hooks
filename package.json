@@ -65,6 +65,7 @@
         "@rollup/rollup-linux-x64-gnu": "^4.19.1"
     },
     "overrides": {
-        "handlebars": ">=4.7.9"
+        "handlebars": ">=4.7.9",
+        "axios": ">=1.15.0"
     }
 }

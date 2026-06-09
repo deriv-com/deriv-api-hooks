@@ -36,7 +36,8 @@
         "@deriv-com/utils": "^0.0.30",
         "@deriv/api-types": "^1.0.1449",
         "@deriv/deriv-api": "^1.0.15",
-        "@tanstack/react-query": "^5.51.16"
+        "@tanstack/react-query": "^5.51.16",
+        "axios": "^1.16.0"
     },
     "devDependencies": {
         "@semantic-release/changelog": "^6.0.3",
@@ -56,15 +57,24 @@
         "ts-jest": "^29.2.3",
         "ts-node": "^10.9.2",
         "typescript": "^5.5.4",
-        "vite": "^7.0.5",
+        "vite": "^7.3.2",
         "vite-plugin-dts": "^4.5.4",
         "vite-plugin-mkcert": "^1.17.5",
         "vite-tsconfig-paths": "^4.3.2"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "^4.19.1"
+        "@rollup/rollup-linux-x64-gnu": "^4.59.0"
     },
     "overrides": {
-        "handlebars": ">=4.7.9"
+        "handlebars": ">=4.7.9",
+        "axios": "^1.16.0",
+        "follow-redirects": "^1.16.0",
+        "lodash": "^4.18.0",
+        "lodash-es": "^4.18.0",
+        "minimatch": "^9.0.7",
+        "picomatch": "^4.0.4",
+        "postcss": "^8.5.10",
+        "rollup": "^4.59.0",
+        "undici": "^7.24.0"
     }
 }
